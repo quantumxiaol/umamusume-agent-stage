@@ -1,0 +1,67 @@
+schema_version: map_scene_plan.v1
+scene_id: tracen_training_ground
+display_name: 特雷森综合训练场
+description: 大尺度芝地、泥地与直线训练设施，连接学生广场和室内训练馆。
+size_tiles: { width: 72, height: 48 }
+source_tile_size: 16
+runtime_tile_size: 32
+surfaces:
+  - { tile: ground.grass.base, bounds: { x: 0, y: 0, width: 72, height: 48 } }
+  - { tile: ground.grass.detail, shape: rounded_ring, radius: 12, thickness: 3, bounds: { x: 2, y: 2, width: 52, height: 31 } }
+  - { tile: ground.track.clay, shape: rounded_ring, radius: 9, thickness: 4, bounds: { x: 6, y: 7, width: 44, height: 21 } }
+  - { tile: ground.track.clay, bounds: { x: 3, y: 35, width: 51, height: 5 } }
+  - { tile: ground.path.sand, bounds: { x: 55, y: 21, width: 14, height: 14 } }
+  - { tile: ground.path.stone, bounds: { x: 32, y: 40, width: 8, height: 8 } }
+  - { tile: ground.path.stone, bounds: { x: 69, y: 26, width: 3, height: 5 } }
+tile_props:
+  - { tile: prop.tree.green, x: 1, y: 1, blocking: true }
+  - { tile: prop.tree.dark_green, x: 56, y: 18, blocking: true }
+  - { tile: prop.tree.green, x: 69, y: 18, blocking: true }
+  - { tile: prop.tree.dark_green, x: 2, y: 43, blocking: true }
+  - { tile: prop.tree.green, x: 52, y: 44, blocking: true }
+  - { tile: prop.sign.direction, x: 40, y: 43, blocking: true }
+landmarks:
+  - { id: turf_training_track, display_name: 芝地训练跑道, kind: track_turf, bounds: { x: 2, y: 2, width: 52, height: 31 } }
+  - { id: dirt_training_track, display_name: 泥地训练跑道, kind: track_dirt, bounds: { x: 6, y: 7, width: 44, height: 21 } }
+  - { id: straight_sprint_lane, display_name: 直线冲刺道, kind: track_straight, bounds: { x: 3, y: 35, width: 51, height: 5 } }
+  - { id: training_grandstand, display_name: 训练场看台, kind: building, bounds: { x: 55, y: 4, width: 14, height: 12 } }
+  - { id: warmup_field, display_name: 热身区, kind: training_zone, bounds: { x: 55, y: 21, width: 14, height: 14 } }
+  - { id: plaza_entrance, display_name: 学生广场入口, kind: entrance, bounds: { x: 30, y: 40, width: 12, height: 8 } }
+collision:
+  - { x: 55, y: 4, width: 14, height: 12 }
+zones:
+  - { id: turf_track, display_name: 芝地训练跑道, kind: training, bounds: { x: 2, y: 2, width: 52, height: 31 } }
+  - { id: dirt_track, display_name: 泥地训练跑道, kind: training, bounds: { x: 6, y: 7, width: 44, height: 21 } }
+  - { id: sprint_lane, display_name: 直线冲刺道, kind: training, bounds: { x: 3, y: 35, width: 51, height: 5 } }
+  - { id: warmup_zone, display_name: 热身区, kind: training, bounds: { x: 55, y: 21, width: 14, height: 14 } }
+anchors:
+  - { id: turf_start, display_name: 芝地起点, position: { x: 4, y: 17 }, facing: up }
+  - { id: dirt_start, display_name: 泥地起点, position: { x: 8, y: 17 }, facing: up }
+  - { id: sprint_start, display_name: 冲刺起点, position: { x: 4, y: 37 }, facing: right }
+  - { id: warmup_meeting, display_name: 热身集合点, position: { x: 61, y: 29 }, facing: down }
+spawns:
+  - { id: from_plaza, position: { x: 35, y: 46 }, facing: up }
+  - { id: trainer_start, position: { x: 35, y: 43 }, facing: up }
+  - { id: from_indoor_training_hall, position: { x: 70, y: 28 }, facing: left }
+portals:
+  - { id: to_student_plaza, position: { x: 35, y: 47 }, target_scene_id: tracen_student_plaza, target_spawn_id: from_training_ground }
+  - { id: to_indoor_training_hall, position: { x: 71, y: 28 }, target_scene_id: tracen_indoor_training_hall, target_spawn_id: from_training_ground }
+activity_paths:
+  - id: turf_endurance_loop
+    activity_id: endurance_run
+    loop: true
+    points: [{ x: 7, y: 5 }, { x: 47, y: 5 }, { x: 51, y: 16 }, { x: 47, y: 29 }, { x: 7, y: 29 }, { x: 3, y: 16 }]
+  - id: straight_sprint
+    activity_id: sprint_training
+    loop: false
+    points: [{ x: 4, y: 37 }, { x: 52, y: 37 }]
+visual_references:
+  - { catalog_id: track_day, role: overall_track_scale }
+  - { catalog_id: dirt_track_day, role: dirt_surface_and_rails }
+  - { catalog_id: turf_training_field_day, role: turf_palette_and_open_sky }
+  - { catalog_id: training_tunnel, role: circulation_and_training_infrastructure }
+missing_tile_families:
+  - track_lanes_and_curves
+  - training_grandstand
+  - training_equipment_and_hurdles
+  - training_ground_entrance

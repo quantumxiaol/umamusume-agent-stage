@@ -1,0 +1,24 @@
+{
+  "name": "@uma-stage/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "typecheck": "vue-tsc -b"
+  },
+  "dependencies": {
+    "@uma-stage/agent-client": "workspace:*",
+    "@uma-stage/contracts": "workspace:*",
+    "@uma-stage/core": "workspace:*",
+    "@uma-stage/renderer-phaser": "workspace:*",
+    "pinia": "4.0.2",
+    "vue": "3.5.41"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "6.0.8",
+    "vite": "8.0.16",
+    "vue-tsc": "3.1.5"
+  }
+}

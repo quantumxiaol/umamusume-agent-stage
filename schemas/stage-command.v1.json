@@ -1,0 +1,435 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "actor_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "string",
+          "enum": [
+            "player",
+            "agent",
+            "script",
+            "system"
+          ]
+        },
+        "policy": {
+          "default": "reject",
+          "type": "string",
+          "enum": [
+            "reject",
+            "queue",
+            "replace"
+          ]
+        },
+        "type": {
+          "type": "string",
+          "const": "actor.move_to"
+        },
+        "target": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "const": "anchor"
+                },
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "slot_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "type",
+                "id"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "const": "tile"
+                },
+                "position": {
+                  "type": "object",
+                  "properties": {
+                    "x": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "y": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "x",
+                    "y"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "type",
+                "position"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "const": "actor"
+                },
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "distance_tiles": {
+                  "default": 1,
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 4
+                }
+              },
+              "required": [
+                "type",
+                "id",
+                "distance_tiles"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "actor_id",
+        "source",
+        "policy",
+        "type",
+        "target"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "actor_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "string",
+          "enum": [
+            "player",
+            "agent",
+            "script",
+            "system"
+          ]
+        },
+        "policy": {
+          "default": "reject",
+          "type": "string",
+          "enum": [
+            "reject",
+            "queue",
+            "replace"
+          ]
+        },
+        "type": {
+          "type": "string",
+          "const": "actor.follow_activity_path"
+        },
+        "activity_path_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cycles": {
+          "default": 1,
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 10
+        }
+      },
+      "required": [
+        "id",
+        "actor_id",
+        "source",
+        "policy",
+        "type",
+        "activity_path_id",
+        "cycles"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "actor_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "string",
+          "enum": [
+            "player",
+            "agent",
+            "script",
+            "system"
+          ]
+        },
+        "policy": {
+          "default": "reject",
+          "type": "string",
+          "enum": [
+            "reject",
+            "queue",
+            "replace"
+          ]
+        },
+        "type": {
+          "type": "string",
+          "const": "actor.follow"
+        },
+        "target_actor_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "distance_tiles": {
+          "default": 2,
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4
+        }
+      },
+      "required": [
+        "id",
+        "actor_id",
+        "source",
+        "policy",
+        "type",
+        "target_actor_id",
+        "distance_tiles"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "actor_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "string",
+          "enum": [
+            "player",
+            "agent",
+            "script",
+            "system"
+          ]
+        },
+        "policy": {
+          "default": "reject",
+          "type": "string",
+          "enum": [
+            "reject",
+            "queue",
+            "replace"
+          ]
+        },
+        "type": {
+          "type": "string",
+          "const": "actor.stop_follow"
+        }
+      },
+      "required": [
+        "id",
+        "actor_id",
+        "source",
+        "policy",
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "actor_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "string",
+          "enum": [
+            "player",
+            "agent",
+            "script",
+            "system"
+          ]
+        },
+        "policy": {
+          "default": "reject",
+          "type": "string",
+          "enum": [
+            "reject",
+            "queue",
+            "replace"
+          ]
+        },
+        "type": {
+          "type": "string",
+          "const": "actor.face"
+        },
+        "facing": {
+          "type": "string",
+          "enum": [
+            "down",
+            "left",
+            "right",
+            "up"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "actor_id",
+        "source",
+        "policy",
+        "type",
+        "facing"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "actor_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "string",
+          "enum": [
+            "player",
+            "agent",
+            "script",
+            "system"
+          ]
+        },
+        "policy": {
+          "default": "reject",
+          "type": "string",
+          "enum": [
+            "reject",
+            "queue",
+            "replace"
+          ]
+        },
+        "type": {
+          "type": "string",
+          "const": "actor.stop"
+        }
+      },
+      "required": [
+        "id",
+        "actor_id",
+        "source",
+        "policy",
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "actor_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "string",
+          "enum": [
+            "player",
+            "agent",
+            "script",
+            "system"
+          ]
+        },
+        "policy": {
+          "default": "reject",
+          "type": "string",
+          "enum": [
+            "reject",
+            "queue",
+            "replace"
+          ]
+        },
+        "type": {
+          "type": "string",
+          "const": "dialogue.say"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "duration_ms": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "id",
+        "actor_id",
+        "source",
+        "policy",
+        "type",
+        "text"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

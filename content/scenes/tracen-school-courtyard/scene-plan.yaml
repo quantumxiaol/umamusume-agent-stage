@@ -1,0 +1,81 @@
+schema_version: map_scene_plan.v1
+scene_id: tracen_school_courtyard
+display_name: 特雷森校舍前庭
+description: 以钟楼主校舍为中心，左右教学翼楼通过玻璃连廊相接的正式前庭。
+size_tiles: { width: 48, height: 34 }
+source_tile_size: 16
+runtime_tile_size: 32
+surfaces:
+  - { tile: ground.grass.base, bounds: { x: 0, y: 0, width: 48, height: 34 } }
+  - { tile: ground.path.stone, bounds: { x: 4, y: 10, width: 40, height: 17 } }
+  - { tile: ground.grass.base, bounds: { x: 8, y: 14, width: 11, height: 8 } }
+  - { tile: ground.grass.base, bounds: { x: 29, y: 14, width: 11, height: 8 } }
+  - { tile: ground.path.stone, bounds: { x: 21, y: 9, width: 7, height: 25 } }
+  - { tile: ground.path.stone, bounds: { x: 4, y: 23, width: 40, height: 4 } }
+tile_props:
+  - { tile: ground.school.steps, x: 23, y: 9 }
+  - { tile: ground.school.steps, x: 24, y: 9 }
+  - { tile: prop.school.banner, x: 19, y: 12, blocking: true }
+  - { tile: prop.school.banner, x: 28, y: 12, blocking: true }
+  - { tile: prop.school.planter, x: 18, y: 21, blocking: true }
+  - { tile: prop.school.planter, x: 29, y: 21, blocking: true }
+  - { tile: prop.school.planter, x: 10, y: 15, blocking: true }
+  - { tile: prop.school.planter, x: 37, y: 15, blocking: true }
+  - { tile: prop.lamp.campus, x: 19, y: 17, blocking: true }
+  - { tile: prop.lamp.campus, x: 28, y: 17, blocking: true }
+  - { tile: prop.lamp.campus, x: 19, y: 25, blocking: true }
+  - { tile: prop.lamp.campus, x: 28, y: 25, blocking: true }
+tile_stamps:
+  - { id: west_teaching_wing_tiles, stamp: building.school.wing.wide, x: 5, y: 4 }
+  - { id: main_hall_tiles, stamp: building.school.main_hall, x: 17, y: 3 }
+  - { id: east_teaching_wing_tiles, stamp: building.school.wing.wide, x: 31, y: 4 }
+  - { id: clock_tower_tiles, stamp: building.school.clock_tower, x: 22, y: 0, allow_overlap: true }
+  - { id: west_glass_connector_tiles, stamp: building.school.connector.glass, x: 14, y: 8, allow_overlap: true }
+  - { id: east_glass_connector_tiles, stamp: building.school.connector.glass, x: 30, y: 8, allow_overlap: true }
+  - { id: west_arcade_tiles, stamp: building.school.arcade.row, x: 6, y: 9, allow_overlap: true }
+  - { id: east_arcade_tiles, stamp: building.school.arcade.row, x: 34, y: 9, allow_overlap: true }
+  - { id: west_courtyard_cherry, stamp: prop.tree.cherry, x: 5, y: 17 }
+  - { id: east_courtyard_cherry, stamp: prop.tree.cherry, x: 41, y: 17 }
+landmarks:
+  - { id: school_facade, display_name: 钟楼主校舍, kind: building, render_mode: tile_stamp, bounds: { x: 17, y: 0, width: 14, height: 11 } }
+  - { id: west_teaching_wing, display_name: 西教学翼楼, kind: building, render_mode: tile_stamp, bounds: { x: 5, y: 4, width: 12, height: 7 } }
+  - { id: east_teaching_wing, display_name: 东教学翼楼, kind: building, render_mode: tile_stamp, bounds: { x: 31, y: 4, width: 12, height: 7 } }
+  - { id: west_connector, display_name: 西侧玻璃连廊, kind: connector, render_mode: tile_stamp, bounds: { x: 14, y: 8, width: 4, height: 3 } }
+  - { id: east_connector, display_name: 东侧玻璃连廊, kind: connector, render_mode: tile_stamp, bounds: { x: 30, y: 8, width: 4, height: 3 } }
+collision:
+  - { x: 5, y: 0, width: 38, height: 10 }
+  - { x: 5, y: 10, width: 19, height: 1 }
+  - { x: 25, y: 10, width: 18, height: 1 }
+  - { x: 5, y: 17, width: 2, height: 2 }
+  - { x: 41, y: 17, width: 2, height: 2 }
+zones:
+  - { id: formal_forecourt, display_name: 校舍前庭, kind: courtyard, bounds: { x: 4, y: 10, width: 40, height: 17 } }
+  - { id: west_lawn, display_name: 西侧庭园, kind: garden, bounds: { x: 8, y: 14, width: 11, height: 8 } }
+  - { id: east_lawn, display_name: 东侧庭园, kind: garden, bounds: { x: 29, y: 14, width: 11, height: 8 } }
+  - { id: main_entrance, display_name: 主校舍入口, kind: entrance, bounds: { x: 21, y: 9, width: 7, height: 4 } }
+anchors:
+  - { id: clock_tower_meeting, display_name: 钟楼集合点, position: { x: 24, y: 13 }, facing: up }
+  - { id: west_wing_meeting, display_name: 西翼集合点, position: { x: 12, y: 12 }, facing: up }
+  - { id: east_wing_meeting, display_name: 东翼集合点, position: { x: 35, y: 12 }, facing: up }
+  - { id: forecourt_assembly, display_name: 前庭集会点, position: { x: 24, y: 24 }, facing: up }
+spawns:
+  - { id: from_student_plaza, position: { x: 24, y: 31 }, facing: up }
+  - { id: from_main_school, position: { x: 24, y: 11 }, facing: down }
+portals:
+  - { id: to_student_plaza, position: { x: 24, y: 33 }, target_scene_id: tracen_student_plaza, target_spawn_id: from_school_courtyard }
+  - { id: to_main_school_interior, position: { x: 24, y: 10 }, target_scene_id: tracen_main_school_interior, target_spawn_id: from_school_courtyard }
+activity_paths:
+  - id: courtyard_main_axis
+    activity_id: campus_walk
+    loop: false
+    points:
+      - { x: 24, y: 32 }
+      - { x: 24, y: 24 }
+      - { x: 24, y: 13 }
+visual_references:
+  - { catalog_id: academy_entrance_day, usage: warm brick, pale stone, formal entrance axis }
+  - { catalog_id: school_side_courtyard_day, usage: arched windows, clipped lawn, campus lamps }
+  - { catalog_id: modern_school_building_day, usage: connected teaching wings and generous forecourt scale }
+  - { local_file: docs/design4training2.png, usage: centered clock tower, symmetric wings and courtyard topology }
+missing_tile_families:
+  - three_goddesses_statue_and_campus_bench

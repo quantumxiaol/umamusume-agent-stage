@@ -1,0 +1,139 @@
+schema_version: map_scene_plan.v1
+scene_id: tracen_riverside_path
+display_name: 特雷森校外河边步道
+description: 连接学院正门的都市河堤，包含堤顶跑道、草坡、下层散步道、亲水护岸和跨河桥。
+size_tiles: { width: 72, height: 48 }
+source_tile_size: 16
+runtime_tile_size: 32
+surfaces:
+  - { tile: ground.grass.base, bounds: { x: 0, y: 0, width: 72, height: 48 } }
+  - { tile: ground.river.path.asphalt, bounds: { x: 0, y: 5, width: 72, height: 6 } }
+  - { tile: ground.river.path.edge, bounds: { x: 0, y: 10, width: 72, height: 1 } }
+  - { tile: ground.river.slope.grass, bounds: { x: 0, y: 11, width: 72, height: 6 } }
+  - { tile: ground.river.gravel, bounds: { x: 0, y: 17, width: 72, height: 6 } }
+  - { tile: structure.river.revetment, bounds: { x: 0, y: 23, width: 72, height: 3 } }
+  - { tile: ground.river.water.deep, bounds: { x: 0, y: 26, width: 72, height: 15 } }
+  - { tile: ground.river.water.light, bounds: { x: 0, y: 31, width: 72, height: 4 } }
+  - { tile: structure.river.revetment, bounds: { x: 0, y: 41, width: 72, height: 2 } }
+  - { tile: ground.river.slope.grass, bounds: { x: 0, y: 43, width: 72, height: 5 } }
+  - { tile: structure.river.steps, bounds: { x: 12, y: 11, width: 4, height: 12 } }
+  - { tile: structure.river.steps, bounds: { x: 34, y: 11, width: 4, height: 12 } }
+  - { tile: structure.river.bridge.deck, bounds: { x: 52, y: 0, width: 6, height: 48 } }
+tile_props:
+  - { tile: prop.tree.dark_green, x: 4, y: 2, blocking: true }
+  - { tile: prop.tree.green, x: 15, y: 2, blocking: true }
+  - { tile: prop.tree.dark_green, x: 28, y: 2, blocking: true }
+  - { tile: prop.tree.green, x: 41, y: 2, blocking: true }
+  - { tile: prop.tree.dark_green, x: 66, y: 2, blocking: true }
+  - { tile: prop.shrub.green, x: 8, y: 3, blocking: true }
+  - { tile: prop.shrub.berries, x: 21, y: 3, blocking: true }
+  - { tile: prop.shrub.green, x: 35, y: 3, blocking: true }
+  - { tile: prop.shrub.berries, x: 63, y: 3, blocking: true }
+  - { tile: prop.river.lamp, x: 6, y: 7, blocking: true }
+  - { tile: prop.river.lamp, x: 19, y: 7, blocking: true }
+  - { tile: prop.river.lamp, x: 32, y: 7, blocking: true }
+  - { tile: prop.river.lamp, x: 45, y: 7, blocking: true }
+  - { tile: prop.river.lamp, x: 64, y: 7, blocking: true }
+  - { tile: prop.river.bicycle, x: 10, y: 8, blocking: true }
+  - { tile: prop.river.bollard, x: 1, y: 5, blocking: true }
+  - { tile: prop.river.bollard, x: 1, y: 10, blocking: true }
+  - { tile: prop.river.sign, x: 3, y: 13, blocking: true }
+  - { tile: prop.river.exercise_bar, x: 20, y: 14, blocking: true }
+  - { tile: prop.river.exercise_bar, x: 24, y: 14, blocking: true }
+  - { tile: prop.river.bench, x: 8, y: 19, blocking: true }
+  - { tile: prop.river.bench, x: 24, y: 19, blocking: true }
+  - { tile: prop.river.bench, x: 42, y: 19, blocking: true }
+  - { tile: prop.river.drinking_fountain, x: 31, y: 20, blocking: true }
+  - { tile: prop.river.life_ring, x: 10, y: 24, blocking: true }
+  - { tile: prop.river.life_ring, x: 43, y: 24, blocking: true }
+  - { tile: detail.river.reeds, x: 5, y: 25, blocking: true }
+  - { tile: detail.river.reeds, x: 17, y: 25, blocking: true }
+  - { tile: detail.river.reeds, x: 29, y: 25, blocking: true }
+  - { tile: detail.river.reeds, x: 47, y: 25, blocking: true }
+  - { tile: detail.river.reeds, x: 63, y: 25, blocking: true }
+  - { tile: ground.river.water.current, x: 7, y: 29, blocking: false }
+  - { tile: ground.river.water.current, x: 18, y: 37, blocking: false }
+  - { tile: ground.river.water.current, x: 31, y: 28, blocking: false }
+  - { tile: ground.river.water.current, x: 43, y: 36, blocking: false }
+  - { tile: structure.river.bridge.shadow, x: 51, y: 28, blocking: false }
+  - { tile: structure.river.bridge.shadow, x: 58, y: 28, blocking: false }
+  - { tile: structure.river.bridge.pier, x: 51, y: 34, blocking: true }
+  - { tile: structure.river.bridge.pier, x: 58, y: 34, blocking: true }
+  - { tile: ground.river.water.current, x: 65, y: 29, blocking: false }
+  - { tile: ground.river.water.current, x: 69, y: 38, blocking: false }
+  - { tile: prop.river.bench, x: 63, y: 45, blocking: true }
+  - { tile: prop.river.sign, x: 68, y: 45, blocking: true }
+tile_stamps:
+  - { id: bridge_water_23, stamp: structure.river.bridge.segment, x: 52, y: 23 }
+  - { id: bridge_water_24, stamp: structure.river.bridge.segment, x: 52, y: 24 }
+  - { id: bridge_water_25, stamp: structure.river.bridge.segment, x: 52, y: 25 }
+  - { id: bridge_water_26, stamp: structure.river.bridge.segment, x: 52, y: 26 }
+  - { id: bridge_water_27, stamp: structure.river.bridge.segment, x: 52, y: 27 }
+  - { id: bridge_water_28, stamp: structure.river.bridge.segment, x: 52, y: 28 }
+  - { id: bridge_water_29, stamp: structure.river.bridge.segment, x: 52, y: 29 }
+  - { id: bridge_water_30, stamp: structure.river.bridge.segment, x: 52, y: 30 }
+  - { id: bridge_water_31, stamp: structure.river.bridge.segment, x: 52, y: 31 }
+  - { id: bridge_water_32, stamp: structure.river.bridge.segment, x: 52, y: 32 }
+  - { id: bridge_water_33, stamp: structure.river.bridge.segment, x: 52, y: 33 }
+  - { id: bridge_water_34, stamp: structure.river.bridge.segment, x: 52, y: 34 }
+  - { id: bridge_water_35, stamp: structure.river.bridge.segment, x: 52, y: 35 }
+  - { id: bridge_water_36, stamp: structure.river.bridge.segment, x: 52, y: 36 }
+  - { id: bridge_water_37, stamp: structure.river.bridge.segment, x: 52, y: 37 }
+  - { id: bridge_water_38, stamp: structure.river.bridge.segment, x: 52, y: 38 }
+  - { id: bridge_water_39, stamp: structure.river.bridge.segment, x: 52, y: 39 }
+  - { id: bridge_water_40, stamp: structure.river.bridge.segment, x: 52, y: 40 }
+  - { id: bridge_water_41, stamp: structure.river.bridge.segment, x: 52, y: 41 }
+  - { id: bridge_water_42, stamp: structure.river.bridge.segment, x: 52, y: 42 }
+landmarks:
+  - { id: levee_jogging_path, display_name: 河堤跑步道, kind: promenade, render_mode: tile_stamp, bounds: { x: 0, y: 5, width: 72, height: 6 } }
+  - { id: exercise_lawn, display_name: 河堤锻炼草坡, kind: training_zone, render_mode: tile_stamp, bounds: { x: 16, y: 11, width: 14, height: 6 } }
+  - { id: lower_promenade, display_name: 下层亲水步道, kind: promenade, render_mode: tile_stamp, bounds: { x: 0, y: 17, width: 52, height: 6 } }
+  - { id: urban_river, display_name: 城市河道, kind: river, render_mode: tile_stamp, bounds: { x: 0, y: 26, width: 72, height: 15 } }
+  - { id: riverside_bridge, display_name: 跨河桥, kind: bridge, render_mode: tile_stamp, bounds: { x: 52, y: 0, width: 6, height: 48 } }
+  - { id: far_bank_viewpoint, display_name: 对岸眺望点, kind: viewpoint, render_mode: tile_stamp, bounds: { x: 58, y: 43, width: 14, height: 5 } }
+collision:
+  - { x: 0, y: 23, width: 52, height: 3 }
+  - { x: 58, y: 23, width: 14, height: 3 }
+  - { x: 0, y: 26, width: 52, height: 15 }
+  - { x: 58, y: 26, width: 14, height: 15 }
+  - { x: 0, y: 41, width: 52, height: 2 }
+  - { x: 58, y: 41, width: 14, height: 2 }
+  - { x: 52, y: 23, width: 1, height: 20 }
+  - { x: 57, y: 23, width: 1, height: 20 }
+zones:
+  - { id: campus_side_park, display_name: 学院侧河堤公园, kind: park, bounds: { x: 0, y: 0, width: 72, height: 5 } }
+  - { id: levee_jogging_path, display_name: 河堤跑步道, kind: training, bounds: { x: 0, y: 5, width: 72, height: 6 } }
+  - { id: embankment_slope, display_name: 河堤草坡, kind: park, bounds: { x: 0, y: 11, width: 72, height: 6 } }
+  - { id: lower_promenade, display_name: 下层亲水步道, kind: promenade, bounds: { x: 0, y: 17, width: 52, height: 6 } }
+  - { id: river_channel, display_name: 河道, kind: water, bounds: { x: 0, y: 26, width: 72, height: 15 } }
+  - { id: far_bank, display_name: 河对岸, kind: city_edge, bounds: { x: 0, y: 43, width: 72, height: 5 } }
+anchors:
+  - { id: gate_side_meeting, display_name: 学院侧集合点, position: { x: 8, y: 8 }, facing: right }
+  - { id: jogging_start, display_name: 河堤跑步起点, position: { x: 28, y: 8 }, facing: right }
+  - { id: lower_promenade_rest, display_name: 下层步道休息点, position: { x: 28, y: 20 }, facing: down }
+  - { id: bridge_view, display_name: 桥上眺望点, position: { x: 55, y: 32 }, facing: down }
+  - { id: city_expansion_point, display_name: 对岸城市扩展点, position: { x: 55, y: 45 }, facing: down }
+spawns:
+  - { id: from_academy_gate, position: { x: 2, y: 8 }, facing: right }
+  - { id: riverside_start, position: { x: 24, y: 8 }, facing: right }
+portals:
+  - { id: to_academy_gate, position: { x: 0, y: 8 }, target_scene_id: tracen_academy_gate, target_spawn_id: from_riverside }
+activity_paths:
+  - id: levee_jogging_loop
+    activity_id: riverside_training_run
+    loop: true
+    points: [{ x: 3, y: 7 }, { x: 49, y: 7 }, { x: 49, y: 9 }, { x: 3, y: 9 }]
+  - id: lower_promenade_walk
+    activity_id: riverside_walk
+    loop: false
+    points: [{ x: 14, y: 20 }, { x: 34, y: 20 }, { x: 50, y: 20 }]
+  - id: bridge_crossing
+    activity_id: city_edge_walk
+    loop: false
+    points: [{ x: 55, y: 18 }, { x: 55, y: 32 }, { x: 55, y: 45 }]
+visual_references:
+  - { catalog_id: riverside_day, usage: 宽蓝河面、都市河堤、灰色跑道、草坡与现代城市感 }
+  - { catalog_id: under_bridge_day, usage: 混凝土桥体、桥墩、桥下阴影与较自然的河岸 }
+  - { catalog_id: park_promenade_day, usage: 林荫慢行尺度、连续长椅、护栏和路灯 }
+  - { catalog_id: park_day, usage: 明亮城市公园色调、公共告示牌和活动设施 }
+missing_tile_families: []

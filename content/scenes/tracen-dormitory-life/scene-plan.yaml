@@ -1,0 +1,99 @@
+schema_version: map_scene_plan.v1
+scene_id: tracen_dormitory_life
+display_name: 特雷森宿舍生活区
+description: 美浦寮、栗东寮、公共洗衣房和中央休闲庭院组成的宿舍生活街区。
+size_tiles: { width: 64, height: 44 }
+source_tile_size: 16
+runtime_tile_size: 32
+surfaces:
+  - { tile: ground.grass.base, bounds: { x: 0, y: 0, width: 64, height: 44 } }
+  - { tile: ground.parking.asphalt, bounds: { x: 0, y: 12, width: 64, height: 7 } }
+  - { tile: ground.path.stone, bounds: { x: 7, y: 9, width: 3, height: 14 } }
+  - { tile: ground.path.stone, bounds: { x: 31, y: 7, width: 3, height: 16 } }
+  - { tile: ground.path.stone, bounds: { x: 54, y: 9, width: 3, height: 14 } }
+  - { tile: ground.path.stone, shape: rounded_ring, radius: 7, thickness: 3, bounds: { x: 11, y: 20, width: 42, height: 21 } }
+  - { tile: ground.terrace.deck, bounds: { x: 22, y: 25, width: 20, height: 11 } }
+  - { tile: ground.path.stone, bounds: { x: 0, y: 14, width: 8, height: 3 } }
+  - { tile: ground.path.stone, bounds: { x: 56, y: 14, width: 8, height: 3 } }
+  - { tile: ground.path.stone, bounds: { x: 51, y: 27, width: 13, height: 3 } }
+tile_props:
+  - { tile: prop.dorm.washer, x: 27, y: 9, blocking: true }
+  - { tile: prop.dorm.washer, x: 37, y: 9, blocking: true }
+  - { tile: prop.dorm.laundry_basket, x: 29, y: 10, blocking: true }
+  - { tile: prop.dorm.laundry_basket, x: 35, y: 10, blocking: true }
+  - { tile: prop.dorm.lamp, x: 18, y: 14, blocking: true }
+  - { tile: prop.dorm.lamp, x: 24, y: 14, blocking: true }
+  - { tile: prop.dorm.lamp, x: 40, y: 14, blocking: true }
+  - { tile: prop.dorm.lamp, x: 46, y: 14, blocking: true }
+  - { tile: prop.dorm.clothesline, x: 15, y: 28, blocking: true }
+  - { tile: prop.dorm.clothesline, x: 15, y: 34, blocking: true }
+  - { tile: prop.dorm.laundry_basket, x: 18, y: 31, blocking: true }
+  - { tile: prop.dorm.clothesline, x: 48, y: 28, blocking: true }
+  - { tile: prop.dorm.clothesline, x: 48, y: 34, blocking: true }
+  - { tile: prop.dorm.laundry_basket, x: 45, y: 31, blocking: true }
+  - { tile: prop.dorm.picnic_table, x: 27, y: 28, blocking: true }
+  - { tile: prop.dorm.picnic_table, x: 36, y: 28, blocking: true }
+  - { tile: prop.dorm.bench, x: 27, y: 33, blocking: true }
+  - { tile: prop.dorm.bench, x: 36, y: 33, blocking: true }
+  - { tile: prop.dorm.notice_board, x: 32, y: 24, blocking: true }
+  - { tile: prop.dorm.lamp, x: 21, y: 23, blocking: true }
+  - { tile: prop.dorm.lamp, x: 42, y: 23, blocking: true }
+  - { tile: prop.dorm.lamp, x: 21, y: 38, blocking: true }
+  - { tile: prop.dorm.lamp, x: 42, y: 38, blocking: true }
+  - { tile: prop.tree.green, x: 2, y: 8, blocking: true }
+  - { tile: prop.tree.dark_green, x: 17, y: 6, blocking: true }
+  - { tile: prop.tree.green, x: 44, y: 6, blocking: true }
+  - { tile: prop.tree.dark_green, x: 61, y: 8, blocking: true }
+  - { tile: prop.shrub.green, x: 4, y: 10, blocking: true }
+  - { tile: prop.shrub.berries, x: 14, y: 10, blocking: true }
+  - { tile: prop.shrub.berries, x: 49, y: 10, blocking: true }
+  - { tile: prop.shrub.green, x: 59, y: 10, blocking: true }
+  - { tile: prop.school.planter, x: 7, y: 10, blocking: true }
+  - { tile: prop.school.planter, x: 56, y: 10, blocking: true }
+tile_stamps:
+  - { id: miho_dorm_tiles, stamp: building.dorm.miho, x: 3, y: 3 }
+  - { id: laundry_building_tiles, stamp: building.dorm.laundry, x: 28, y: 4 }
+  - { id: ritto_dorm_tiles, stamp: building.dorm.ritto, x: 50, y: 3 }
+landmarks:
+  - { id: miho_dormitory, display_name: 美浦寮, kind: dormitory, render_mode: tile_stamp, bounds: { x: 3, y: 3, width: 11, height: 7 } }
+  - { id: ritto_dormitory, display_name: 栗东寮, kind: dormitory, render_mode: tile_stamp, bounds: { x: 50, y: 3, width: 11, height: 7 } }
+  - { id: common_laundry, display_name: 公共洗衣房, kind: laundry, render_mode: tile_stamp, bounds: { x: 28, y: 4, width: 9, height: 4 } }
+  - { id: leisure_courtyard, display_name: 宿舍休闲庭院, kind: courtyard, render_mode: tile_stamp, bounds: { x: 11, y: 20, width: 42, height: 21 } }
+collision:
+  - { x: 3, y: 3, width: 11, height: 7 }
+  - { x: 28, y: 4, width: 9, height: 4 }
+  - { x: 50, y: 3, width: 11, height: 7 }
+zones:
+  - { id: miho_dormitory, display_name: 美浦寮前区, kind: dormitory, bounds: { x: 0, y: 0, width: 21, height: 20 } }
+  - { id: laundry_zone, display_name: 公共洗衣区, kind: service, bounds: { x: 22, y: 0, width: 20, height: 20 } }
+  - { id: ritto_dormitory, display_name: 栗东寮前区, kind: dormitory, bounds: { x: 43, y: 0, width: 21, height: 20 } }
+  - { id: leisure_courtyard, display_name: 宿舍休闲庭院, kind: courtyard, bounds: { x: 11, y: 20, width: 42, height: 21 } }
+anchors:
+  - { id: miho_entrance, display_name: 美浦寮入口, position: { x: 8, y: 10 }, facing: up }
+  - { id: ritto_entrance, display_name: 栗东寮入口, position: { x: 55, y: 10 }, facing: up }
+  - { id: laundry_entrance, display_name: 公共洗衣房入口, position: { x: 32, y: 8 }, facing: up }
+  - { id: courtyard_meeting, display_name: 庭院休息集合点, position: { x: 32, y: 31 }, facing: down }
+  - { id: clothes_drying, display_name: 晾晒区, position: { x: 18, y: 34 }, facing: left }
+spawns:
+  - { id: from_academy_gate, position: { x: 61, y: 15 }, facing: left }
+  - { id: from_student_plaza, position: { x: 61, y: 28 }, facing: left }
+  - { id: dormitory_start, position: { x: 32, y: 20 }, facing: down }
+portals:
+  - { id: to_academy_gate, position: { x: 63, y: 15 }, target_scene_id: tracen_academy_gate, target_spawn_id: from_dormitory }
+  - { id: to_student_plaza, position: { x: 63, y: 28 }, target_scene_id: tracen_student_plaza, target_spawn_id: from_dormitory_life }
+activity_paths:
+  - id: dormitory_morning_route
+    activity_id: morning_departure
+    loop: false
+    points: [{ x: 8, y: 11 }, { x: 8, y: 15 }, { x: 55, y: 15 }, { x: 55, y: 11 }]
+  - id: courtyard_evening_loop
+    activity_id: dormitory_relax
+    loop: true
+    points: [{ x: 13, y: 23 }, { x: 51, y: 23 }, { x: 51, y: 38 }, { x: 13, y: 38 }]
+visual_references:
+  - { catalog_id: dorm_road_day, usage: 奶油灰多层宿舍、深棕腰线、小阳台及蓝粉屋顶 }
+  - { catalog_id: dorm_room_day, usage: 蓝绿粉生活色和明亮木色 }
+  - { catalog_id: common_room_day, usage: 公共公告板、绿色休息设施与生活氛围 }
+  - { catalog_id: coin_laundry_autumn_day, usage: 浅米色洗衣房、蓝绿色机器和洗衣篮 }
+missing_tile_families:
+  - miho_ritto_room_and_common_room_interiors

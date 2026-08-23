@@ -1,0 +1,79 @@
+{
+  "schema_version": "asset_license_manifest.v1",
+  "tileset_id": "tracen-campus",
+  "sources": [
+    {
+      "id": "kenney-roguelike-rpg-pack",
+      "title": "Roguelike/RPG Pack",
+      "author": "Kenney",
+      "homepage": "https://www.kenney.nl/assets/roguelike-rpg-pack",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "archive_sha256": "8e7d2378f8f794245645f6d7dc7aeeb246791410a7e512293c594b46a5a9524b"
+    },
+    {
+      "id": "tracen-school-exterior-and-fountain",
+      "title": "Tracen school exterior and fountain pixel tiles",
+      "author": "chibi_weaver project",
+      "license": "project-authored",
+      "source_kind": "reference-guided deterministic pixel art",
+      "reference_only": true
+    },
+    {
+      "id": "tracen-academy-gate",
+      "title": "Tracen academy gate and cherry avenue pixel tiles",
+      "author": "chibi_weaver project",
+      "license": "project-authored",
+      "source_kind": "reference-guided deterministic pixel art",
+      "reference_only": true
+    },
+    {
+      "id": "tracen-school-courtyard",
+      "title": "Tracen school clock tower and courtyard pixel tiles",
+      "author": "chibi_weaver project",
+      "license": "project-authored",
+      "source_kind": "reference-guided deterministic pixel art",
+      "reference_only": true
+    },
+    {
+      "id": "tracen-main-school-interior",
+      "title": "Tracen main school interior pixel tiles",
+      "author": "chibi_weaver project",
+      "license": "project-authored",
+      "source_kind": "reference-guided deterministic pixel art",
+      "reference_only": true
+    },
+    {
+      "id": "tracen-indoor-training",
+      "title": "Tracen indoor training hall pixel tiles",
+      "author": "chibi_weaver project",
+      "license": "project-authored",
+      "source_kind": "reference-guided deterministic pixel art",
+      "reference_only": true
+    },
+    {
+      "id": "tracen-cafeteria-shops",
+      "title": "Tracen cafeteria, shop, and terrace pixel tiles",
+      "author": "chibi_weaver project",
+      "license": "project-authored",
+      "source_kind": "reference-guided deterministic pixel art",
+      "reference_only": true
+    },
+    {
+      "id": "tracen-dormitory-life",
+      "title": "Tracen dormitory and courtyard-life pixel tiles",
+      "author": "chibi_weaver project",
+      "license": "project-authored",
+      "source_kind": "reference-guided deterministic pixel art",
+      "reference_only": true
+    },
+    {
+      "id": "tracen-riverside",
+      "title": "Tracen urban river, embankment, and promenade pixel tiles",
+      "author": "chibi_weaver project",
+      "license": "project-authored",
+      "source_kind": "reference-guided deterministic pixel art",
+      "reference_only": true
+    }
+  ]
+}

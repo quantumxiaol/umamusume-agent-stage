@@ -1,0 +1,3857 @@
+{
+  "columns": 8,
+  "image": "runtime-32.png",
+  "imageheight": 768,
+  "imagewidth": 256,
+  "margin": 0,
+  "name": "tracen-campus",
+  "spacing": 0,
+  "tilecount": 192,
+  "tiledversion": "1.11.2",
+  "tileheight": 32,
+  "tilewidth": 32,
+  "type": "tileset",
+  "version": "1.10",
+  "tiles": [
+    {
+      "id": 0,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.grass.base"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.grass.detail"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.path.dirt"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.path.stone"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.path.sand"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.track.clay"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.water.base"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.water.detail"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "detail.flowers.white"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "decorative"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "detail.flowers.autumn"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "decorative"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.tree.green"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.tree.dark_green"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.shrub.green"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.shrub.berries"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.fence.horizontal"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.sign.direction"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.school.roof.left"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.school.roof.middle"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.school.roof.right"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.school.wall.brick"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.school.window"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.school.entrance"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.school.pillar"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.school.wall.bottom"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.school.clock"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.fountain.r0c0"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.fountain.r0c1"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.fountain.r0c2"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 28,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.fountain.r0c3"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 29,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.fountain.r1c0"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 30,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.fountain.r1c1"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.fountain.r1c2"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 32,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.fountain.r1c3"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 33,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.fountain.r2c0"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 34,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.fountain.r2c1"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 35,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.fountain.r2c2"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 36,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.fountain.r2c3"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 37,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.fountain.r3c0"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 38,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.fountain.r3c1"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 39,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.fountain.r3c2"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 40,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.fountain.r3c3"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 41,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.gate.brick_wall"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 42,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.gate.pillar"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 43,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.gate.iron_fence"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 44,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.gate.iron_open_left"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 45,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.gate.iron_open_right"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 46,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.parking.asphalt"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 47,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.parking.line.vertical"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground_detail"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 48,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.parking.line.horizontal"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground_detail"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 49,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.tree.cherry.r0c0"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 50,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.tree.cherry.r0c1"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 51,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.tree.cherry.r1c0"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 52,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.tree.cherry.r1c1"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 53,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "detail.cherry.petals"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "decorative"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 54,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.gate.pillar.sign"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 55,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.gate.curb"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 56,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.lamp.campus"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 57,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.school.tower.spire"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 58,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.school.tower.roof.left"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 59,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.school.tower.roof.middle"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 60,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.school.tower.roof.right"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 61,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.school.tower.wall"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 62,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.school.tower.clock"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 63,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.school.tower.arch_window"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 64,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.school.tower.entrance"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 65,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.school.arcade.arch"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 66,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.school.arcade.pillar"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 67,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.school.connector.roof"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 68,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.school.connector.window"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 69,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.school.connector.base"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 70,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.school.steps"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground_detail"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 71,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.school.banner"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 72,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.school.planter"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 73,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.interior.desk.front"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 74,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.interior.desk.side"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 75,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.interior.bookshelf.left"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 76,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.interior.bookshelf.middle"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 77,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.interior.bookshelf.right"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 78,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.interior.chair"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 79,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.interior.cabinet"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 80,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.interior.wood"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 81,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.interior.marble"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 82,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.interior.carpet.green"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 83,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.interior.border.dark"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 84,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.interior.wall.cream"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 85,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.interior.wall.window"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 86,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.interior.wall.wainscot"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 87,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.interior.wall.base"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 88,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.interior.door.left"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 89,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.interior.door.right"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 90,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.interior.column"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 91,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.interior.archway"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 92,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.interior.stairs"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 93,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "detail.interior.school_emblem"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "decorative"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 94,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.interior.notice_board"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 95,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.interior.plant"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 96,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.training.rubber.dark"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 97,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.training.rubber.light"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 98,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.training.wood"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 99,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.training.pool.deck"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 100,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.training.pool.water"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 101,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.training.pool.lane"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground_detail"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 102,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.training.track"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 103,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.training.track.line"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground_detail"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 104,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.training.pool.curb"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 105,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.training.glass.partition"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 106,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.training.treadmill"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 107,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.training.bike"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 108,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.training.weight_rack"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 109,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.training.bench"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 110,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.training.hurdle"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 111,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.training.cone"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 112,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.training.balance_pad"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 113,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.training.pool_ladder"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 114,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.training.climbing_frame"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 115,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.training.equipment_cabinet"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 116,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "detail.training.start_line"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground_detail"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 117,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "detail.training.zone_marker.blue"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground_detail"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 118,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "detail.training.zone_marker.red"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground_detail"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 119,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "detail.training.school_emblem"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "decorative"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 120,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.dining.parquet"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 121,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.dining.tile.cream"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 122,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.cafe.tile.green"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 123,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.shop.wood"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 124,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.terrace.deck"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 125,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.terrace.paver"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 126,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.dining.carpet"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 127,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.shop.tile"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 128,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.dining.counter"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 129,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.dining.serving_window"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 130,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.cafe.counter"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 131,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.shop.checkout"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 132,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.dining.table.round"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 133,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.dining.table.long"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 134,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.dining.chair.green"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 135,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.cafe.booth.green"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 136,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.cafe.table"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 137,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.shop.shelf"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 138,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.shop.fridge"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 139,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.shop.display"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 140,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.terrace.table"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 141,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.terrace.umbrella"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 142,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.terrace.sofa"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 143,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.dining.menu_board"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 144,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.dorm.roof.blue.left"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 145,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.dorm.roof.blue.middle"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 146,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.dorm.roof.blue.right"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 147,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.dorm.roof.pink.left"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 148,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.dorm.roof.pink.middle"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 149,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.dorm.roof.pink.right"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 150,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.dorm.wall.cream"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 151,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.dorm.wall.trim"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 152,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.dorm.window"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 153,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.dorm.balcony"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 154,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.dorm.entrance"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 155,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.dorm.sign.miho"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 156,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.dorm.sign.ritto"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 157,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.laundry.roof"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 158,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.laundry.wall"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 159,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.laundry.window"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 160,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "building.laundry.entrance"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 161,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.dorm.washer"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 162,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.dorm.clothesline"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 163,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.dorm.laundry_basket"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 164,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.dorm.bench"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 165,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.dorm.picnic_table"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 166,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.dorm.notice_board"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 167,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.dorm.lamp"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 168,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.river.water.deep"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 169,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.river.water.light"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 170,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.river.water.current"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 171,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.river.path.asphalt"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 172,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.river.path.edge"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 173,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.river.slope.grass"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 174,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "ground.river.gravel"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 175,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.river.revetment"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 176,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.river.steps"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "ground"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 177,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.river.bridge.deck"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 178,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.river.railing.horizontal"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 179,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.river.railing.vertical"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 180,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.river.bridge.rail"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 181,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.river.bridge.pier"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "structure"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 182,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "structure.river.bridge.shadow"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "decorative"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 183,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "detail.river.reeds"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "decorative"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 184,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.river.bench"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 185,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.river.lamp"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 186,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.river.sign"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 187,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.river.bollard"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 188,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.river.bicycle"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 189,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.river.exercise_bar"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 190,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.river.life_ring"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 191,
+      "properties": [
+        {
+          "name": "semantic_id",
+          "type": "string",
+          "value": "prop.river.drinking_fountain"
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "value": "prop"
+        },
+        {
+          "name": "walkable",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    }
+  ]
+}

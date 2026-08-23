@@ -1,0 +1,111 @@
+schema_version: map_scene_plan.v1
+scene_id: tracen_academy_gate
+display_name: 特雷森学院正门与大道
+description: 连接学生广场、宿舍生活区与河边步道的学院正门，包含樱花大道与访客停车区。
+size_tiles: { width: 56, height: 36 }
+source_tile_size: 16
+runtime_tile_size: 32
+surfaces:
+  - { tile: ground.grass.base, bounds: { x: 0, y: 0, width: 56, height: 36 } }
+  - { tile: ground.path.stone, bounds: { x: 24, y: 0, width: 8, height: 30 } }
+  - { tile: ground.path.stone, bounds: { x: 20, y: 20, width: 16, height: 10 } }
+  - { tile: ground.parking.asphalt, bounds: { x: 2, y: 30, width: 20, height: 6 } }
+  - { tile: ground.parking.asphalt, bounds: { x: 34, y: 30, width: 20, height: 6 } }
+  - { tile: ground.path.stone, bounds: { x: 24, y: 28, width: 8, height: 8 } }
+tile_props:
+  - { tile: prop.lamp.campus, x: 22, y: 7, blocking: true }
+  - { tile: prop.lamp.campus, x: 33, y: 7, blocking: true }
+  - { tile: prop.lamp.campus, x: 22, y: 15, blocking: true }
+  - { tile: prop.lamp.campus, x: 33, y: 15, blocking: true }
+  - { tile: prop.lamp.campus, x: 18, y: 24, blocking: true }
+  - { tile: prop.lamp.campus, x: 37, y: 24, blocking: true }
+  - { tile: detail.cherry.petals, x: 20, y: 5, blocking: false }
+  - { tile: detail.cherry.petals, x: 34, y: 10, blocking: false }
+  - { tile: detail.cherry.petals, x: 19, y: 17, blocking: false }
+  - { tile: detail.cherry.petals, x: 35, y: 20, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 5, y: 31, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 5, y: 32, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 5, y: 33, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 5, y: 34, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 10, y: 31, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 10, y: 32, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 10, y: 33, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 10, y: 34, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 15, y: 31, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 15, y: 32, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 15, y: 33, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 15, y: 34, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 20, y: 31, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 20, y: 32, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 20, y: 33, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 20, y: 34, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 35, y: 31, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 35, y: 32, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 35, y: 33, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 35, y: 34, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 40, y: 31, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 40, y: 32, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 40, y: 33, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 40, y: 34, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 45, y: 31, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 45, y: 32, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 45, y: 33, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 45, y: 34, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 50, y: 31, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 50, y: 32, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 50, y: 33, blocking: false }
+  - { tile: ground.parking.line.vertical, x: 50, y: 34, blocking: false }
+tile_stamps:
+  - { id: gate_left_wall, stamp: structure.academy_gate.wall_long, x: 0, y: 28 }
+  - { id: academy_gate, stamp: structure.academy_gate.main, x: 22, y: 27 }
+  - { id: gate_right_wall, stamp: structure.academy_gate.wall_long, x: 34, y: 28 }
+  - { id: cherry_left_01, stamp: prop.tree.cherry, x: 17, y: 4 }
+  - { id: cherry_right_01, stamp: prop.tree.cherry, x: 37, y: 4 }
+  - { id: cherry_left_02, stamp: prop.tree.cherry, x: 17, y: 11 }
+  - { id: cherry_right_02, stamp: prop.tree.cherry, x: 37, y: 11 }
+  - { id: cherry_left_03, stamp: prop.tree.cherry, x: 17, y: 18 }
+  - { id: cherry_right_03, stamp: prop.tree.cherry, x: 37, y: 18 }
+landmarks:
+  - { id: academy_gate, display_name: 学院正门, kind: entrance, render_mode: tile_stamp, bounds: { x: 22, y: 27, width: 12, height: 2 } }
+  - { id: cherry_avenue, display_name: 樱花大道, kind: avenue, render_mode: tile_stamp, bounds: { x: 17, y: 4, width: 22, height: 16 } }
+  - { id: visitor_parking_west, display_name: 西侧访客停车区, kind: parking, render_mode: tile_stamp, bounds: { x: 2, y: 30, width: 20, height: 6 } }
+  - { id: visitor_parking_east, display_name: 东侧访客停车区, kind: parking, render_mode: tile_stamp, bounds: { x: 34, y: 30, width: 20, height: 6 } }
+collision:
+  - { x: 0, y: 28, width: 26, height: 1 }
+  - { x: 30, y: 28, width: 26, height: 1 }
+  - { x: 17, y: 4, width: 2, height: 2 }
+  - { x: 37, y: 4, width: 2, height: 2 }
+  - { x: 17, y: 11, width: 2, height: 2 }
+  - { x: 37, y: 11, width: 2, height: 2 }
+  - { x: 17, y: 18, width: 2, height: 2 }
+  - { x: 37, y: 18, width: 2, height: 2 }
+zones:
+  - { id: cherry_avenue, display_name: 樱花大道, kind: transit, bounds: { x: 20, y: 0, width: 16, height: 27 } }
+  - { id: visitor_parking_west, display_name: 西侧访客停车区, kind: parking, bounds: { x: 2, y: 30, width: 20, height: 6 } }
+  - { id: visitor_parking_east, display_name: 东侧访客停车区, kind: parking, bounds: { x: 34, y: 30, width: 20, height: 6 } }
+  - { id: academy_gate_threshold, display_name: 正门通行区, kind: entrance, bounds: { x: 24, y: 26, width: 8, height: 5 } }
+anchors:
+  - { id: gate_meeting, display_name: 正门集合点, position: { x: 28, y: 24 }, facing: down }
+  - { id: visitor_reception, display_name: 访客接待点, position: { x: 28, y: 31 }, facing: down }
+  - { id: parking_west, display_name: 西侧停车集合点, position: { x: 12, y: 33 }, facing: right }
+spawns:
+  - { id: from_student_plaza, position: { x: 28, y: 4 }, facing: down }
+  - { id: visitor_start, position: { x: 28, y: 34 }, facing: up }
+  - { id: from_riverside, position: { x: 52, y: 34 }, facing: left }
+  - { id: from_dormitory, position: { x: 3, y: 34 }, facing: right }
+portals:
+  - { id: to_student_plaza, position: { x: 28, y: 0 }, target_scene_id: tracen_student_plaza, target_spawn_id: from_main_gate }
+  - { id: to_riverside_path, position: { x: 55, y: 34 }, target_scene_id: tracen_riverside_path, target_spawn_id: from_academy_gate }
+  - { id: to_dormitory_life, position: { x: 0, y: 34 }, target_scene_id: tracen_dormitory_life, target_spawn_id: from_academy_gate }
+activity_paths:
+  - id: gate_to_plaza_route
+    activity_id: campus_walk
+    loop: false
+    points: [{ x: 28, y: 34 }, { x: 28, y: 24 }, { x: 28, y: 2 }]
+visual_references:
+  - { catalog_id: academy_gate_day, role: brick_gate_and_black_iron }
+  - { catalog_id: academy_entrance_day, role: formal_entrance_axis }
+  - { catalog_id: academy_main_road_day, role: mature_tree_avenue_and_lamps }
+missing_tile_families:
+  - visitor_vehicle
+  - campus_security_booth

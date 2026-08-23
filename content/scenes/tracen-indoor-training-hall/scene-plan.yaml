@@ -1,0 +1,135 @@
+schema_version: map_scene_plan.v1
+scene_id: tracen_indoor_training_hall
+display_name: 特雷森室内训练馆
+description: 集合力量训练、体能器械、室内泳池、障碍训练和热身恢复区的综合训练建筑。
+size_tiles: { width: 60, height: 38 }
+source_tile_size: 16
+runtime_tile_size: 32
+surfaces:
+  - { tile: ground.training.rubber.light, bounds: { x: 0, y: 0, width: 60, height: 38 } }
+  - { tile: ground.interior.border.dark, bounds: { x: 0, y: 0, width: 60, height: 2 } }
+  - { tile: ground.interior.border.dark, bounds: { x: 0, y: 2, width: 2, height: 36 } }
+  - { tile: ground.interior.border.dark, bounds: { x: 58, y: 2, width: 2, height: 36 } }
+  - { tile: ground.interior.border.dark, bounds: { x: 2, y: 37, width: 56, height: 1 } }
+  - { tile: ground.training.rubber.dark, bounds: { x: 2, y: 6, width: 26, height: 15 } }
+  - { tile: ground.training.wood, bounds: { x: 28, y: 6, width: 4, height: 31 } }
+  - { tile: ground.training.pool.deck, bounds: { x: 32, y: 6, width: 26, height: 19 } }
+  - { tile: ground.training.pool.water, bounds: { x: 34, y: 8, width: 22, height: 15 } }
+  - { tile: ground.training.pool.lane, bounds: { x: 37, y: 8, width: 1, height: 15 } }
+  - { tile: ground.training.pool.lane, bounds: { x: 41, y: 8, width: 1, height: 15 } }
+  - { tile: ground.training.pool.lane, bounds: { x: 45, y: 8, width: 1, height: 15 } }
+  - { tile: ground.training.pool.lane, bounds: { x: 49, y: 8, width: 1, height: 15 } }
+  - { tile: ground.training.pool.lane, bounds: { x: 53, y: 8, width: 1, height: 15 } }
+  - { tile: structure.training.pool.curb, bounds: { x: 33, y: 7, width: 24, height: 1 } }
+  - { tile: structure.training.pool.curb, bounds: { x: 33, y: 23, width: 24, height: 1 } }
+  - { tile: structure.training.pool.curb, bounds: { x: 33, y: 8, width: 1, height: 15 } }
+  - { tile: structure.training.pool.curb, bounds: { x: 56, y: 8, width: 1, height: 15 } }
+  - { tile: ground.training.track, bounds: { x: 2, y: 22, width: 26, height: 15 } }
+  - { tile: ground.training.track.line, bounds: { x: 6, y: 22, width: 1, height: 15 } }
+  - { tile: ground.training.track.line, bounds: { x: 14, y: 22, width: 1, height: 15 } }
+  - { tile: ground.training.track.line, bounds: { x: 22, y: 22, width: 1, height: 15 } }
+  - { tile: ground.training.wood, bounds: { x: 32, y: 25, width: 26, height: 12 } }
+  - { tile: ground.training.wood, bounds: { x: 0, y: 18, width: 3, height: 3 } }
+tile_props:
+  - { tile: prop.training.treadmill, x: 5, y: 8, blocking: true }
+  - { tile: prop.training.treadmill, x: 9, y: 8, blocking: true }
+  - { tile: prop.training.treadmill, x: 13, y: 8, blocking: true }
+  - { tile: prop.training.bike, x: 19, y: 8, blocking: true }
+  - { tile: prop.training.bike, x: 23, y: 8, blocking: true }
+  - { tile: prop.training.weight_rack, x: 5, y: 14, blocking: true }
+  - { tile: prop.training.bench, x: 6, y: 16, blocking: true }
+  - { tile: prop.training.weight_rack, x: 11, y: 14, blocking: true }
+  - { tile: prop.training.bench, x: 12, y: 16, blocking: true }
+  - { tile: prop.training.weight_rack, x: 17, y: 14, blocking: true }
+  - { tile: prop.training.bench, x: 18, y: 16, blocking: true }
+  - { tile: prop.training.equipment_cabinet, x: 25, y: 14, blocking: true }
+  - { tile: structure.training.glass.partition, x: 31, y: 7, blocking: true }
+  - { tile: structure.training.glass.partition, x: 31, y: 8, blocking: true }
+  - { tile: structure.training.glass.partition, x: 31, y: 9, blocking: true }
+  - { tile: structure.training.glass.partition, x: 31, y: 10, blocking: true }
+  - { tile: structure.training.glass.partition, x: 31, y: 11, blocking: true }
+  - { tile: structure.training.glass.partition, x: 31, y: 12, blocking: true }
+  - { tile: structure.training.glass.partition, x: 31, y: 13, blocking: true }
+  - { tile: structure.training.glass.partition, x: 31, y: 14, blocking: true }
+  - { tile: structure.training.glass.partition, x: 31, y: 15, blocking: true }
+  - { tile: structure.training.glass.partition, x: 31, y: 16, blocking: true }
+  - { tile: structure.training.glass.partition, x: 31, y: 21, blocking: true }
+  - { tile: structure.training.glass.partition, x: 31, y: 22, blocking: true }
+  - { tile: structure.training.glass.partition, x: 31, y: 23, blocking: true }
+  - { tile: prop.training.pool_ladder, x: 35, y: 23, blocking: true }
+  - { tile: prop.training.pool_ladder, x: 54, y: 23, blocking: true }
+  - { tile: prop.training.cone, x: 4, y: 23, blocking: true }
+  - { tile: prop.training.cone, x: 25, y: 23, blocking: true }
+  - { tile: detail.training.start_line, x: 6, y: 25 }
+  - { tile: prop.training.hurdle, x: 8, y: 28, blocking: true }
+  - { tile: prop.training.hurdle, x: 12, y: 28, blocking: true }
+  - { tile: prop.training.hurdle, x: 16, y: 28, blocking: true }
+  - { tile: prop.training.hurdle, x: 20, y: 28, blocking: true }
+  - { tile: prop.training.climbing_frame, x: 25, y: 31, blocking: true }
+  - { tile: detail.training.zone_marker.blue, x: 35, y: 28 }
+  - { tile: prop.training.balance_pad, x: 38, y: 29, blocking: true }
+  - { tile: prop.training.balance_pad, x: 43, y: 29, blocking: true }
+  - { tile: prop.training.balance_pad, x: 48, y: 29, blocking: true }
+  - { tile: prop.training.equipment_cabinet, x: 55, y: 28, blocking: true }
+  - { tile: prop.training.equipment_cabinet, x: 55, y: 32, blocking: true }
+  - { tile: detail.training.zone_marker.red, x: 35, y: 34 }
+  - { tile: detail.training.school_emblem, x: 51, y: 34 }
+  - { tile: prop.interior.plant, x: 29, y: 7, blocking: true }
+  - { tile: prop.interior.plant, x: 29, y: 34, blocking: true }
+tile_stamps:
+  - { id: north_windows_1, stamp: structure.interior.wall.window_section, x: 2, y: 2 }
+  - { id: north_windows_2, stamp: structure.interior.wall.window_section, x: 9, y: 2 }
+  - { id: north_windows_3, stamp: structure.interior.wall.window_section, x: 16, y: 2 }
+  - { id: north_windows_4, stamp: structure.interior.wall.window_section, x: 23, y: 2 }
+  - { id: north_windows_5, stamp: structure.interior.wall.window_section, x: 30, y: 2 }
+  - { id: north_windows_6, stamp: structure.interior.wall.window_section, x: 37, y: 2 }
+  - { id: north_windows_7, stamp: structure.interior.wall.window_section, x: 44, y: 2 }
+  - { id: north_windows_8, stamp: structure.interior.wall.window_section, x: 51, y: 2 }
+landmarks:
+  - { id: fitness_zone, display_name: 力量与有氧训练区, kind: fitness, render_mode: tile_stamp, bounds: { x: 2, y: 6, width: 26, height: 15 } }
+  - { id: indoor_pool, display_name: 室内泳池, kind: pool, render_mode: tile_stamp, bounds: { x: 32, y: 6, width: 26, height: 19 } }
+  - { id: obstacle_course, display_name: 障碍训练区, kind: obstacle_training, render_mode: tile_stamp, bounds: { x: 2, y: 22, width: 26, height: 15 } }
+  - { id: warmup_recovery, display_name: 热身与恢复区, kind: warmup, render_mode: tile_stamp, bounds: { x: 32, y: 25, width: 26, height: 12 } }
+collision:
+  - { x: 0, y: 0, width: 60, height: 6 }
+  - { x: 0, y: 6, width: 2, height: 12 }
+  - { x: 0, y: 21, width: 2, height: 17 }
+  - { x: 58, y: 6, width: 2, height: 32 }
+  - { x: 2, y: 37, width: 56, height: 1 }
+  - { x: 33, y: 7, width: 24, height: 17 }
+zones:
+  - { id: fitness_zone, display_name: 力量与有氧训练区, kind: training, bounds: { x: 2, y: 6, width: 26, height: 15 } }
+  - { id: indoor_pool, display_name: 室内泳池, kind: swimming, bounds: { x: 32, y: 6, width: 26, height: 19 } }
+  - { id: obstacle_course, display_name: 障碍训练区, kind: obstacle, bounds: { x: 2, y: 22, width: 26, height: 15 } }
+  - { id: warmup_recovery, display_name: 热身与恢复区, kind: recovery, bounds: { x: 32, y: 25, width: 26, height: 12 } }
+anchors:
+  - { id: cardio_coach, display_name: 有氧训练指导点, position: { x: 16, y: 11 }, facing: up }
+  - { id: strength_coach, display_name: 力量训练指导点, position: { x: 22, y: 17 }, facing: left }
+  - { id: poolside_start, display_name: 泳池出发区, position: { x: 45, y: 25 }, facing: up }
+  - { id: obstacle_start, display_name: 障碍训练起点, position: { x: 6, y: 25 }, facing: down }
+  - { id: recovery_meeting, display_name: 恢复训练集合点, position: { x: 45, y: 34 }, facing: up }
+spawns:
+  - { id: from_training_ground, position: { x: 2, y: 19 }, facing: right }
+  - { id: trainer_start, position: { x: 4, y: 19 }, facing: right }
+portals:
+  - { id: to_training_ground, position: { x: 0, y: 19 }, target_scene_id: tracen_training_ground, target_spawn_id: from_indoor_training_hall }
+activity_paths:
+  - id: fitness_circuit
+    activity_id: indoor_fitness
+    loop: true
+    points: [{ x: 3, y: 19 }, { x: 3, y: 7 }, { x: 26, y: 7 }, { x: 26, y: 19 }]
+  - id: obstacle_approach
+    activity_id: obstacle_training
+    loop: false
+    points: [{ x: 4, y: 25 }, { x: 25, y: 25 }]
+  - id: recovery_loop
+    activity_id: cooldown
+    loop: true
+    points: [{ x: 34, y: 26 }, { x: 56, y: 26 }, { x: 56, y: 35 }, { x: 34, y: 35 }]
+visual_references:
+  - { catalog_id: pool_day, usage: 明亮池水、白色池边和大面积采光 }
+  - { catalog_id: indoor_training_ground_day, usage: 木地板、玻璃隔断和现代训练空间 }
+  - { catalog_id: gym_day, usage: 深灰橡胶地面、蓝色力量器械和整齐分区 }
+  - { catalog_id: fitness_gym, usage: 有氧与力量器械的通行间隔 }
+missing_tile_families:
+  - animated_pool_water_and_large_strength_machine_variants

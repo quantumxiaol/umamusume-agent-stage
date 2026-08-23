@@ -1,0 +1,22 @@
+{
+  "schema_version": "stage_definition.v1",
+  "stage_id": "academy_gate_stage",
+  "display_name": "学院正门与大道",
+  "scene_path": "scenes/tracen-academy-gate/scene.json",
+  "actors": [
+    {
+      "instance_id": "trainer",
+      "bundle_id": "trainer",
+      "spawn_id": "visitor_start",
+      "control_owner": "player",
+      "player": true
+    },
+    {
+      "instance_id": "uma_admire_vega",
+      "bundle_id": "admire-vega-uniform",
+      "spawn_id": "from_student_plaza",
+      "control_owner": "agent",
+      "player": false
+    }
+  ]
+}

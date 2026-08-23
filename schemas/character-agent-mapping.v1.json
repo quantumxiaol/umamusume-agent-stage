@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "character_agent_mapping.v1"
+    },
+    "characters": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "character_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$"
+          },
+          "agent_character_name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "stage_actor_id": {
+            "type": "string",
+            "pattern": "^uma_[a-z0-9_]+$"
+          },
+          "uniform_bundle_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_-]+$"
+          },
+          "race_outfit_bundle_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_-]+$"
+          }
+        },
+        "required": [
+          "character_id",
+          "agent_character_name",
+          "stage_actor_id",
+          "uniform_bundle_id",
+          "race_outfit_bundle_id"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "characters"
+  ],
+  "additionalProperties": false
+}

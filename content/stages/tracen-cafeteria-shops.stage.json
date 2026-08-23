@@ -1,0 +1,22 @@
+{
+  "schema_version": "stage_definition.v1",
+  "stage_id": "cafeteria_shops_stage",
+  "display_name": "餐厅与商店区",
+  "scene_path": "scenes/tracen-cafeteria-shops/scene.json",
+  "actors": [
+    {
+      "instance_id": "trainer",
+      "bundle_id": "trainer",
+      "spawn_id": "cafeteria_start",
+      "control_owner": "player",
+      "player": true
+    },
+    {
+      "instance_id": "uma_admire_vega",
+      "bundle_id": "admire-vega-uniform",
+      "spawn_id": "from_student_plaza",
+      "control_owner": "agent",
+      "player": false
+    }
+  ]
+}

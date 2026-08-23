@@ -1,0 +1,144 @@
+{
+  "schema_version": "map_world.v1",
+  "world_id": "tracen_campus",
+  "display_name": "特雷森学院及周边",
+  "locations": [
+    {
+      "id": "academy_gate",
+      "scene_id": "tracen_academy_gate",
+      "display_name": "学院正门与大道",
+      "status": "playable",
+      "map_position": {
+        "x": 0,
+        "y": 2
+      }
+    },
+    {
+      "id": "student_plaza",
+      "scene_id": "tracen_student_plaza",
+      "display_name": "学生广场",
+      "status": "playable",
+      "map_position": {
+        "x": 0,
+        "y": 1
+      }
+    },
+    {
+      "id": "school_courtyard",
+      "scene_id": "tracen_school_courtyard",
+      "display_name": "校舍前庭",
+      "status": "playable",
+      "map_position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "main_school_interior",
+      "scene_id": "tracen_main_school_interior",
+      "display_name": "主校舍内部",
+      "status": "playable",
+      "map_position": {
+        "x": 0,
+        "y": -1
+      }
+    },
+    {
+      "id": "training_ground",
+      "scene_id": "tracen_training_ground",
+      "display_name": "综合训练场",
+      "status": "playable",
+      "map_position": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    {
+      "id": "indoor_training_hall",
+      "scene_id": "tracen_indoor_training_hall",
+      "display_name": "室内训练馆",
+      "status": "playable",
+      "map_position": {
+        "x": 2,
+        "y": 1
+      }
+    },
+    {
+      "id": "cafeteria_shops",
+      "scene_id": "tracen_cafeteria_shops",
+      "display_name": "餐厅与商店区",
+      "status": "playable",
+      "map_position": {
+        "x": -1,
+        "y": 1
+      }
+    },
+    {
+      "id": "dormitory_life",
+      "scene_id": "tracen_dormitory_life",
+      "display_name": "宿舍生活区",
+      "status": "playable",
+      "map_position": {
+        "x": -1,
+        "y": 2
+      }
+    },
+    {
+      "id": "riverside_path",
+      "scene_id": "tracen_riverside_path",
+      "display_name": "河边步道",
+      "status": "playable",
+      "map_position": {
+        "x": 1,
+        "y": 2
+      }
+    }
+  ],
+  "connections": [
+    {
+      "from": "academy_gate",
+      "to": "student_plaza",
+      "kind": "portal"
+    },
+    {
+      "from": "academy_gate",
+      "to": "riverside_path",
+      "kind": "walk"
+    },
+    {
+      "from": "student_plaza",
+      "to": "school_courtyard",
+      "kind": "portal"
+    },
+    {
+      "from": "school_courtyard",
+      "to": "main_school_interior",
+      "kind": "door"
+    },
+    {
+      "from": "student_plaza",
+      "to": "training_ground",
+      "kind": "portal"
+    },
+    {
+      "from": "training_ground",
+      "to": "indoor_training_hall",
+      "kind": "door"
+    },
+    {
+      "from": "student_plaza",
+      "to": "cafeteria_shops",
+      "kind": "portal"
+    },
+    {
+      "from": "student_plaza",
+      "to": "dormitory_life",
+      "kind": "portal"
+    },
+    {
+      "from": "dormitory_life",
+      "to": "academy_gate",
+      "kind": "walk"
+    }
+  ]
+}

@@ -1,0 +1,484 @@
+{
+  "schema_version": "tile_catalog.v1",
+  "tileset_id": "tracen-campus",
+  "source_tile_size": 16,
+  "runtime_tile_size": 32,
+  "runtime_scale": 2,
+  "resampling": "nearest",
+  "columns": 8,
+  "local_sources": [
+    {
+      "id": "tracen-school-exterior-and-fountain",
+      "title": "Tracen school exterior and fountain pixel tiles",
+      "author": "chibi_weaver project",
+      "license": "project-authored",
+      "source_kind": "reference-guided deterministic pixel art",
+      "reference_only": true
+    },
+    {
+      "id": "tracen-academy-gate",
+      "title": "Tracen academy gate and cherry avenue pixel tiles",
+      "author": "chibi_weaver project",
+      "license": "project-authored",
+      "source_kind": "reference-guided deterministic pixel art",
+      "reference_only": true
+    },
+    {
+      "id": "tracen-school-courtyard",
+      "title": "Tracen school clock tower and courtyard pixel tiles",
+      "author": "chibi_weaver project",
+      "license": "project-authored",
+      "source_kind": "reference-guided deterministic pixel art",
+      "reference_only": true
+    },
+    {
+      "id": "tracen-main-school-interior",
+      "title": "Tracen main school interior pixel tiles",
+      "author": "chibi_weaver project",
+      "license": "project-authored",
+      "source_kind": "reference-guided deterministic pixel art",
+      "reference_only": true
+    },
+    {
+      "id": "tracen-indoor-training",
+      "title": "Tracen indoor training hall pixel tiles",
+      "author": "chibi_weaver project",
+      "license": "project-authored",
+      "source_kind": "reference-guided deterministic pixel art",
+      "reference_only": true
+    },
+    {
+      "id": "tracen-cafeteria-shops",
+      "title": "Tracen cafeteria, shop, and terrace pixel tiles",
+      "author": "chibi_weaver project",
+      "license": "project-authored",
+      "source_kind": "reference-guided deterministic pixel art",
+      "reference_only": true
+    },
+    {
+      "id": "tracen-dormitory-life",
+      "title": "Tracen dormitory and courtyard-life pixel tiles",
+      "author": "chibi_weaver project",
+      "license": "project-authored",
+      "source_kind": "reference-guided deterministic pixel art",
+      "reference_only": true
+    },
+    {
+      "id": "tracen-riverside",
+      "title": "Tracen urban river, embankment, and promenade pixel tiles",
+      "author": "chibi_weaver project",
+      "license": "project-authored",
+      "source_kind": "reference-guided deterministic pixel art",
+      "reference_only": true
+    }
+  ],
+  "tiles": [
+    { "id": "ground.grass.base", "atlas_index": 0, "source": { "pack_id": "kenney-roguelike-rpg-pack", "sheet": "roguelikeSheet_transparent.png", "column": 3, "row": 16 }, "transform": { "pattern": { "id": "campus_lawn", "variant": "base", "base": "#62C45F", "shadow": "#53AE54", "highlight": "#7CD274" } }, "tags": ["outdoor", "lawn", "campus", "tracen_palette", "low_noise"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "ground.grass.detail", "atlas_index": 1, "source": { "pack_id": "kenney-roguelike-rpg-pack", "sheet": "roguelikeSheet_transparent.png", "column": 1, "row": 16 }, "transform": { "pattern": { "id": "campus_lawn", "variant": "detail", "base": "#62C45F", "shadow": "#46994B", "highlight": "#8ADA7D" } }, "tags": ["outdoor", "lawn", "variation", "tracen_palette", "low_noise"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "ground.path.dirt", "atlas_index": 2, "source": { "pack_id": "kenney-roguelike-rpg-pack", "sheet": "roguelikeSheet_transparent.png", "column": 8, "row": 10 }, "tags": ["outdoor", "path", "dirt"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "ground.path.stone", "atlas_index": 3, "source": { "pack_id": "kenney-roguelike-rpg-pack", "sheet": "roguelikeSheet_transparent.png", "column": 8, "row": 16 }, "transform": { "pattern": { "id": "staggered_pavers", "base": "#CBD2C8", "seam": "#AAB4B0", "highlight": "#D9DED6" } }, "tags": ["outdoor", "path", "stone", "tracen_palette", "staggered_pavers", "low_noise"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "ground.path.sand", "atlas_index": 4, "source": { "pack_id": "kenney-roguelike-rpg-pack", "sheet": "roguelikeSheet_transparent.png", "column": 8, "row": 22 }, "tags": ["outdoor", "path", "light"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "ground.track.clay", "atlas_index": 5, "source": { "pack_id": "kenney-roguelike-rpg-pack", "sheet": "roguelikeSheet_transparent.png", "column": 3, "row": 19 }, "tags": ["outdoor", "track", "clay"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "ground.water.base", "atlas_index": 6, "source": { "pack_id": "kenney-roguelike-rpg-pack", "sheet": "roguelikeSheet_transparent.png", "column": 11, "row": 8 }, "tags": ["outdoor", "water"], "role": "ground", "walkable": false, "autotile": null },
+    { "id": "ground.water.detail", "atlas_index": 7, "source": { "pack_id": "kenney-roguelike-rpg-pack", "sheet": "roguelikeSheet_transparent.png", "column": 12, "row": 8 }, "tags": ["outdoor", "water", "variation"], "role": "ground", "walkable": false, "autotile": null },
+    { "id": "detail.flowers.white", "atlas_index": 8, "source": { "pack_id": "kenney-roguelike-rpg-pack", "sheet": "roguelikeSheet_transparent.png", "column": 0, "row": 9 }, "tags": ["outdoor", "flowers", "white"], "role": "decorative", "walkable": true, "autotile": null },
+    { "id": "detail.flowers.autumn", "atlas_index": 9, "source": { "pack_id": "kenney-roguelike-rpg-pack", "sheet": "roguelikeSheet_transparent.png", "column": 0, "row": 6 }, "tags": ["outdoor", "flowers", "orange"], "role": "decorative", "walkable": true, "autotile": null },
+    { "id": "prop.tree.green", "atlas_index": 10, "source": { "pack_id": "kenney-roguelike-rpg-pack", "sheet": "roguelikeSheet_transparent.png", "column": 13, "row": 10 }, "tags": ["outdoor", "tree", "green"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.tree.dark_green", "atlas_index": 11, "source": { "pack_id": "kenney-roguelike-rpg-pack", "sheet": "roguelikeSheet_transparent.png", "column": 15, "row": 10 }, "tags": ["outdoor", "tree", "dark_green"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.shrub.green", "atlas_index": 12, "source": { "pack_id": "kenney-roguelike-rpg-pack", "sheet": "roguelikeSheet_transparent.png", "column": 25, "row": 10 }, "tags": ["outdoor", "shrub", "green"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.shrub.berries", "atlas_index": 13, "source": { "pack_id": "kenney-roguelike-rpg-pack", "sheet": "roguelikeSheet_transparent.png", "column": 23, "row": 10 }, "tags": ["outdoor", "shrub", "berries"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.fence.horizontal", "atlas_index": 14, "source": { "pack_id": "kenney-roguelike-rpg-pack", "sheet": "roguelikeSheet_transparent.png", "column": 48, "row": 24 }, "tags": ["outdoor", "fence", "horizontal"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "prop.sign.direction", "atlas_index": 15, "source": { "pack_id": "kenney-roguelike-rpg-pack", "sheet": "roguelikeSheet_transparent.png", "column": 19, "row": 0 }, "tags": ["outdoor", "sign", "direction"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "building.school.roof.left", "atlas_index": 16, "source": { "kind": "local", "family_id": "tracen-school-exterior-and-fountain", "sheet": "../../tile-sources/tracen-school-fountain/master-16.png", "column": 0, "row": 0 }, "tags": ["building", "school", "roof", "left"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.school.roof.middle", "atlas_index": 17, "source": { "kind": "local", "family_id": "tracen-school-exterior-and-fountain", "sheet": "../../tile-sources/tracen-school-fountain/master-16.png", "column": 1, "row": 0 }, "tags": ["building", "school", "roof", "repeatable"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.school.roof.right", "atlas_index": 18, "source": { "kind": "local", "family_id": "tracen-school-exterior-and-fountain", "sheet": "../../tile-sources/tracen-school-fountain/master-16.png", "column": 2, "row": 0 }, "tags": ["building", "school", "roof", "right"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.school.wall.brick", "atlas_index": 19, "source": { "kind": "local", "family_id": "tracen-school-exterior-and-fountain", "sheet": "../../tile-sources/tracen-school-fountain/master-16.png", "column": 3, "row": 0 }, "tags": ["building", "school", "brick", "repeatable"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.school.window", "atlas_index": 20, "source": { "kind": "local", "family_id": "tracen-school-exterior-and-fountain", "sheet": "../../tile-sources/tracen-school-fountain/master-16.png", "column": 4, "row": 0 }, "tags": ["building", "school", "window", "arched"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.school.entrance", "atlas_index": 21, "source": { "kind": "local", "family_id": "tracen-school-exterior-and-fountain", "sheet": "../../tile-sources/tracen-school-fountain/master-16.png", "column": 5, "row": 0 }, "tags": ["building", "school", "entrance"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.school.pillar", "atlas_index": 22, "source": { "kind": "local", "family_id": "tracen-school-exterior-and-fountain", "sheet": "../../tile-sources/tracen-school-fountain/master-16.png", "column": 6, "row": 0 }, "tags": ["building", "school", "pillar"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.school.wall.bottom", "atlas_index": 23, "source": { "kind": "local", "family_id": "tracen-school-exterior-and-fountain", "sheet": "../../tile-sources/tracen-school-fountain/master-16.png", "column": 7, "row": 0 }, "tags": ["building", "school", "plinth", "repeatable"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.school.clock", "atlas_index": 24, "source": { "kind": "local", "family_id": "tracen-school-exterior-and-fountain", "sheet": "../../tile-sources/tracen-school-fountain/master-16.png", "column": 0, "row": 1 }, "tags": ["building", "school", "clock"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "prop.fountain.r0c0", "atlas_index": 25, "source": { "kind": "local", "family_id": "tracen-school-exterior-and-fountain", "sheet": "../../tile-sources/tracen-school-fountain/master-16.png", "column": 1, "row": 1 }, "tags": ["fountain", "stamp", "r0c0"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "prop.fountain.r0c1", "atlas_index": 26, "source": { "kind": "local", "family_id": "tracen-school-exterior-and-fountain", "sheet": "../../tile-sources/tracen-school-fountain/master-16.png", "column": 2, "row": 1 }, "tags": ["fountain", "stamp", "r0c1"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "prop.fountain.r0c2", "atlas_index": 27, "source": { "kind": "local", "family_id": "tracen-school-exterior-and-fountain", "sheet": "../../tile-sources/tracen-school-fountain/master-16.png", "column": 3, "row": 1 }, "tags": ["fountain", "stamp", "r0c2"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "prop.fountain.r0c3", "atlas_index": 28, "source": { "kind": "local", "family_id": "tracen-school-exterior-and-fountain", "sheet": "../../tile-sources/tracen-school-fountain/master-16.png", "column": 4, "row": 1 }, "tags": ["fountain", "stamp", "r0c3"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "prop.fountain.r1c0", "atlas_index": 29, "source": { "kind": "local", "family_id": "tracen-school-exterior-and-fountain", "sheet": "../../tile-sources/tracen-school-fountain/master-16.png", "column": 5, "row": 1 }, "tags": ["fountain", "stamp", "r1c0"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "prop.fountain.r1c1", "atlas_index": 30, "source": { "kind": "local", "family_id": "tracen-school-exterior-and-fountain", "sheet": "../../tile-sources/tracen-school-fountain/master-16.png", "column": 6, "row": 1 }, "tags": ["fountain", "stamp", "r1c1"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "prop.fountain.r1c2", "atlas_index": 31, "source": { "kind": "local", "family_id": "tracen-school-exterior-and-fountain", "sheet": "../../tile-sources/tracen-school-fountain/master-16.png", "column": 7, "row": 1 }, "tags": ["fountain", "stamp", "r1c2"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "prop.fountain.r1c3", "atlas_index": 32, "source": { "kind": "local", "family_id": "tracen-school-exterior-and-fountain", "sheet": "../../tile-sources/tracen-school-fountain/master-16.png", "column": 0, "row": 2 }, "tags": ["fountain", "stamp", "r1c3"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "prop.fountain.r2c0", "atlas_index": 33, "source": { "kind": "local", "family_id": "tracen-school-exterior-and-fountain", "sheet": "../../tile-sources/tracen-school-fountain/master-16.png", "column": 1, "row": 2 }, "tags": ["fountain", "stamp", "r2c0"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "prop.fountain.r2c1", "atlas_index": 34, "source": { "kind": "local", "family_id": "tracen-school-exterior-and-fountain", "sheet": "../../tile-sources/tracen-school-fountain/master-16.png", "column": 2, "row": 2 }, "tags": ["fountain", "stamp", "r2c1"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "prop.fountain.r2c2", "atlas_index": 35, "source": { "kind": "local", "family_id": "tracen-school-exterior-and-fountain", "sheet": "../../tile-sources/tracen-school-fountain/master-16.png", "column": 3, "row": 2 }, "tags": ["fountain", "stamp", "r2c2"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "prop.fountain.r2c3", "atlas_index": 36, "source": { "kind": "local", "family_id": "tracen-school-exterior-and-fountain", "sheet": "../../tile-sources/tracen-school-fountain/master-16.png", "column": 4, "row": 2 }, "tags": ["fountain", "stamp", "r2c3"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "prop.fountain.r3c0", "atlas_index": 37, "source": { "kind": "local", "family_id": "tracen-school-exterior-and-fountain", "sheet": "../../tile-sources/tracen-school-fountain/master-16.png", "column": 5, "row": 2 }, "tags": ["fountain", "stamp", "r3c0"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "prop.fountain.r3c1", "atlas_index": 38, "source": { "kind": "local", "family_id": "tracen-school-exterior-and-fountain", "sheet": "../../tile-sources/tracen-school-fountain/master-16.png", "column": 6, "row": 2 }, "tags": ["fountain", "stamp", "r3c1"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "prop.fountain.r3c2", "atlas_index": 39, "source": { "kind": "local", "family_id": "tracen-school-exterior-and-fountain", "sheet": "../../tile-sources/tracen-school-fountain/master-16.png", "column": 7, "row": 2 }, "tags": ["fountain", "stamp", "r3c2"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "prop.fountain.r3c3", "atlas_index": 40, "source": { "kind": "local", "family_id": "tracen-school-exterior-and-fountain", "sheet": "../../tile-sources/tracen-school-fountain/master-16.png", "column": 0, "row": 3 }, "tags": ["fountain", "stamp", "r3c3"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "structure.gate.brick_wall", "atlas_index": 41, "source": { "kind": "local", "family_id": "tracen-academy-gate", "sheet": "../../tile-sources/tracen-academy-gate/master-16.png", "column": 0, "row": 0 }, "tags": ["gate", "brick", "wall", "repeatable"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "structure.gate.pillar", "atlas_index": 42, "source": { "kind": "local", "family_id": "tracen-academy-gate", "sheet": "../../tile-sources/tracen-academy-gate/master-16.png", "column": 1, "row": 0 }, "tags": ["gate", "brick", "pillar"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "structure.gate.iron_fence", "atlas_index": 43, "source": { "kind": "local", "family_id": "tracen-academy-gate", "sheet": "../../tile-sources/tracen-academy-gate/master-16.png", "column": 2, "row": 0 }, "tags": ["gate", "iron", "fence"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "structure.gate.iron_open_left", "atlas_index": 44, "source": { "kind": "local", "family_id": "tracen-academy-gate", "sheet": "../../tile-sources/tracen-academy-gate/master-16.png", "column": 3, "row": 0 }, "tags": ["gate", "iron", "open", "left"], "role": "structure", "walkable": true, "autotile": null },
+    { "id": "structure.gate.iron_open_right", "atlas_index": 45, "source": { "kind": "local", "family_id": "tracen-academy-gate", "sheet": "../../tile-sources/tracen-academy-gate/master-16.png", "column": 4, "row": 0 }, "tags": ["gate", "iron", "open", "right"], "role": "structure", "walkable": true, "autotile": null },
+    { "id": "ground.parking.asphalt", "atlas_index": 46, "source": { "kind": "local", "family_id": "tracen-academy-gate", "sheet": "../../tile-sources/tracen-academy-gate/master-16.png", "column": 5, "row": 0 }, "tags": ["ground", "parking", "asphalt"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "ground.parking.line.vertical", "atlas_index": 47, "source": { "kind": "local", "family_id": "tracen-academy-gate", "sheet": "../../tile-sources/tracen-academy-gate/master-16.png", "column": 6, "row": 0 }, "tags": ["ground", "parking", "line", "vertical"], "role": "ground_detail", "walkable": true, "autotile": null },
+    { "id": "ground.parking.line.horizontal", "atlas_index": 48, "source": { "kind": "local", "family_id": "tracen-academy-gate", "sheet": "../../tile-sources/tracen-academy-gate/master-16.png", "column": 7, "row": 0 }, "tags": ["ground", "parking", "line", "horizontal"], "role": "ground_detail", "walkable": true, "autotile": null },
+    { "id": "prop.tree.cherry.r0c0", "atlas_index": 49, "source": { "kind": "local", "family_id": "tracen-academy-gate", "sheet": "../../tile-sources/tracen-academy-gate/master-16.png", "column": 0, "row": 1 }, "tags": ["tree", "cherry", "stamp", "r0c0"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.tree.cherry.r0c1", "atlas_index": 50, "source": { "kind": "local", "family_id": "tracen-academy-gate", "sheet": "../../tile-sources/tracen-academy-gate/master-16.png", "column": 1, "row": 1 }, "tags": ["tree", "cherry", "stamp", "r0c1"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.tree.cherry.r1c0", "atlas_index": 51, "source": { "kind": "local", "family_id": "tracen-academy-gate", "sheet": "../../tile-sources/tracen-academy-gate/master-16.png", "column": 2, "row": 1 }, "tags": ["tree", "cherry", "stamp", "r1c0"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.tree.cherry.r1c1", "atlas_index": 52, "source": { "kind": "local", "family_id": "tracen-academy-gate", "sheet": "../../tile-sources/tracen-academy-gate/master-16.png", "column": 3, "row": 1 }, "tags": ["tree", "cherry", "stamp", "r1c1"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "detail.cherry.petals", "atlas_index": 53, "source": { "kind": "local", "family_id": "tracen-academy-gate", "sheet": "../../tile-sources/tracen-academy-gate/master-16.png", "column": 4, "row": 1 }, "tags": ["cherry", "petals", "decorative"], "role": "decorative", "walkable": true, "autotile": null },
+    { "id": "structure.gate.pillar.sign", "atlas_index": 54, "source": { "kind": "local", "family_id": "tracen-academy-gate", "sheet": "../../tile-sources/tracen-academy-gate/master-16.png", "column": 5, "row": 1 }, "tags": ["gate", "pillar", "sign"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "structure.gate.curb", "atlas_index": 55, "source": { "kind": "local", "family_id": "tracen-academy-gate", "sheet": "../../tile-sources/tracen-academy-gate/master-16.png", "column": 6, "row": 1 }, "tags": ["gate", "curb", "stone"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "prop.lamp.campus", "atlas_index": 56, "source": { "kind": "local", "family_id": "tracen-academy-gate", "sheet": "../../tile-sources/tracen-academy-gate/master-16.png", "column": 7, "row": 1 }, "tags": ["lamp", "campus", "black_iron"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "building.school.tower.spire", "atlas_index": 57, "source": { "kind": "local", "family_id": "tracen-school-courtyard", "sheet": "../../tile-sources/tracen-school-courtyard/master-16.png", "column": 0, "row": 0 }, "tags": ["building", "school", "tower", "spire"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.school.tower.roof.left", "atlas_index": 58, "source": { "kind": "local", "family_id": "tracen-school-courtyard", "sheet": "../../tile-sources/tracen-school-courtyard/master-16.png", "column": 1, "row": 0 }, "tags": ["building", "school", "tower", "roof", "left"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.school.tower.roof.middle", "atlas_index": 59, "source": { "kind": "local", "family_id": "tracen-school-courtyard", "sheet": "../../tile-sources/tracen-school-courtyard/master-16.png", "column": 2, "row": 0 }, "tags": ["building", "school", "tower", "roof", "repeatable"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.school.tower.roof.right", "atlas_index": 60, "source": { "kind": "local", "family_id": "tracen-school-courtyard", "sheet": "../../tile-sources/tracen-school-courtyard/master-16.png", "column": 3, "row": 0 }, "tags": ["building", "school", "tower", "roof", "right"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.school.tower.wall", "atlas_index": 61, "source": { "kind": "local", "family_id": "tracen-school-courtyard", "sheet": "../../tile-sources/tracen-school-courtyard/master-16.png", "column": 4, "row": 0 }, "tags": ["building", "school", "tower", "wall"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.school.tower.clock", "atlas_index": 62, "source": { "kind": "local", "family_id": "tracen-school-courtyard", "sheet": "../../tile-sources/tracen-school-courtyard/master-16.png", "column": 5, "row": 0 }, "tags": ["building", "school", "tower", "clock"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.school.tower.arch_window", "atlas_index": 63, "source": { "kind": "local", "family_id": "tracen-school-courtyard", "sheet": "../../tile-sources/tracen-school-courtyard/master-16.png", "column": 6, "row": 0 }, "tags": ["building", "school", "tower", "window", "arched"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.school.tower.entrance", "atlas_index": 64, "source": { "kind": "local", "family_id": "tracen-school-courtyard", "sheet": "../../tile-sources/tracen-school-courtyard/master-16.png", "column": 7, "row": 0 }, "tags": ["building", "school", "tower", "entrance"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.school.arcade.arch", "atlas_index": 65, "source": { "kind": "local", "family_id": "tracen-school-courtyard", "sheet": "../../tile-sources/tracen-school-courtyard/master-16.png", "column": 0, "row": 1 }, "tags": ["building", "school", "arcade", "arch"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.school.arcade.pillar", "atlas_index": 66, "source": { "kind": "local", "family_id": "tracen-school-courtyard", "sheet": "../../tile-sources/tracen-school-courtyard/master-16.png", "column": 1, "row": 1 }, "tags": ["building", "school", "arcade", "pillar"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.school.connector.roof", "atlas_index": 67, "source": { "kind": "local", "family_id": "tracen-school-courtyard", "sheet": "../../tile-sources/tracen-school-courtyard/master-16.png", "column": 2, "row": 1 }, "tags": ["building", "school", "connector", "roof"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.school.connector.window", "atlas_index": 68, "source": { "kind": "local", "family_id": "tracen-school-courtyard", "sheet": "../../tile-sources/tracen-school-courtyard/master-16.png", "column": 3, "row": 1 }, "tags": ["building", "school", "connector", "window"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.school.connector.base", "atlas_index": 69, "source": { "kind": "local", "family_id": "tracen-school-courtyard", "sheet": "../../tile-sources/tracen-school-courtyard/master-16.png", "column": 4, "row": 1 }, "tags": ["building", "school", "connector", "base"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "ground.school.steps", "atlas_index": 70, "source": { "kind": "local", "family_id": "tracen-school-courtyard", "sheet": "../../tile-sources/tracen-school-courtyard/master-16.png", "column": 5, "row": 1 }, "tags": ["ground", "school", "entrance", "steps"], "role": "ground_detail", "walkable": true, "autotile": null },
+    { "id": "prop.school.banner", "atlas_index": 71, "source": { "kind": "local", "family_id": "tracen-school-courtyard", "sheet": "../../tile-sources/tracen-school-courtyard/master-16.png", "column": 6, "row": 1 }, "tags": ["prop", "school", "banner"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.school.planter", "atlas_index": 72, "source": { "kind": "local", "family_id": "tracen-school-courtyard", "sheet": "../../tile-sources/tracen-school-courtyard/master-16.png", "column": 7, "row": 1 }, "tags": ["prop", "school", "planter"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.interior.desk.front", "atlas_index": 73, "source": { "pack_id": "kenney-roguelike-rpg-pack", "sheet": "roguelikeSheet_transparent.png", "column": 23, "row": 4 }, "tags": ["interior", "desk", "wood", "cc0"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.interior.desk.side", "atlas_index": 74, "source": { "pack_id": "kenney-roguelike-rpg-pack", "sheet": "roguelikeSheet_transparent.png", "column": 28, "row": 4 }, "tags": ["interior", "desk", "wood", "side", "cc0"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.interior.bookshelf.left", "atlas_index": 75, "source": { "pack_id": "kenney-roguelike-rpg-pack", "sheet": "roguelikeSheet_transparent.png", "column": 41, "row": 13 }, "tags": ["interior", "bookshelf", "left", "cc0"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.interior.bookshelf.middle", "atlas_index": 76, "source": { "pack_id": "kenney-roguelike-rpg-pack", "sheet": "roguelikeSheet_transparent.png", "column": 42, "row": 13 }, "tags": ["interior", "bookshelf", "repeatable", "cc0"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.interior.bookshelf.right", "atlas_index": 77, "source": { "pack_id": "kenney-roguelike-rpg-pack", "sheet": "roguelikeSheet_transparent.png", "column": 50, "row": 13 }, "tags": ["interior", "bookshelf", "right", "cc0"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.interior.chair", "atlas_index": 78, "source": { "pack_id": "kenney-roguelike-rpg-pack", "sheet": "roguelikeSheet_transparent.png", "column": 19, "row": 2 }, "tags": ["interior", "chair", "wood", "cc0"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.interior.cabinet", "atlas_index": 79, "source": { "pack_id": "kenney-roguelike-rpg-pack", "sheet": "roguelikeSheet_transparent.png", "column": 28, "row": 6 }, "tags": ["interior", "cabinet", "wood", "cc0"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "ground.interior.wood", "atlas_index": 80, "source": { "kind": "local", "family_id": "tracen-main-school-interior", "sheet": "../../tile-sources/tracen-main-school-interior/master-16.png", "column": 0, "row": 0 }, "tags": ["interior", "ground", "wood", "repeatable"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "ground.interior.marble", "atlas_index": 81, "source": { "kind": "local", "family_id": "tracen-main-school-interior", "sheet": "../../tile-sources/tracen-main-school-interior/master-16.png", "column": 1, "row": 0 }, "tags": ["interior", "ground", "marble", "repeatable"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "ground.interior.carpet.green", "atlas_index": 82, "source": { "kind": "local", "family_id": "tracen-main-school-interior", "sheet": "../../tile-sources/tracen-main-school-interior/master-16.png", "column": 2, "row": 0 }, "tags": ["interior", "ground", "carpet", "green", "repeatable"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "ground.interior.border.dark", "atlas_index": 83, "source": { "kind": "local", "family_id": "tracen-main-school-interior", "sheet": "../../tile-sources/tracen-main-school-interior/master-16.png", "column": 3, "row": 0 }, "tags": ["interior", "ground", "border", "dark"], "role": "ground", "walkable": false, "autotile": null },
+    { "id": "structure.interior.wall.cream", "atlas_index": 84, "source": { "kind": "local", "family_id": "tracen-main-school-interior", "sheet": "../../tile-sources/tracen-main-school-interior/master-16.png", "column": 4, "row": 0 }, "tags": ["interior", "wall", "cream", "repeatable"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "structure.interior.wall.window", "atlas_index": 85, "source": { "kind": "local", "family_id": "tracen-main-school-interior", "sheet": "../../tile-sources/tracen-main-school-interior/master-16.png", "column": 5, "row": 0 }, "tags": ["interior", "wall", "window", "arched"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "structure.interior.wall.wainscot", "atlas_index": 86, "source": { "kind": "local", "family_id": "tracen-main-school-interior", "sheet": "../../tile-sources/tracen-main-school-interior/master-16.png", "column": 6, "row": 0 }, "tags": ["interior", "wall", "wainscot", "green", "repeatable"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "structure.interior.wall.base", "atlas_index": 87, "source": { "kind": "local", "family_id": "tracen-main-school-interior", "sheet": "../../tile-sources/tracen-main-school-interior/master-16.png", "column": 7, "row": 0 }, "tags": ["interior", "wall", "base", "repeatable"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "structure.interior.door.left", "atlas_index": 88, "source": { "kind": "local", "family_id": "tracen-main-school-interior", "sheet": "../../tile-sources/tracen-main-school-interior/master-16.png", "column": 0, "row": 1 }, "tags": ["interior", "door", "left"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "structure.interior.door.right", "atlas_index": 89, "source": { "kind": "local", "family_id": "tracen-main-school-interior", "sheet": "../../tile-sources/tracen-main-school-interior/master-16.png", "column": 1, "row": 1 }, "tags": ["interior", "door", "right"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "structure.interior.column", "atlas_index": 90, "source": { "kind": "local", "family_id": "tracen-main-school-interior", "sheet": "../../tile-sources/tracen-main-school-interior/master-16.png", "column": 2, "row": 1 }, "tags": ["interior", "column", "cream"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "structure.interior.archway", "atlas_index": 91, "source": { "kind": "local", "family_id": "tracen-main-school-interior", "sheet": "../../tile-sources/tracen-main-school-interior/master-16.png", "column": 3, "row": 1 }, "tags": ["interior", "archway", "green"], "role": "structure", "walkable": true, "autotile": null },
+    { "id": "structure.interior.stairs", "atlas_index": 92, "source": { "kind": "local", "family_id": "tracen-main-school-interior", "sheet": "../../tile-sources/tracen-main-school-interior/master-16.png", "column": 4, "row": 1 }, "tags": ["interior", "stairs", "wood"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "detail.interior.school_emblem", "atlas_index": 93, "source": { "kind": "local", "family_id": "tracen-main-school-interior", "sheet": "../../tile-sources/tracen-main-school-interior/master-16.png", "column": 5, "row": 1 }, "tags": ["interior", "emblem", "floor", "decorative"], "role": "decorative", "walkable": true, "autotile": null },
+    { "id": "prop.interior.notice_board", "atlas_index": 94, "source": { "kind": "local", "family_id": "tracen-main-school-interior", "sheet": "../../tile-sources/tracen-main-school-interior/master-16.png", "column": 6, "row": 1 }, "tags": ["interior", "notice_board", "school"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.interior.plant", "atlas_index": 95, "source": { "kind": "local", "family_id": "tracen-main-school-interior", "sheet": "../../tile-sources/tracen-main-school-interior/master-16.png", "column": 7, "row": 1 }, "tags": ["interior", "plant", "school"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "ground.training.rubber.dark", "atlas_index": 96, "source": { "kind": "local", "family_id": "tracen-indoor-training", "sheet": "../../tile-sources/tracen-indoor-training/master-16.png", "column": 0, "row": 0 }, "tags": ["interior", "training", "ground", "rubber", "dark"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "ground.training.rubber.light", "atlas_index": 97, "source": { "kind": "local", "family_id": "tracen-indoor-training", "sheet": "../../tile-sources/tracen-indoor-training/master-16.png", "column": 1, "row": 0 }, "tags": ["interior", "training", "ground", "rubber", "light"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "ground.training.wood", "atlas_index": 98, "source": { "kind": "local", "family_id": "tracen-indoor-training", "sheet": "../../tile-sources/tracen-indoor-training/master-16.png", "column": 2, "row": 0 }, "tags": ["interior", "training", "ground", "wood"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "ground.training.pool.deck", "atlas_index": 99, "source": { "kind": "local", "family_id": "tracen-indoor-training", "sheet": "../../tile-sources/tracen-indoor-training/master-16.png", "column": 3, "row": 0 }, "tags": ["interior", "training", "pool", "deck"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "ground.training.pool.water", "atlas_index": 100, "source": { "kind": "local", "family_id": "tracen-indoor-training", "sheet": "../../tile-sources/tracen-indoor-training/master-16.png", "column": 4, "row": 0 }, "tags": ["interior", "training", "pool", "water"], "role": "ground", "walkable": false, "autotile": null },
+    { "id": "ground.training.pool.lane", "atlas_index": 101, "source": { "kind": "local", "family_id": "tracen-indoor-training", "sheet": "../../tile-sources/tracen-indoor-training/master-16.png", "column": 5, "row": 0 }, "tags": ["interior", "training", "pool", "lane"], "role": "ground_detail", "walkable": false, "autotile": null },
+    { "id": "ground.training.track", "atlas_index": 102, "source": { "kind": "local", "family_id": "tracen-indoor-training", "sheet": "../../tile-sources/tracen-indoor-training/master-16.png", "column": 6, "row": 0 }, "tags": ["interior", "training", "track", "rubber"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "ground.training.track.line", "atlas_index": 103, "source": { "kind": "local", "family_id": "tracen-indoor-training", "sheet": "../../tile-sources/tracen-indoor-training/master-16.png", "column": 7, "row": 0 }, "tags": ["interior", "training", "track", "line"], "role": "ground_detail", "walkable": true, "autotile": null },
+    { "id": "structure.training.pool.curb", "atlas_index": 104, "source": { "kind": "local", "family_id": "tracen-indoor-training", "sheet": "../../tile-sources/tracen-indoor-training/master-16.png", "column": 0, "row": 1 }, "tags": ["interior", "training", "pool", "curb"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "structure.training.glass.partition", "atlas_index": 105, "source": { "kind": "local", "family_id": "tracen-indoor-training", "sheet": "../../tile-sources/tracen-indoor-training/master-16.png", "column": 1, "row": 1 }, "tags": ["interior", "training", "glass", "partition"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "prop.training.treadmill", "atlas_index": 106, "source": { "kind": "local", "family_id": "tracen-indoor-training", "sheet": "../../tile-sources/tracen-indoor-training/master-16.png", "column": 2, "row": 1 }, "tags": ["interior", "training", "fitness", "treadmill"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.training.bike", "atlas_index": 107, "source": { "kind": "local", "family_id": "tracen-indoor-training", "sheet": "../../tile-sources/tracen-indoor-training/master-16.png", "column": 3, "row": 1 }, "tags": ["interior", "training", "fitness", "bike"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.training.weight_rack", "atlas_index": 108, "source": { "kind": "local", "family_id": "tracen-indoor-training", "sheet": "../../tile-sources/tracen-indoor-training/master-16.png", "column": 4, "row": 1 }, "tags": ["interior", "training", "fitness", "weights"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.training.bench", "atlas_index": 109, "source": { "kind": "local", "family_id": "tracen-indoor-training", "sheet": "../../tile-sources/tracen-indoor-training/master-16.png", "column": 5, "row": 1 }, "tags": ["interior", "training", "fitness", "bench"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.training.hurdle", "atlas_index": 110, "source": { "kind": "local", "family_id": "tracen-indoor-training", "sheet": "../../tile-sources/tracen-indoor-training/master-16.png", "column": 6, "row": 1 }, "tags": ["interior", "training", "obstacle", "hurdle"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.training.cone", "atlas_index": 111, "source": { "kind": "local", "family_id": "tracen-indoor-training", "sheet": "../../tile-sources/tracen-indoor-training/master-16.png", "column": 7, "row": 1 }, "tags": ["interior", "training", "obstacle", "cone"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.training.balance_pad", "atlas_index": 112, "source": { "kind": "local", "family_id": "tracen-indoor-training", "sheet": "../../tile-sources/tracen-indoor-training/master-16.png", "column": 0, "row": 2 }, "tags": ["interior", "training", "balance"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.training.pool_ladder", "atlas_index": 113, "source": { "kind": "local", "family_id": "tracen-indoor-training", "sheet": "../../tile-sources/tracen-indoor-training/master-16.png", "column": 1, "row": 2 }, "tags": ["interior", "training", "pool", "ladder"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.training.climbing_frame", "atlas_index": 114, "source": { "kind": "local", "family_id": "tracen-indoor-training", "sheet": "../../tile-sources/tracen-indoor-training/master-16.png", "column": 2, "row": 2 }, "tags": ["interior", "training", "obstacle", "climbing"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.training.equipment_cabinet", "atlas_index": 115, "source": { "kind": "local", "family_id": "tracen-indoor-training", "sheet": "../../tile-sources/tracen-indoor-training/master-16.png", "column": 3, "row": 2 }, "tags": ["interior", "training", "equipment", "cabinet"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "detail.training.start_line", "atlas_index": 116, "source": { "kind": "local", "family_id": "tracen-indoor-training", "sheet": "../../tile-sources/tracen-indoor-training/master-16.png", "column": 4, "row": 2 }, "tags": ["interior", "training", "track", "start"], "role": "ground_detail", "walkable": true, "autotile": null },
+    { "id": "detail.training.zone_marker.blue", "atlas_index": 117, "source": { "kind": "local", "family_id": "tracen-indoor-training", "sheet": "../../tile-sources/tracen-indoor-training/master-16.png", "column": 5, "row": 2 }, "tags": ["interior", "training", "zone", "blue"], "role": "ground_detail", "walkable": true, "autotile": null },
+    { "id": "detail.training.zone_marker.red", "atlas_index": 118, "source": { "kind": "local", "family_id": "tracen-indoor-training", "sheet": "../../tile-sources/tracen-indoor-training/master-16.png", "column": 6, "row": 2 }, "tags": ["interior", "training", "zone", "red"], "role": "ground_detail", "walkable": true, "autotile": null },
+    { "id": "detail.training.school_emblem", "atlas_index": 119, "source": { "kind": "local", "family_id": "tracen-indoor-training", "sheet": "../../tile-sources/tracen-indoor-training/master-16.png", "column": 7, "row": 2 }, "tags": ["interior", "training", "school", "emblem"], "role": "decorative", "walkable": true, "autotile": null },
+    { "id": "ground.dining.parquet", "atlas_index": 120, "source": { "kind": "local", "family_id": "tracen-cafeteria-shops", "sheet": "../../tile-sources/tracen-cafeteria-shops/master-16.png", "column": 0, "row": 0 }, "tags": ["interior", "dining", "ground", "parquet"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "ground.dining.tile.cream", "atlas_index": 121, "source": { "kind": "local", "family_id": "tracen-cafeteria-shops", "sheet": "../../tile-sources/tracen-cafeteria-shops/master-16.png", "column": 1, "row": 0 }, "tags": ["interior", "dining", "ground", "cream"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "ground.cafe.tile.green", "atlas_index": 122, "source": { "kind": "local", "family_id": "tracen-cafeteria-shops", "sheet": "../../tile-sources/tracen-cafeteria-shops/master-16.png", "column": 2, "row": 0 }, "tags": ["interior", "cafe", "ground", "green"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "ground.shop.wood", "atlas_index": 123, "source": { "kind": "local", "family_id": "tracen-cafeteria-shops", "sheet": "../../tile-sources/tracen-cafeteria-shops/master-16.png", "column": 3, "row": 0 }, "tags": ["interior", "shop", "ground", "wood"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "ground.terrace.deck", "atlas_index": 124, "source": { "kind": "local", "family_id": "tracen-cafeteria-shops", "sheet": "../../tile-sources/tracen-cafeteria-shops/master-16.png", "column": 4, "row": 0 }, "tags": ["outdoor", "terrace", "ground", "deck"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "ground.terrace.paver", "atlas_index": 125, "source": { "kind": "local", "family_id": "tracen-cafeteria-shops", "sheet": "../../tile-sources/tracen-cafeteria-shops/master-16.png", "column": 5, "row": 0 }, "tags": ["outdoor", "terrace", "ground", "paver"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "ground.dining.carpet", "atlas_index": 126, "source": { "kind": "local", "family_id": "tracen-cafeteria-shops", "sheet": "../../tile-sources/tracen-cafeteria-shops/master-16.png", "column": 6, "row": 0 }, "tags": ["interior", "dining", "ground", "carpet"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "ground.shop.tile", "atlas_index": 127, "source": { "kind": "local", "family_id": "tracen-cafeteria-shops", "sheet": "../../tile-sources/tracen-cafeteria-shops/master-16.png", "column": 7, "row": 0 }, "tags": ["interior", "shop", "ground", "tile"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "structure.dining.counter", "atlas_index": 128, "source": { "kind": "local", "family_id": "tracen-cafeteria-shops", "sheet": "../../tile-sources/tracen-cafeteria-shops/master-16.png", "column": 0, "row": 1 }, "tags": ["interior", "dining", "counter"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "structure.dining.serving_window", "atlas_index": 129, "source": { "kind": "local", "family_id": "tracen-cafeteria-shops", "sheet": "../../tile-sources/tracen-cafeteria-shops/master-16.png", "column": 1, "row": 1 }, "tags": ["interior", "dining", "serving", "window"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "structure.cafe.counter", "atlas_index": 130, "source": { "kind": "local", "family_id": "tracen-cafeteria-shops", "sheet": "../../tile-sources/tracen-cafeteria-shops/master-16.png", "column": 2, "row": 1 }, "tags": ["interior", "cafe", "counter", "green"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "structure.shop.checkout", "atlas_index": 131, "source": { "kind": "local", "family_id": "tracen-cafeteria-shops", "sheet": "../../tile-sources/tracen-cafeteria-shops/master-16.png", "column": 3, "row": 1 }, "tags": ["interior", "shop", "checkout"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "prop.dining.table.round", "atlas_index": 132, "source": { "kind": "local", "family_id": "tracen-cafeteria-shops", "sheet": "../../tile-sources/tracen-cafeteria-shops/master-16.png", "column": 4, "row": 1 }, "tags": ["interior", "dining", "table", "round"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.dining.table.long", "atlas_index": 133, "source": { "kind": "local", "family_id": "tracen-cafeteria-shops", "sheet": "../../tile-sources/tracen-cafeteria-shops/master-16.png", "column": 5, "row": 1 }, "tags": ["interior", "dining", "table", "long"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.dining.chair.green", "atlas_index": 134, "source": { "kind": "local", "family_id": "tracen-cafeteria-shops", "sheet": "../../tile-sources/tracen-cafeteria-shops/master-16.png", "column": 6, "row": 1 }, "tags": ["interior", "dining", "chair", "green"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.cafe.booth.green", "atlas_index": 135, "source": { "kind": "local", "family_id": "tracen-cafeteria-shops", "sheet": "../../tile-sources/tracen-cafeteria-shops/master-16.png", "column": 7, "row": 1 }, "tags": ["interior", "cafe", "booth", "green"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.cafe.table", "atlas_index": 136, "source": { "kind": "local", "family_id": "tracen-cafeteria-shops", "sheet": "../../tile-sources/tracen-cafeteria-shops/master-16.png", "column": 0, "row": 2 }, "tags": ["interior", "cafe", "table"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.shop.shelf", "atlas_index": 137, "source": { "kind": "local", "family_id": "tracen-cafeteria-shops", "sheet": "../../tile-sources/tracen-cafeteria-shops/master-16.png", "column": 1, "row": 2 }, "tags": ["interior", "shop", "shelf", "goods"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.shop.fridge", "atlas_index": 138, "source": { "kind": "local", "family_id": "tracen-cafeteria-shops", "sheet": "../../tile-sources/tracen-cafeteria-shops/master-16.png", "column": 2, "row": 2 }, "tags": ["interior", "shop", "fridge", "glass"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.shop.display", "atlas_index": 139, "source": { "kind": "local", "family_id": "tracen-cafeteria-shops", "sheet": "../../tile-sources/tracen-cafeteria-shops/master-16.png", "column": 3, "row": 2 }, "tags": ["interior", "shop", "display"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.terrace.table", "atlas_index": 140, "source": { "kind": "local", "family_id": "tracen-cafeteria-shops", "sheet": "../../tile-sources/tracen-cafeteria-shops/master-16.png", "column": 4, "row": 2 }, "tags": ["outdoor", "terrace", "table"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.terrace.umbrella", "atlas_index": 141, "source": { "kind": "local", "family_id": "tracen-cafeteria-shops", "sheet": "../../tile-sources/tracen-cafeteria-shops/master-16.png", "column": 5, "row": 2 }, "tags": ["outdoor", "terrace", "umbrella", "white", "pink"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.terrace.sofa", "atlas_index": 142, "source": { "kind": "local", "family_id": "tracen-cafeteria-shops", "sheet": "../../tile-sources/tracen-cafeteria-shops/master-16.png", "column": 6, "row": 2 }, "tags": ["outdoor", "terrace", "sofa"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.dining.menu_board", "atlas_index": 143, "source": { "kind": "local", "family_id": "tracen-cafeteria-shops", "sheet": "../../tile-sources/tracen-cafeteria-shops/master-16.png", "column": 7, "row": 2 }, "tags": ["interior", "dining", "menu", "board"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "building.dorm.roof.blue.left", "atlas_index": 144, "source": { "kind": "local", "family_id": "tracen-dormitory-life", "sheet": "../../tile-sources/tracen-dormitory-life/master-16.png", "column": 0, "row": 0 }, "tags": ["building", "dorm", "roof", "blue", "left"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.dorm.roof.blue.middle", "atlas_index": 145, "source": { "kind": "local", "family_id": "tracen-dormitory-life", "sheet": "../../tile-sources/tracen-dormitory-life/master-16.png", "column": 1, "row": 0 }, "tags": ["building", "dorm", "roof", "blue", "repeatable"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.dorm.roof.blue.right", "atlas_index": 146, "source": { "kind": "local", "family_id": "tracen-dormitory-life", "sheet": "../../tile-sources/tracen-dormitory-life/master-16.png", "column": 2, "row": 0 }, "tags": ["building", "dorm", "roof", "blue", "right"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.dorm.roof.pink.left", "atlas_index": 147, "source": { "kind": "local", "family_id": "tracen-dormitory-life", "sheet": "../../tile-sources/tracen-dormitory-life/master-16.png", "column": 3, "row": 0 }, "tags": ["building", "dorm", "roof", "pink", "left"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.dorm.roof.pink.middle", "atlas_index": 148, "source": { "kind": "local", "family_id": "tracen-dormitory-life", "sheet": "../../tile-sources/tracen-dormitory-life/master-16.png", "column": 4, "row": 0 }, "tags": ["building", "dorm", "roof", "pink", "repeatable"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.dorm.roof.pink.right", "atlas_index": 149, "source": { "kind": "local", "family_id": "tracen-dormitory-life", "sheet": "../../tile-sources/tracen-dormitory-life/master-16.png", "column": 5, "row": 0 }, "tags": ["building", "dorm", "roof", "pink", "right"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.dorm.wall.cream", "atlas_index": 150, "source": { "kind": "local", "family_id": "tracen-dormitory-life", "sheet": "../../tile-sources/tracen-dormitory-life/master-16.png", "column": 6, "row": 0 }, "tags": ["building", "dorm", "wall", "cream", "repeatable"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.dorm.wall.trim", "atlas_index": 151, "source": { "kind": "local", "family_id": "tracen-dormitory-life", "sheet": "../../tile-sources/tracen-dormitory-life/master-16.png", "column": 7, "row": 0 }, "tags": ["building", "dorm", "wall", "trim", "repeatable"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.dorm.window", "atlas_index": 152, "source": { "kind": "local", "family_id": "tracen-dormitory-life", "sheet": "../../tile-sources/tracen-dormitory-life/master-16.png", "column": 0, "row": 1 }, "tags": ["building", "dorm", "window"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.dorm.balcony", "atlas_index": 153, "source": { "kind": "local", "family_id": "tracen-dormitory-life", "sheet": "../../tile-sources/tracen-dormitory-life/master-16.png", "column": 1, "row": 1 }, "tags": ["building", "dorm", "balcony"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.dorm.entrance", "atlas_index": 154, "source": { "kind": "local", "family_id": "tracen-dormitory-life", "sheet": "../../tile-sources/tracen-dormitory-life/master-16.png", "column": 2, "row": 1 }, "tags": ["building", "dorm", "entrance"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.dorm.sign.miho", "atlas_index": 155, "source": { "kind": "local", "family_id": "tracen-dormitory-life", "sheet": "../../tile-sources/tracen-dormitory-life/master-16.png", "column": 3, "row": 1 }, "tags": ["building", "dorm", "sign", "miho", "blue"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.dorm.sign.ritto", "atlas_index": 156, "source": { "kind": "local", "family_id": "tracen-dormitory-life", "sheet": "../../tile-sources/tracen-dormitory-life/master-16.png", "column": 4, "row": 1 }, "tags": ["building", "dorm", "sign", "ritto", "pink"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.laundry.roof", "atlas_index": 157, "source": { "kind": "local", "family_id": "tracen-dormitory-life", "sheet": "../../tile-sources/tracen-dormitory-life/master-16.png", "column": 5, "row": 1 }, "tags": ["building", "laundry", "roof", "repeatable"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.laundry.wall", "atlas_index": 158, "source": { "kind": "local", "family_id": "tracen-dormitory-life", "sheet": "../../tile-sources/tracen-dormitory-life/master-16.png", "column": 6, "row": 1 }, "tags": ["building", "laundry", "wall", "repeatable"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.laundry.window", "atlas_index": 159, "source": { "kind": "local", "family_id": "tracen-dormitory-life", "sheet": "../../tile-sources/tracen-dormitory-life/master-16.png", "column": 7, "row": 1 }, "tags": ["building", "laundry", "window"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "building.laundry.entrance", "atlas_index": 160, "source": { "kind": "local", "family_id": "tracen-dormitory-life", "sheet": "../../tile-sources/tracen-dormitory-life/master-16.png", "column": 0, "row": 2 }, "tags": ["building", "laundry", "entrance"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "prop.dorm.washer", "atlas_index": 161, "source": { "kind": "local", "family_id": "tracen-dormitory-life", "sheet": "../../tile-sources/tracen-dormitory-life/master-16.png", "column": 1, "row": 2 }, "tags": ["dorm", "laundry", "washer"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.dorm.clothesline", "atlas_index": 162, "source": { "kind": "local", "family_id": "tracen-dormitory-life", "sheet": "../../tile-sources/tracen-dormitory-life/master-16.png", "column": 2, "row": 2 }, "tags": ["dorm", "laundry", "clothesline"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.dorm.laundry_basket", "atlas_index": 163, "source": { "kind": "local", "family_id": "tracen-dormitory-life", "sheet": "../../tile-sources/tracen-dormitory-life/master-16.png", "column": 3, "row": 2 }, "tags": ["dorm", "laundry", "basket"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.dorm.bench", "atlas_index": 164, "source": { "kind": "local", "family_id": "tracen-dormitory-life", "sheet": "../../tile-sources/tracen-dormitory-life/master-16.png", "column": 4, "row": 2 }, "tags": ["dorm", "courtyard", "bench"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.dorm.picnic_table", "atlas_index": 165, "source": { "kind": "local", "family_id": "tracen-dormitory-life", "sheet": "../../tile-sources/tracen-dormitory-life/master-16.png", "column": 5, "row": 2 }, "tags": ["dorm", "courtyard", "table"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.dorm.notice_board", "atlas_index": 166, "source": { "kind": "local", "family_id": "tracen-dormitory-life", "sheet": "../../tile-sources/tracen-dormitory-life/master-16.png", "column": 6, "row": 2 }, "tags": ["dorm", "courtyard", "notice_board"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.dorm.lamp", "atlas_index": 167, "source": { "kind": "local", "family_id": "tracen-dormitory-life", "sheet": "../../tile-sources/tracen-dormitory-life/master-16.png", "column": 7, "row": 2 }, "tags": ["dorm", "courtyard", "lamp"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "ground.river.water.deep", "atlas_index": 168, "source": { "kind": "local", "family_id": "tracen-riverside", "sheet": "../../tile-sources/tracen-riverside/master-16.png", "column": 0, "row": 0 }, "tags": ["river", "water", "deep"], "role": "ground", "walkable": false, "autotile": null },
+    { "id": "ground.river.water.light", "atlas_index": 169, "source": { "kind": "local", "family_id": "tracen-riverside", "sheet": "../../tile-sources/tracen-riverside/master-16.png", "column": 1, "row": 0 }, "tags": ["river", "water", "light"], "role": "ground", "walkable": false, "autotile": null },
+    { "id": "ground.river.water.current", "atlas_index": 170, "source": { "kind": "local", "family_id": "tracen-riverside", "sheet": "../../tile-sources/tracen-riverside/master-16.png", "column": 2, "row": 0 }, "tags": ["river", "water", "current"], "role": "ground", "walkable": false, "autotile": null },
+    { "id": "ground.river.path.asphalt", "atlas_index": 171, "source": { "kind": "local", "family_id": "tracen-riverside", "sheet": "../../tile-sources/tracen-riverside/master-16.png", "column": 3, "row": 0 }, "tags": ["river", "jogging", "asphalt"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "ground.river.path.edge", "atlas_index": 172, "source": { "kind": "local", "family_id": "tracen-riverside", "sheet": "../../tile-sources/tracen-riverside/master-16.png", "column": 4, "row": 0 }, "tags": ["river", "path", "curb"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "ground.river.slope.grass", "atlas_index": 173, "source": { "kind": "local", "family_id": "tracen-riverside", "sheet": "../../tile-sources/tracen-riverside/master-16.png", "column": 5, "row": 0 }, "tags": ["river", "embankment", "grass"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "ground.river.gravel", "atlas_index": 174, "source": { "kind": "local", "family_id": "tracen-riverside", "sheet": "../../tile-sources/tracen-riverside/master-16.png", "column": 6, "row": 0 }, "tags": ["river", "bank", "gravel"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "structure.river.revetment", "atlas_index": 175, "source": { "kind": "local", "family_id": "tracen-riverside", "sheet": "../../tile-sources/tracen-riverside/master-16.png", "column": 7, "row": 0 }, "tags": ["river", "concrete", "revetment"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "structure.river.steps", "atlas_index": 176, "source": { "kind": "local", "family_id": "tracen-riverside", "sheet": "../../tile-sources/tracen-riverside/master-16.png", "column": 0, "row": 1 }, "tags": ["river", "embankment", "steps"], "role": "ground", "walkable": true, "autotile": null },
+    { "id": "structure.river.bridge.deck", "atlas_index": 177, "source": { "kind": "local", "family_id": "tracen-riverside", "sheet": "../../tile-sources/tracen-riverside/master-16.png", "column": 1, "row": 1 }, "tags": ["river", "bridge", "deck"], "role": "structure", "walkable": true, "autotile": null },
+    { "id": "structure.river.railing.horizontal", "atlas_index": 178, "source": { "kind": "local", "family_id": "tracen-riverside", "sheet": "../../tile-sources/tracen-riverside/master-16.png", "column": 2, "row": 1 }, "tags": ["river", "railing", "horizontal"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "structure.river.railing.vertical", "atlas_index": 179, "source": { "kind": "local", "family_id": "tracen-riverside", "sheet": "../../tile-sources/tracen-riverside/master-16.png", "column": 3, "row": 1 }, "tags": ["river", "railing", "vertical"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "structure.river.bridge.rail", "atlas_index": 180, "source": { "kind": "local", "family_id": "tracen-riverside", "sheet": "../../tile-sources/tracen-riverside/master-16.png", "column": 4, "row": 1 }, "tags": ["river", "bridge", "rail"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "structure.river.bridge.pier", "atlas_index": 181, "source": { "kind": "local", "family_id": "tracen-riverside", "sheet": "../../tile-sources/tracen-riverside/master-16.png", "column": 5, "row": 1 }, "tags": ["river", "bridge", "pier"], "role": "structure", "walkable": false, "autotile": null },
+    { "id": "structure.river.bridge.shadow", "atlas_index": 182, "source": { "kind": "local", "family_id": "tracen-riverside", "sheet": "../../tile-sources/tracen-riverside/master-16.png", "column": 6, "row": 1 }, "tags": ["river", "bridge", "shadow"], "role": "decorative", "walkable": false, "autotile": null },
+    { "id": "detail.river.reeds", "atlas_index": 183, "source": { "kind": "local", "family_id": "tracen-riverside", "sheet": "../../tile-sources/tracen-riverside/master-16.png", "column": 7, "row": 1 }, "tags": ["river", "bank", "reeds"], "role": "decorative", "walkable": false, "autotile": null },
+    { "id": "prop.river.bench", "atlas_index": 184, "source": { "kind": "local", "family_id": "tracen-riverside", "sheet": "../../tile-sources/tracen-riverside/master-16.png", "column": 0, "row": 2 }, "tags": ["river", "promenade", "bench"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.river.lamp", "atlas_index": 185, "source": { "kind": "local", "family_id": "tracen-riverside", "sheet": "../../tile-sources/tracen-riverside/master-16.png", "column": 1, "row": 2 }, "tags": ["river", "promenade", "lamp"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.river.sign", "atlas_index": 186, "source": { "kind": "local", "family_id": "tracen-riverside", "sheet": "../../tile-sources/tracen-riverside/master-16.png", "column": 2, "row": 2 }, "tags": ["river", "promenade", "sign"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.river.bollard", "atlas_index": 187, "source": { "kind": "local", "family_id": "tracen-riverside", "sheet": "../../tile-sources/tracen-riverside/master-16.png", "column": 3, "row": 2 }, "tags": ["river", "path", "bollard"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.river.bicycle", "atlas_index": 188, "source": { "kind": "local", "family_id": "tracen-riverside", "sheet": "../../tile-sources/tracen-riverside/master-16.png", "column": 4, "row": 2 }, "tags": ["river", "promenade", "bicycle"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.river.exercise_bar", "atlas_index": 189, "source": { "kind": "local", "family_id": "tracen-riverside", "sheet": "../../tile-sources/tracen-riverside/master-16.png", "column": 5, "row": 2 }, "tags": ["river", "training", "exercise"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.river.life_ring", "atlas_index": 190, "source": { "kind": "local", "family_id": "tracen-riverside", "sheet": "../../tile-sources/tracen-riverside/master-16.png", "column": 6, "row": 2 }, "tags": ["river", "safety", "life_ring"], "role": "prop", "walkable": false, "autotile": null },
+    { "id": "prop.river.drinking_fountain", "atlas_index": 191, "source": { "kind": "local", "family_id": "tracen-riverside", "sheet": "../../tile-sources/tracen-riverside/master-16.png", "column": 7, "row": 2 }, "tags": ["river", "promenade", "drinking_fountain"], "role": "prop", "walkable": false, "autotile": null }
+  ],
+  "stamps": [
+    {
+      "id": "building.school.main",
+      "width": 11,
+      "height": 6,
+      "tiles": [
+        "building.school.roof.left", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.right",
+        "building.school.pillar", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.clock", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.pillar",
+        "building.school.pillar", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.pillar",
+        "building.school.pillar", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.pillar",
+        "building.school.pillar", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.pillar",
+        "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.entrance", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom"
+      ]
+    },
+    {
+      "id": "building.school.club",
+      "width": 10,
+      "height": 6,
+      "tiles": [
+        "building.school.roof.left", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.right",
+        "building.school.pillar", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.pillar",
+        "building.school.pillar", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.pillar",
+        "building.school.pillar", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.pillar",
+        "building.school.pillar", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.pillar",
+        "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.entrance", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom"
+      ]
+    },
+    {
+      "id": "prop.fountain.central",
+      "width": 4,
+      "height": 4,
+      "tiles": [
+        "prop.fountain.r0c0", "prop.fountain.r0c1", "prop.fountain.r0c2", "prop.fountain.r0c3",
+        "prop.fountain.r1c0", "prop.fountain.r1c1", "prop.fountain.r1c2", "prop.fountain.r1c3",
+        "prop.fountain.r2c0", "prop.fountain.r2c1", "prop.fountain.r2c2", "prop.fountain.r2c3",
+        "prop.fountain.r3c0", "prop.fountain.r3c1", "prop.fountain.r3c2", "prop.fountain.r3c3"
+      ]
+    },
+    {
+      "id": "structure.academy_gate.main",
+      "width": 12,
+      "height": 2,
+      "tiles": [
+        "structure.gate.brick_wall", "structure.gate.brick_wall", "structure.gate.brick_wall", "structure.gate.pillar", "structure.gate.iron_fence", "structure.gate.iron_fence", "structure.gate.iron_fence", "structure.gate.iron_fence", "structure.gate.pillar", "structure.gate.brick_wall", "structure.gate.brick_wall", "structure.gate.brick_wall",
+        "structure.gate.brick_wall", "structure.gate.brick_wall", "structure.gate.brick_wall", "structure.gate.pillar.sign", "structure.gate.iron_open_left", null, null, "structure.gate.iron_open_right", "structure.gate.pillar", "structure.gate.brick_wall", "structure.gate.brick_wall", "structure.gate.brick_wall"
+      ]
+    },
+    {
+      "id": "structure.academy_gate.wall_long",
+      "width": 22,
+      "height": 1,
+      "tiles": [
+        "structure.gate.brick_wall", "structure.gate.brick_wall", "structure.gate.brick_wall", "structure.gate.brick_wall", "structure.gate.brick_wall", "structure.gate.brick_wall", "structure.gate.brick_wall", "structure.gate.brick_wall", "structure.gate.brick_wall", "structure.gate.brick_wall", "structure.gate.brick_wall",
+        "structure.gate.brick_wall", "structure.gate.brick_wall", "structure.gate.brick_wall", "structure.gate.brick_wall", "structure.gate.brick_wall", "structure.gate.brick_wall", "structure.gate.brick_wall", "structure.gate.brick_wall", "structure.gate.brick_wall", "structure.gate.brick_wall", "structure.gate.brick_wall"
+      ]
+    },
+    {
+      "id": "prop.tree.cherry",
+      "width": 2,
+      "height": 2,
+      "tiles": [
+        "prop.tree.cherry.r0c0", "prop.tree.cherry.r0c1",
+        "prop.tree.cherry.r1c0", "prop.tree.cherry.r1c1"
+      ]
+    },
+    {
+      "id": "building.school.wing.wide",
+      "width": 12,
+      "height": 7,
+      "tiles": [
+        "building.school.roof.left", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.right",
+        "building.school.pillar", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.pillar",
+        "building.school.pillar", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.pillar",
+        "building.school.pillar", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.pillar",
+        "building.school.pillar", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.pillar",
+        "building.school.pillar", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.pillar",
+        "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom"
+      ]
+    },
+    {
+      "id": "building.school.main_hall",
+      "width": 14,
+      "height": 8,
+      "tiles": [
+        "building.school.roof.left", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.middle", "building.school.roof.right",
+        "building.school.pillar", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.pillar",
+        "building.school.pillar", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.pillar",
+        "building.school.pillar", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.pillar",
+        "building.school.pillar", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.pillar",
+        "building.school.pillar", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.pillar",
+        "building.school.pillar", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.window", "building.school.wall.brick", "building.school.pillar",
+        "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom"
+      ]
+    },
+    {
+      "id": "building.school.clock_tower",
+      "width": 5,
+      "height": 9,
+      "tiles": [
+        null, null, "building.school.tower.spire", null, null,
+        "building.school.tower.roof.left", "building.school.tower.roof.middle", "building.school.tower.roof.middle", "building.school.tower.roof.middle", "building.school.tower.roof.right",
+        "building.school.tower.wall", "building.school.wall.brick", "building.school.tower.clock", "building.school.wall.brick", "building.school.tower.wall",
+        "building.school.tower.wall", "building.school.window", "building.school.tower.arch_window", "building.school.window", "building.school.tower.wall",
+        "building.school.tower.wall", "building.school.wall.brick", "building.school.tower.arch_window", "building.school.wall.brick", "building.school.tower.wall",
+        "building.school.tower.wall", "building.school.window", "building.school.tower.arch_window", "building.school.window", "building.school.tower.wall",
+        "building.school.tower.wall", "building.school.wall.brick", "building.school.tower.arch_window", "building.school.wall.brick", "building.school.tower.wall",
+        "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom", "building.school.wall.bottom",
+        "building.school.wall.bottom", "building.school.wall.bottom", "building.school.tower.entrance", "building.school.wall.bottom", "building.school.wall.bottom"
+      ]
+    },
+    {
+      "id": "building.school.connector.glass",
+      "width": 4,
+      "height": 3,
+      "tiles": [
+        "building.school.connector.roof", "building.school.connector.roof", "building.school.connector.roof", "building.school.connector.roof",
+        "building.school.arcade.pillar", "building.school.connector.window", "building.school.connector.window", "building.school.arcade.pillar",
+        "building.school.connector.base", "building.school.connector.base", "building.school.connector.base", "building.school.connector.base"
+      ]
+    },
+    {
+      "id": "building.school.arcade.row",
+      "width": 8,
+      "height": 2,
+      "tiles": [
+        "building.school.arcade.pillar", "building.school.arcade.arch", "building.school.arcade.arch", "building.school.arcade.pillar", "building.school.arcade.pillar", "building.school.arcade.arch", "building.school.arcade.arch", "building.school.arcade.pillar",
+        "building.school.connector.base", "building.school.connector.base", "building.school.connector.base", "building.school.connector.base", "building.school.connector.base", "building.school.connector.base", "building.school.connector.base", "building.school.connector.base"
+      ]
+    },
+    {
+      "id": "structure.interior.wall.room_entry",
+      "width": 10,
+      "height": 4,
+      "tiles": [
+        "structure.interior.wall.cream", "structure.interior.wall.cream", "structure.interior.wall.cream", "structure.interior.wall.cream", "structure.interior.wall.cream", "structure.interior.wall.cream", "structure.interior.wall.cream", "structure.interior.wall.cream", "structure.interior.wall.cream", "structure.interior.wall.cream",
+        "structure.interior.column", "structure.interior.wall.window", "structure.interior.wall.cream", "structure.interior.wall.window", "structure.interior.wall.cream", "structure.interior.wall.cream", "structure.interior.wall.window", "structure.interior.wall.cream", "structure.interior.wall.window", "structure.interior.column",
+        "structure.interior.wall.wainscot", "structure.interior.wall.wainscot", "structure.interior.wall.wainscot", "structure.interior.wall.wainscot", "structure.interior.wall.wainscot", "structure.interior.wall.wainscot", "structure.interior.wall.wainscot", "structure.interior.wall.wainscot", "structure.interior.wall.wainscot", "structure.interior.wall.wainscot",
+        "structure.interior.wall.base", "structure.interior.wall.base", "structure.interior.wall.base", "structure.interior.wall.base", "structure.interior.door.left", "structure.interior.door.right", "structure.interior.wall.base", "structure.interior.wall.base", "structure.interior.wall.base", "structure.interior.wall.base"
+      ]
+    },
+    {
+      "id": "structure.interior.wall.window_section",
+      "width": 7,
+      "height": 4,
+      "tiles": [
+        "structure.interior.wall.cream", "structure.interior.wall.cream", "structure.interior.wall.cream", "structure.interior.wall.cream", "structure.interior.wall.cream", "structure.interior.wall.cream", "structure.interior.wall.cream",
+        "structure.interior.column", "structure.interior.wall.window", "structure.interior.wall.cream", "structure.interior.wall.window", "structure.interior.wall.cream", "structure.interior.wall.window", "structure.interior.column",
+        "structure.interior.wall.wainscot", "structure.interior.wall.wainscot", "structure.interior.wall.wainscot", "structure.interior.wall.wainscot", "structure.interior.wall.wainscot", "structure.interior.wall.wainscot", "structure.interior.wall.wainscot",
+        "structure.interior.wall.base", "structure.interior.wall.base", "structure.interior.wall.base", "structure.interior.wall.base", "structure.interior.wall.base", "structure.interior.wall.base", "structure.interior.wall.base"
+      ]
+    },
+    {
+      "id": "furniture.interior.bookshelf.long",
+      "width": 10,
+      "height": 1,
+      "tiles": [
+        "prop.interior.bookshelf.left", "prop.interior.bookshelf.middle", "prop.interior.bookshelf.middle", "prop.interior.bookshelf.middle", "prop.interior.bookshelf.middle", "prop.interior.bookshelf.middle", "prop.interior.bookshelf.middle", "prop.interior.bookshelf.middle", "prop.interior.bookshelf.middle", "prop.interior.bookshelf.right"
+      ]
+    },
+    {
+      "id": "furniture.interior.desk.pair",
+      "width": 3,
+      "height": 1,
+      "tiles": [
+        "prop.interior.desk.front", "prop.interior.desk.front", "prop.interior.desk.side"
+      ]
+    },
+    {
+      "id": "building.dorm.miho",
+      "width": 11,
+      "height": 7,
+      "tiles": [
+        "building.dorm.roof.blue.left", "building.dorm.roof.blue.middle", "building.dorm.roof.blue.middle", "building.dorm.roof.blue.middle", "building.dorm.roof.blue.middle", "building.dorm.roof.blue.middle", "building.dorm.roof.blue.middle", "building.dorm.roof.blue.middle", "building.dorm.roof.blue.middle", "building.dorm.roof.blue.middle", "building.dorm.roof.blue.right",
+        "building.dorm.wall.trim", "building.dorm.wall.trim", "building.dorm.wall.trim", "building.dorm.wall.trim", "building.dorm.wall.trim", "building.dorm.wall.trim", "building.dorm.wall.trim", "building.dorm.wall.trim", "building.dorm.wall.trim", "building.dorm.wall.trim", "building.dorm.wall.trim",
+        "building.dorm.wall.cream", "building.dorm.window", "building.dorm.wall.cream", "building.dorm.window", "building.dorm.wall.cream", "building.dorm.window", "building.dorm.wall.cream", "building.dorm.window", "building.dorm.wall.cream", "building.dorm.window", "building.dorm.wall.cream",
+        "building.dorm.wall.cream", "building.dorm.balcony", "building.dorm.wall.cream", "building.dorm.balcony", "building.dorm.wall.cream", "building.dorm.balcony", "building.dorm.wall.cream", "building.dorm.balcony", "building.dorm.wall.cream", "building.dorm.balcony", "building.dorm.wall.cream",
+        "building.dorm.wall.cream", "building.dorm.window", "building.dorm.wall.cream", "building.dorm.window", "building.dorm.wall.cream", "building.dorm.window", "building.dorm.wall.cream", "building.dorm.window", "building.dorm.wall.cream", "building.dorm.window", "building.dorm.wall.cream",
+        "building.dorm.wall.cream", "building.dorm.balcony", "building.dorm.wall.cream", "building.dorm.balcony", "building.dorm.wall.cream", "building.dorm.balcony", "building.dorm.wall.cream", "building.dorm.balcony", "building.dorm.wall.cream", "building.dorm.balcony", "building.dorm.wall.cream",
+        "building.dorm.wall.cream", "building.dorm.wall.cream", "building.dorm.wall.cream", "building.dorm.wall.cream", "building.dorm.sign.miho", "building.dorm.entrance", "building.dorm.wall.cream", "building.dorm.wall.cream", "building.dorm.wall.cream", "building.dorm.wall.cream", "building.dorm.wall.cream"
+      ]
+    },
+    {
+      "id": "building.dorm.ritto",
+      "width": 11,
+      "height": 7,
+      "tiles": [
+        "building.dorm.roof.pink.left", "building.dorm.roof.pink.middle", "building.dorm.roof.pink.middle", "building.dorm.roof.pink.middle", "building.dorm.roof.pink.middle", "building.dorm.roof.pink.middle", "building.dorm.roof.pink.middle", "building.dorm.roof.pink.middle", "building.dorm.roof.pink.middle", "building.dorm.roof.pink.middle", "building.dorm.roof.pink.right",
+        "building.dorm.wall.trim", "building.dorm.wall.trim", "building.dorm.wall.trim", "building.dorm.wall.trim", "building.dorm.wall.trim", "building.dorm.wall.trim", "building.dorm.wall.trim", "building.dorm.wall.trim", "building.dorm.wall.trim", "building.dorm.wall.trim", "building.dorm.wall.trim",
+        "building.dorm.wall.cream", "building.dorm.window", "building.dorm.wall.cream", "building.dorm.window", "building.dorm.wall.cream", "building.dorm.window", "building.dorm.wall.cream", "building.dorm.window", "building.dorm.wall.cream", "building.dorm.window", "building.dorm.wall.cream",
+        "building.dorm.wall.cream", "building.dorm.balcony", "building.dorm.wall.cream", "building.dorm.balcony", "building.dorm.wall.cream", "building.dorm.balcony", "building.dorm.wall.cream", "building.dorm.balcony", "building.dorm.wall.cream", "building.dorm.balcony", "building.dorm.wall.cream",
+        "building.dorm.wall.cream", "building.dorm.window", "building.dorm.wall.cream", "building.dorm.window", "building.dorm.wall.cream", "building.dorm.window", "building.dorm.wall.cream", "building.dorm.window", "building.dorm.wall.cream", "building.dorm.window", "building.dorm.wall.cream",
+        "building.dorm.wall.cream", "building.dorm.balcony", "building.dorm.wall.cream", "building.dorm.balcony", "building.dorm.wall.cream", "building.dorm.balcony", "building.dorm.wall.cream", "building.dorm.balcony", "building.dorm.wall.cream", "building.dorm.balcony", "building.dorm.wall.cream",
+        "building.dorm.wall.cream", "building.dorm.wall.cream", "building.dorm.wall.cream", "building.dorm.wall.cream", "building.dorm.sign.ritto", "building.dorm.entrance", "building.dorm.wall.cream", "building.dorm.wall.cream", "building.dorm.wall.cream", "building.dorm.wall.cream", "building.dorm.wall.cream"
+      ]
+    },
+    {
+      "id": "building.dorm.laundry",
+      "width": 9,
+      "height": 4,
+      "tiles": [
+        "building.laundry.roof", "building.laundry.roof", "building.laundry.roof", "building.laundry.roof", "building.laundry.roof", "building.laundry.roof", "building.laundry.roof", "building.laundry.roof", "building.laundry.roof",
+        "building.laundry.wall", "building.laundry.window", "building.laundry.wall", "building.laundry.window", "building.laundry.wall", "building.laundry.window", "building.laundry.wall", "building.laundry.window", "building.laundry.wall",
+        "building.laundry.wall", "building.laundry.wall", "building.laundry.wall", "building.laundry.wall", "building.laundry.wall", "building.laundry.wall", "building.laundry.wall", "building.laundry.wall", "building.laundry.wall",
+        "building.laundry.wall", "building.laundry.window", "building.laundry.wall", "building.laundry.wall", "building.laundry.entrance", "building.laundry.wall", "building.laundry.wall", "building.laundry.window", "building.laundry.wall"
+      ]
+    },
+    {
+      "id": "structure.river.bridge.segment",
+      "width": 6,
+      "height": 1,
+      "tiles": [
+        "structure.river.bridge.rail", "structure.river.bridge.deck", "structure.river.bridge.deck", "structure.river.bridge.deck", "structure.river.bridge.deck", "structure.river.railing.vertical"
+      ]
+    }
+  ]
+}

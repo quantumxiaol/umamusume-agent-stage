@@ -1,0 +1,61 @@
+schema_version: map_scene_plan.v1
+scene_id: tracen_student_plaza
+display_name: 特雷森学生广场
+description: 学院中心的户外枢纽，连接校舍、训练场、餐厅与正门。
+size_tiles: { width: 48, height: 32 }
+source_tile_size: 16
+runtime_tile_size: 32
+surfaces:
+  - { tile: ground.grass.base, bounds: { x: 0, y: 0, width: 48, height: 32 } }
+  - { tile: ground.water.base, bounds: { x: 0, y: 0, width: 48, height: 4 } }
+  - { tile: ground.path.stone, bounds: { x: 0, y: 14, width: 48, height: 4 } }
+  - { tile: ground.path.stone, bounds: { x: 22, y: 4, width: 4, height: 28 } }
+  - { tile: ground.path.stone, bounds: { x: 16, y: 10, width: 16, height: 12 } }
+  - { tile: ground.path.stone, bounds: { x: 4, y: 11, width: 10, height: 3 } }
+tile_props:
+  - { tile: prop.tree.green, x: 3, y: 13, blocking: true }
+  - { tile: prop.tree.dark_green, x: 6, y: 20, blocking: true }
+  - { tile: prop.tree.green, x: 12, y: 24, blocking: true }
+  - { tile: prop.tree.dark_green, x: 37, y: 13, blocking: true }
+  - { tile: prop.tree.green, x: 43, y: 19, blocking: true }
+  - { tile: prop.shrub.berries, x: 18, y: 8, blocking: true }
+  - { tile: prop.shrub.green, x: 29, y: 8, blocking: true }
+  - { tile: prop.sign.direction, x: 26, y: 27, blocking: true }
+tile_stamps:
+  - { id: main_school_tiles, stamp: building.school.main, x: 3, y: 5 }
+  - { id: club_house_tiles, stamp: building.school.club, x: 34, y: 5 }
+  - { id: plaza_fountain_tiles, stamp: prop.fountain.central, x: 22, y: 13 }
+landmarks:
+  - { id: main_school, display_name: 主校舍, kind: building, render_mode: tile_stamp, bounds: { x: 3, y: 5, width: 11, height: 6 } }
+  - { id: club_house, display_name: 社团楼, kind: building, render_mode: tile_stamp, bounds: { x: 34, y: 5, width: 10, height: 6 } }
+  - { id: plaza_fountain, display_name: 中央喷泉, kind: fountain, render_mode: tile_stamp, bounds: { x: 22, y: 13, width: 4, height: 4 } }
+  - { id: training_ground_entrance, display_name: 训练场入口, kind: entrance, bounds: { x: 43, y: 12, width: 5, height: 9 } }
+collision:
+  - { x: 0, y: 0, width: 48, height: 4 }
+  - { x: 3, y: 5, width: 11, height: 6 }
+  - { x: 34, y: 5, width: 10, height: 6 }
+  - { x: 22, y: 13, width: 4, height: 4 }
+zones:
+  - { id: student_plaza, display_name: 学生广场, kind: plaza, bounds: { x: 16, y: 10, width: 16, height: 12 } }
+  - { id: training_access, display_name: 训练场通道, kind: transit, bounds: { x: 42, y: 14, width: 6, height: 4 } }
+anchors:
+  - { id: fountain_meeting, display_name: 喷泉会面点, position: { x: 24, y: 18 }, facing: up }
+  - { id: training_meeting, display_name: 训练场集合点, position: { x: 42, y: 18 }, facing: right }
+spawns:
+  - { id: trainer_start, position: { x: 24, y: 28 }, facing: up }
+  - { id: from_main_gate, position: { x: 24, y: 30 }, facing: up }
+  - { id: from_training_ground, position: { x: 46, y: 16 }, facing: left }
+  - { id: from_school_courtyard, position: { x: 8, y: 12 }, facing: down }
+  - { id: from_cafeteria_shops, position: { x: 1, y: 16 }, facing: right }
+  - { id: from_dormitory_life, position: { x: 1, y: 24 }, facing: right }
+portals:
+  - { id: to_school_courtyard, position: { x: 8, y: 11 }, target_scene_id: tracen_school_courtyard, target_spawn_id: from_student_plaza }
+  - { id: to_training_ground, position: { x: 47, y: 16 }, target_scene_id: tracen_training_ground, target_spawn_id: from_plaza }
+  - { id: to_cafeteria_shops, position: { x: 0, y: 16 }, target_scene_id: tracen_cafeteria_shops, target_spawn_id: from_student_plaza }
+  - { id: to_dormitory_life, position: { x: 0, y: 24 }, target_scene_id: tracen_dormitory_life, target_spawn_id: from_student_plaza }
+  - { id: to_academy_gate, position: { x: 24, y: 31 }, target_scene_id: tracen_academy_gate, target_spawn_id: from_student_plaza }
+activity_paths: []
+missing_tile_families:
+  - training_ground_entrance
+  - riverbank_and_railing
+  - campus_bench_and_vending_machine

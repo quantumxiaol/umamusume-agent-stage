@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "actor_id": "mihono_bourbon_race_outfit_v02",
+  "display_name": "Mihono Bourbon · 决胜服",
+  "outfit_id": "race_outfit",
+  "atlas": {
+    "image": "atlas.png",
+    "data": "atlas.json"
+  },
+  "render": {
+    "frame_width": 64,
+    "frame_height": 64,
+    "anchor_x": 32,
+    "anchor_y": 61,
+    "scale": 3
+  },
+  "movement": {
+    "speed_px_per_second": 96,
+    "idle_after_ms": 800
+  },
+  "default_direction": "down",
+  "animations": {
+    "stand": {
+      "fps": 1,
+      "loop": false,
+      "directions": {
+        "down": [
+          "stand/down/000"
+        ],
+        "left": [
+          "stand/left/000"
+        ],
+        "right": [
+          "stand/right/000"
+        ],
+        "up": [
+          "stand/up/000"
+        ]
+      },
+      "fallback": null
+    },
+    "walk": {
+      "fps": 8,
+      "loop": true,
+      "directions": {
+        "down": [
+          "walk/down/000",
+          "walk/down/001"
+        ],
+        "left": [
+          "walk/left/000",
+          "walk/left/001"
+        ],
+        "right": [
+          "walk/right/000",
+          "walk/right/001"
+        ],
+        "up": [
+          "walk/up/000",
+          "walk/up/001"
+        ]
+      },
+      "fallback": null
+    },
+    "idle": {
+      "fps": 2,
+      "loop": true,
+      "directions": {
+        "down": [
+          "idle/down/000",
+          "idle/down/001"
+        ],
+        "left": [
+          "idle/left/000",
+          "idle/left/001"
+        ],
+        "right": [
+          "idle/right/000",
+          "idle/right/001"
+        ],
+        "up": [
+          "idle/up/000",
+          "idle/up/001"
+        ]
+      },
+      "fallback": null
+    }
+  }
+}

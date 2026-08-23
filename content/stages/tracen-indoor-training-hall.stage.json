@@ -1,0 +1,22 @@
+{
+  "schema_version": "stage_definition.v1",
+  "stage_id": "indoor_training_hall_stage",
+  "display_name": "室内训练馆",
+  "scene_path": "scenes/tracen-indoor-training-hall/scene.json",
+  "actors": [
+    {
+      "instance_id": "trainer",
+      "bundle_id": "trainer",
+      "spawn_id": "trainer_start",
+      "control_owner": "player",
+      "player": true
+    },
+    {
+      "instance_id": "uma_admire_vega",
+      "bundle_id": "admire-vega-uniform",
+      "spawn_id": "from_training_ground",
+      "control_owner": "agent",
+      "player": false
+    }
+  ]
+}

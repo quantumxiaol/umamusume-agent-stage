@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "stage_definition.v1"
+    },
+    "stage_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_-]+$"
+    },
+    "display_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scene_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "actors": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "instance_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_-]+$"
+          },
+          "bundle_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_-]+$"
+          },
+          "spawn_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "control_owner": {
+            "type": "string",
+            "enum": [
+              "player",
+              "agent",
+              "script",
+              "system"
+            ]
+          },
+          "player": {
+            "default": false,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "instance_id",
+          "bundle_id",
+          "spawn_id",
+          "control_owner",
+          "player"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "stage_id",
+    "display_name",
+    "scene_path",
+    "actors"
+  ],
+  "additionalProperties": false
+}

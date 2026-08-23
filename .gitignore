@@ -1,0 +1,16 @@
+node_modules/
+.pnpm-store/
+dist/
+coverage/
+.vite/
+.map-work/
+.DS_Store
+*.log
+.venv/
+__pycache__/
+*.py[cod]
+
+# Local environment overrides
+.env
+.env.*
+!.env.example

@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "stage_registry.v1"
+    },
+    "default_definition_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stages": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "stage_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_-]+$"
+          },
+          "scene_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_-]+$"
+          },
+          "display_name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "definition_path": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "stage_id",
+          "scene_id",
+          "display_name",
+          "definition_path"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "default_definition_path",
+    "stages"
+  ],
+  "additionalProperties": false
+}

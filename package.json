@@ -1,0 +1,28 @@
+{
+  "name": "umamusume-agent-stage",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.20.0",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "dev": "pnpm build:content && pnpm --filter @uma-stage/web dev",
+    "build": "pnpm build:content && pnpm --filter @uma-stage/web build",
+    "build:content": "pnpm --filter @uma-stage/sceneweaver build:content",
+    "build:schemas": "pnpm --filter @uma-stage/contracts build:schemas",
+    "import:actor": "node --import tsx scripts/import-chibi-bundle.ts",
+    "sync:chibi-roster": "node --import tsx scripts/sync-chibi-roster.ts",
+    "sync:mapweaver": "node --import tsx scripts/sync-mapweaver.ts",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.scripts.json && pnpm -r typecheck",
+    "check": "pnpm build:content && pnpm build:schemas && pnpm typecheck && pnpm test && pnpm build"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "tsx": "4.20.6",
+    "typescript": "5.9.3",
+    "vitest": "4.1.10"
+  }
+}

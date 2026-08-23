@@ -1,0 +1,22 @@
+{
+  "schema_version": "stage_definition.v1",
+  "stage_id": "training_ground_stage",
+  "display_name": "综合训练场",
+  "scene_path": "scenes/tracen-training-ground/scene.json",
+  "actors": [
+    {
+      "instance_id": "trainer",
+      "bundle_id": "trainer",
+      "spawn_id": "trainer_start",
+      "control_owner": "player",
+      "player": true
+    },
+    {
+      "instance_id": "uma_admire_vega",
+      "bundle_id": "admire-vega-uniform",
+      "spawn_id": "from_plaza",
+      "control_owner": "agent",
+      "player": false
+    }
+  ]
+}

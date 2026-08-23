@@ -1,0 +1,15 @@
+{
+  "name": "@uma-stage/agent-client",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@uma-stage/contracts": "workspace:*"
+  }
+}

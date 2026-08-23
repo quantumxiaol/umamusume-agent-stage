@@ -1,0 +1,22 @@
+{
+  "schema_version": "stage_definition.v1",
+  "stage_id": "school_courtyard_stage",
+  "display_name": "校舍前庭",
+  "scene_path": "scenes/tracen-school-courtyard/scene.json",
+  "actors": [
+    {
+      "instance_id": "trainer",
+      "bundle_id": "trainer",
+      "spawn_id": "from_main_school",
+      "control_owner": "player",
+      "player": true
+    },
+    {
+      "instance_id": "uma_admire_vega",
+      "bundle_id": "admire-vega-uniform",
+      "spawn_id": "from_student_plaza",
+      "control_owner": "agent",
+      "player": false
+    }
+  ]
+}

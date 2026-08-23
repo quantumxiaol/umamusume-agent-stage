@@ -1,0 +1,359 @@
+{
+  "schema_version": "character_registry.v1",
+  "characters": [
+    {
+      "bundle_id": "admire-vega-race-outfit",
+      "actor_path": "characters/admire-vega-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "admire-vega-uniform",
+      "actor_path": "characters/admire-vega-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "almond-eye-race-outfit",
+      "actor_path": "characters/almond-eye-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "almond-eye-uniform",
+      "actor_path": "characters/almond-eye-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "aston-machan-race-outfit",
+      "actor_path": "characters/aston-machan-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "aston-machan-uniform",
+      "actor_path": "characters/aston-machan-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "cheval-grand-race-outfit",
+      "actor_path": "characters/cheval-grand-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "cheval-grand-uniform",
+      "actor_path": "characters/cheval-grand-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "chrono-genesis-race-outfit",
+      "actor_path": "characters/chrono-genesis-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "chrono-genesis-uniform",
+      "actor_path": "characters/chrono-genesis-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "curren-bouquetdor-race-outfit",
+      "actor_path": "characters/curren-bouquetdor-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "curren-bouquetdor-uniform",
+      "actor_path": "characters/curren-bouquetdor-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "curren-chan-race-outfit",
+      "actor_path": "characters/curren-chan-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "curren-chan-uniform",
+      "actor_path": "characters/curren-chan-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "daiwa-scarlet-race-outfit",
+      "actor_path": "characters/daiwa-scarlet-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "daiwa-scarlet-uniform",
+      "actor_path": "characters/daiwa-scarlet-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "gentildonna-race-outfit",
+      "actor_path": "characters/gentildonna-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "gentildonna-uniform",
+      "actor_path": "characters/gentildonna-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "grass-wonder-race-outfit",
+      "actor_path": "characters/grass-wonder-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "grass-wonder-uniform",
+      "actor_path": "characters/grass-wonder-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "kitasan-black-race-outfit",
+      "actor_path": "characters/kitasan-black-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "kitasan-black-uniform",
+      "actor_path": "characters/kitasan-black-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "loves-only-you-race-outfit",
+      "actor_path": "characters/loves-only-you-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "loves-only-you-uniform",
+      "actor_path": "characters/loves-only-you-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "manhattan-cafe-race-outfit",
+      "actor_path": "characters/manhattan-cafe-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "manhattan-cafe-uniform",
+      "actor_path": "characters/manhattan-cafe-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "mayano-top-gun-race-outfit",
+      "actor_path": "characters/mayano-top-gun-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "mayano-top-gun-uniform",
+      "actor_path": "characters/mayano-top-gun-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "mejiro-mcqueen-race-outfit",
+      "actor_path": "characters/mejiro-mcqueen-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "mejiro-mcqueen-uniform",
+      "actor_path": "characters/mejiro-mcqueen-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "mihono-bourbon-race-outfit",
+      "actor_path": "characters/mihono-bourbon-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "mihono-bourbon-uniform",
+      "actor_path": "characters/mihono-bourbon-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "neo-universe-race-outfit",
+      "actor_path": "characters/neo-universe-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "neo-universe-uniform",
+      "actor_path": "characters/neo-universe-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "nice-nature-race-outfit",
+      "actor_path": "characters/nice-nature-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "nice-nature-uniform",
+      "actor_path": "characters/nice-nature-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "rice-shower-race-outfit",
+      "actor_path": "characters/rice-shower-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "rice-shower-uniform",
+      "actor_path": "characters/rice-shower-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "satono-diamond-race-outfit",
+      "actor_path": "characters/satono-diamond-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "satono-diamond-uniform",
+      "actor_path": "characters/satono-diamond-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "silence-suzuka-race-outfit",
+      "actor_path": "characters/silence-suzuka-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "silence-suzuka-uniform",
+      "actor_path": "characters/silence-suzuka-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "smart-falcon-race-outfit",
+      "actor_path": "characters/smart-falcon-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "smart-falcon-uniform",
+      "actor_path": "characters/smart-falcon-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "special-week-race-outfit",
+      "actor_path": "characters/special-week-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "special-week-uniform",
+      "actor_path": "characters/special-week-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "still-in-love-race-outfit",
+      "actor_path": "characters/still-in-love-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "still-in-love-uniform",
+      "actor_path": "characters/still-in-love-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "tokai-teio-race-outfit",
+      "actor_path": "characters/tokai-teio-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "tokai-teio-uniform",
+      "actor_path": "characters/tokai-teio-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "trainer",
+      "actor_path": "characters/trainer/actor.json",
+      "role": "controller_avatar",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "verxina-race-outfit",
+      "actor_path": "characters/verxina-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "verxina-uniform",
+      "actor_path": "characters/verxina-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "victoire-pisa-race-outfit",
+      "actor_path": "characters/victoire-pisa-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "victoire-pisa-uniform",
+      "actor_path": "characters/victoire-pisa-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "vivlos-race-outfit",
+      "actor_path": "characters/vivlos-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "vivlos-uniform",
+      "actor_path": "characters/vivlos-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "win-variation-race-outfit",
+      "actor_path": "characters/win-variation-race-outfit/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    },
+    {
+      "bundle_id": "win-variation-uniform",
+      "actor_path": "characters/win-variation-uniform/actor.json",
+      "role": "character",
+      "animation_profile": "base20"
+    }
+  ]
+}

@@ -1,0 +1,173 @@
+schema_version: map_scene_plan.v1
+scene_id: tracen_cafeteria_shops
+display_name: 特雷森餐厅与商店区
+description: 开放式学院食堂、绿色咖啡区、校园小卖部和室外露台组成的生活服务中心。
+size_tiles: { width: 60, height: 40 }
+source_tile_size: 16
+runtime_tile_size: 32
+surfaces:
+  - { tile: ground.grass.base, bounds: { x: 0, y: 0, width: 60, height: 40 } }
+  - { tile: ground.interior.border.dark, bounds: { x: 0, y: 0, width: 60, height: 2 } }
+  - { tile: ground.interior.border.dark, bounds: { x: 0, y: 2, width: 2, height: 26 } }
+  - { tile: ground.interior.border.dark, bounds: { x: 58, y: 2, width: 2, height: 26 } }
+  - { tile: ground.dining.parquet, bounds: { x: 2, y: 6, width: 27, height: 22 } }
+  - { tile: ground.dining.tile.cream, bounds: { x: 29, y: 6, width: 3, height: 22 } }
+  - { tile: ground.shop.wood, bounds: { x: 32, y: 6, width: 26, height: 10 } }
+  - { tile: ground.cafe.tile.green, bounds: { x: 32, y: 16, width: 26, height: 12 } }
+  - { tile: ground.dining.carpet, bounds: { x: 3, y: 6, width: 25, height: 6 } }
+  - { tile: ground.shop.tile, bounds: { x: 33, y: 7, width: 24, height: 8 } }
+  - { tile: ground.cafe.tile.green, bounds: { x: 57, y: 19, width: 3, height: 3 } }
+  - { tile: ground.terrace.deck, bounds: { x: 2, y: 28, width: 56, height: 10 } }
+  - { tile: ground.terrace.paver, bounds: { x: 27, y: 28, width: 6, height: 12 } }
+  - { tile: ground.interior.border.dark, bounds: { x: 0, y: 39, width: 27, height: 1 } }
+  - { tile: ground.interior.border.dark, bounds: { x: 33, y: 39, width: 27, height: 1 } }
+tile_props:
+  - { tile: prop.dining.menu_board, x: 6, y: 6, blocking: true }
+  - { tile: prop.dining.menu_board, x: 14, y: 6, blocking: true }
+  - { tile: prop.dining.menu_board, x: 22, y: 6, blocking: true }
+  - { tile: structure.dining.serving_window, x: 4, y: 8, blocking: true }
+  - { tile: structure.dining.serving_window, x: 8, y: 8, blocking: true }
+  - { tile: structure.dining.serving_window, x: 12, y: 8, blocking: true }
+  - { tile: structure.dining.serving_window, x: 16, y: 8, blocking: true }
+  - { tile: structure.dining.serving_window, x: 20, y: 8, blocking: true }
+  - { tile: structure.dining.serving_window, x: 24, y: 8, blocking: true }
+  - { tile: structure.dining.counter, x: 4, y: 10, blocking: true }
+  - { tile: structure.dining.counter, x: 5, y: 10, blocking: true }
+  - { tile: structure.dining.counter, x: 6, y: 10, blocking: true }
+  - { tile: structure.dining.counter, x: 7, y: 10, blocking: true }
+  - { tile: structure.dining.counter, x: 8, y: 10, blocking: true }
+  - { tile: structure.dining.counter, x: 9, y: 10, blocking: true }
+  - { tile: structure.dining.counter, x: 10, y: 10, blocking: true }
+  - { tile: structure.dining.counter, x: 11, y: 10, blocking: true }
+  - { tile: structure.dining.counter, x: 12, y: 10, blocking: true }
+  - { tile: structure.dining.counter, x: 13, y: 10, blocking: true }
+  - { tile: structure.dining.counter, x: 14, y: 10, blocking: true }
+  - { tile: structure.dining.counter, x: 15, y: 10, blocking: true }
+  - { tile: structure.dining.counter, x: 16, y: 10, blocking: true }
+  - { tile: structure.dining.counter, x: 17, y: 10, blocking: true }
+  - { tile: structure.dining.counter, x: 18, y: 10, blocking: true }
+  - { tile: structure.dining.counter, x: 19, y: 10, blocking: true }
+  - { tile: structure.dining.counter, x: 20, y: 10, blocking: true }
+  - { tile: structure.dining.counter, x: 21, y: 10, blocking: true }
+  - { tile: structure.dining.counter, x: 22, y: 10, blocking: true }
+  - { tile: structure.dining.counter, x: 23, y: 10, blocking: true }
+  - { tile: structure.dining.counter, x: 24, y: 10, blocking: true }
+  - { tile: structure.dining.counter, x: 25, y: 10, blocking: true }
+  - { tile: structure.dining.counter, x: 26, y: 10, blocking: true }
+  - { tile: prop.dining.table.round, x: 6, y: 15, blocking: true }
+  - { tile: prop.dining.chair.green, x: 5, y: 17, blocking: true }
+  - { tile: prop.dining.chair.green, x: 7, y: 17, blocking: true }
+  - { tile: prop.dining.table.round, x: 14, y: 15, blocking: true }
+  - { tile: prop.dining.chair.green, x: 13, y: 17, blocking: true }
+  - { tile: prop.dining.chair.green, x: 15, y: 17, blocking: true }
+  - { tile: prop.dining.table.round, x: 22, y: 15, blocking: true }
+  - { tile: prop.dining.chair.green, x: 21, y: 17, blocking: true }
+  - { tile: prop.dining.chair.green, x: 23, y: 17, blocking: true }
+  - { tile: prop.dining.table.long, x: 6, y: 22, blocking: true }
+  - { tile: prop.dining.table.long, x: 12, y: 22, blocking: true }
+  - { tile: prop.dining.table.long, x: 18, y: 22, blocking: true }
+  - { tile: prop.dining.table.long, x: 24, y: 22, blocking: true }
+  - { tile: structure.shop.checkout, x: 34, y: 8, blocking: true }
+  - { tile: prop.shop.display, x: 36, y: 12, blocking: true }
+  - { tile: prop.shop.shelf, x: 40, y: 8, blocking: true }
+  - { tile: prop.shop.shelf, x: 44, y: 8, blocking: true }
+  - { tile: prop.shop.shelf, x: 48, y: 8, blocking: true }
+  - { tile: prop.shop.shelf, x: 52, y: 8, blocking: true }
+  - { tile: prop.shop.shelf, x: 40, y: 12, blocking: true }
+  - { tile: prop.shop.shelf, x: 44, y: 12, blocking: true }
+  - { tile: prop.shop.shelf, x: 48, y: 12, blocking: true }
+  - { tile: prop.shop.shelf, x: 52, y: 12, blocking: true }
+  - { tile: prop.shop.fridge, x: 56, y: 8, blocking: true }
+  - { tile: prop.shop.fridge, x: 56, y: 12, blocking: true }
+  - { tile: structure.cafe.counter, x: 34, y: 18, blocking: true }
+  - { tile: structure.cafe.counter, x: 35, y: 18, blocking: true }
+  - { tile: structure.cafe.counter, x: 36, y: 18, blocking: true }
+  - { tile: structure.cafe.counter, x: 37, y: 18, blocking: true }
+  - { tile: structure.cafe.counter, x: 38, y: 18, blocking: true }
+  - { tile: structure.cafe.counter, x: 39, y: 18, blocking: true }
+  - { tile: structure.cafe.counter, x: 40, y: 18, blocking: true }
+  - { tile: structure.cafe.counter, x: 41, y: 18, blocking: true }
+  - { tile: structure.cafe.counter, x: 42, y: 18, blocking: true }
+  - { tile: structure.cafe.counter, x: 43, y: 18, blocking: true }
+  - { tile: structure.cafe.counter, x: 44, y: 18, blocking: true }
+  - { tile: structure.cafe.counter, x: 45, y: 18, blocking: true }
+  - { tile: prop.cafe.booth.green, x: 34, y: 25, blocking: true }
+  - { tile: prop.cafe.table, x: 37, y: 23, blocking: true }
+  - { tile: prop.cafe.booth.green, x: 40, y: 25, blocking: true }
+  - { tile: prop.cafe.table, x: 43, y: 23, blocking: true }
+  - { tile: prop.cafe.booth.green, x: 46, y: 25, blocking: true }
+  - { tile: prop.cafe.table, x: 49, y: 23, blocking: true }
+  - { tile: prop.cafe.booth.green, x: 52, y: 25, blocking: true }
+  - { tile: prop.cafe.table, x: 55, y: 23, blocking: true }
+  - { tile: prop.terrace.umbrella, x: 7, y: 30, blocking: true }
+  - { tile: prop.terrace.table, x: 7, y: 33, blocking: true }
+  - { tile: prop.terrace.umbrella, x: 20, y: 30, blocking: true }
+  - { tile: prop.terrace.table, x: 20, y: 33, blocking: true }
+  - { tile: prop.terrace.umbrella, x: 40, y: 30, blocking: true }
+  - { tile: prop.terrace.table, x: 40, y: 33, blocking: true }
+  - { tile: prop.terrace.umbrella, x: 53, y: 30, blocking: true }
+  - { tile: prop.terrace.table, x: 53, y: 33, blocking: true }
+  - { tile: prop.terrace.sofa, x: 14, y: 35, blocking: true }
+  - { tile: prop.terrace.sofa, x: 24, y: 35, blocking: true }
+  - { tile: prop.terrace.sofa, x: 36, y: 35, blocking: true }
+  - { tile: prop.terrace.sofa, x: 46, y: 35, blocking: true }
+  - { tile: prop.interior.plant, x: 3, y: 27, blocking: true }
+  - { tile: prop.interior.plant, x: 56, y: 27, blocking: true }
+tile_stamps:
+  - { id: north_windows_1, stamp: structure.interior.wall.window_section, x: 2, y: 2 }
+  - { id: north_windows_2, stamp: structure.interior.wall.window_section, x: 9, y: 2 }
+  - { id: north_windows_3, stamp: structure.interior.wall.window_section, x: 16, y: 2 }
+  - { id: north_windows_4, stamp: structure.interior.wall.window_section, x: 23, y: 2 }
+  - { id: north_windows_5, stamp: structure.interior.wall.window_section, x: 30, y: 2 }
+  - { id: north_windows_6, stamp: structure.interior.wall.window_section, x: 37, y: 2 }
+  - { id: north_windows_7, stamp: structure.interior.wall.window_section, x: 44, y: 2 }
+  - { id: north_windows_8, stamp: structure.interior.wall.window_section, x: 51, y: 2 }
+landmarks:
+  - { id: academy_cafeteria, display_name: 学院食堂, kind: cafeteria, render_mode: tile_stamp, bounds: { x: 2, y: 6, width: 27, height: 22 } }
+  - { id: campus_shop, display_name: 校园小卖部, kind: shop, render_mode: tile_stamp, bounds: { x: 32, y: 6, width: 26, height: 10 } }
+  - { id: green_cafe, display_name: 绿色咖啡区, kind: cafe, render_mode: tile_stamp, bounds: { x: 32, y: 16, width: 26, height: 12 } }
+  - { id: outdoor_terrace, display_name: 室外休息露台, kind: terrace, render_mode: tile_stamp, bounds: { x: 2, y: 28, width: 56, height: 10 } }
+collision:
+  - { x: 0, y: 0, width: 60, height: 6 }
+  - { x: 0, y: 6, width: 2, height: 34 }
+  - { x: 58, y: 6, width: 2, height: 13 }
+  - { x: 58, y: 22, width: 2, height: 18 }
+  - { x: 2, y: 39, width: 25, height: 1 }
+  - { x: 33, y: 39, width: 25, height: 1 }
+zones:
+  - { id: cafeteria, display_name: 学院食堂, kind: dining, bounds: { x: 2, y: 6, width: 27, height: 22 } }
+  - { id: campus_shop, display_name: 校园小卖部, kind: shop, bounds: { x: 32, y: 6, width: 26, height: 10 } }
+  - { id: green_cafe, display_name: 绿色咖啡区, kind: cafe, bounds: { x: 32, y: 16, width: 26, height: 12 } }
+  - { id: outdoor_terrace, display_name: 室外休息露台, kind: outdoor_rest, bounds: { x: 2, y: 28, width: 56, height: 10 } }
+anchors:
+  - { id: meal_pickup, display_name: 食堂取餐点, position: { x: 15, y: 12 }, facing: up }
+  - { id: lunch_meeting, display_name: 食堂聚餐点, position: { x: 14, y: 20 }, facing: down }
+  - { id: shop_checkout, display_name: 小卖部结账点, position: { x: 34, y: 10 }, facing: up }
+  - { id: cafe_meeting, display_name: 咖啡区会面点, position: { x: 48, y: 21 }, facing: down }
+  - { id: terrace_meeting, display_name: 露台休息点, position: { x: 30, y: 33 }, facing: down }
+spawns:
+  - { id: from_student_plaza, position: { x: 57, y: 20 }, facing: left }
+  - { id: cafeteria_start, position: { x: 30, y: 26 }, facing: up }
+portals:
+  - { id: to_student_plaza, position: { x: 59, y: 20 }, target_scene_id: tracen_student_plaza, target_spawn_id: from_cafeteria_shops }
+activity_paths:
+  - id: lunch_service_route
+    activity_id: cafeteria_service
+    loop: true
+    points: [{ x: 28, y: 12 }, { x: 3, y: 12 }, { x: 3, y: 26 }, { x: 28, y: 26 }]
+  - id: shop_browsing_route
+    activity_id: shopping
+    loop: false
+    points: [{ x: 33, y: 14 }, { x: 56, y: 14 }]
+  - id: terrace_walk
+    activity_id: outdoor_break
+    loop: true
+    points: [{ x: 3, y: 29 }, { x: 56, y: 29 }, { x: 56, y: 37 }, { x: 3, y: 37 }]
+visual_references:
+  - { catalog_id: cafeteria_day, usage: 暖木拼花地板、砖红与深木取餐区 }
+  - { catalog_id: convenience_store_interior, usage: 浅木货架、玻璃冷柜和开放结账区 }
+  - { catalog_id: cafe_lounge, usage: 奶油黄空间与绿色软座 }
+  - { catalog_id: terrace_cafe_day, usage: 木平台、白色遮阳伞和粉色学院装饰 }
+  - { catalog_id: green_cafe_interior, usage: 绿色座椅、木桌和整齐通道 }
+missing_tile_families:
+  - branded_vending_machine_and_multi_tile_circular_cafeteria_canopy

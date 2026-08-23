@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "character_registry.v1"
+    },
+    "characters": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "bundle_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_-]+$"
+          },
+          "actor_path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "character",
+              "controller_avatar"
+            ]
+          },
+          "animation_profile": {
+            "type": "string",
+            "enum": [
+              "base20",
+              "fallback"
+            ]
+          }
+        },
+        "required": [
+          "bundle_id",
+          "actor_path",
+          "role",
+          "animation_profile"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "characters"
+  ],
+  "additionalProperties": false
+}
