@@ -6,6 +6,7 @@ import {
   type AgentLiveStage,
   type AgentStageAction,
   type AgentStageActorBinding,
+  type AgentStageEvent,
   type AgentStageTurnResponse,
   type StageCommand,
 } from "@uma-stage/contracts";
@@ -206,6 +207,64 @@ export function stageActionToCommand(
     return stageCommandSchema.parse({ ...base, type: action.type, text: action.text });
   }
   return stageCommandSchema.parse({ ...base, type: action.type });
+}
+
+/**
+ * Keep live roleplay playable across Agent deployments that do or do not
+ * already append dialogue.say actions for character replies.
+ *
+ * StageSceneService currently supplies these actions server-side. The client
+ * still reconciles the response because a visible reply without a speech
+ * command would otherwise silently disappear from the stage.
+ */
+export function reconcileStageTurnActions(
+  response: Pick<AgentStageTurnResponse, "events" | "stage_actions">,
+  actorBindings: AgentStageActorBinding[],
+): AgentStageAction[] {
+  const stageActorByAgentActor = new Map(
+    actorBindings.map((binding) => [binding.agent_actor_id, binding.stage_actor_id]),
+  );
+  const actions = [...response.stage_actions];
+  const availableDialogueActions = countDialogueActions(actions);
+
+  for (const event of response.events) {
+    const fallback = replyToDialogueAction(event, stageActorByAgentActor);
+    if (!fallback) continue;
+    const key = dialogueActionKey(fallback.actor_id, fallback.text);
+    const available = availableDialogueActions.get(key) ?? 0;
+    if (available > 0) {
+      availableDialogueActions.set(key, available - 1);
+      continue;
+    }
+    actions.push(fallback);
+  }
+  return actions;
+}
+
+function replyToDialogueAction(
+  event: AgentStageEvent,
+  stageActorByAgentActor: Map<string, string>,
+): Extract<AgentStageAction, { type: "dialogue.say" }> | null {
+  if (event.event_type !== "character_reply" || !event.actor) return null;
+  const text = event.dialogue.trim() || event.content.trim();
+  if (!text) return null;
+  const actorId = stageActorByAgentActor.get(event.actor.actor_id);
+  if (!actorId) return null;
+  return { type: "dialogue.say", actor_id: actorId, text };
+}
+
+function countDialogueActions(actions: AgentStageAction[]): Map<string, number> {
+  const counts = new Map<string, number>();
+  for (const action of actions) {
+    if (action.type !== "dialogue.say") continue;
+    const key = dialogueActionKey(action.actor_id, action.text);
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+  return counts;
+}
+
+function dialogueActionKey(actorId: string, text: string): string {
+  return `${actorId}\u0000${text.trim()}`;
 }
 
 async function readPayload(response: Response): Promise<unknown> {

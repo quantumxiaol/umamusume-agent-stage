@@ -1,6 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { AgentApiClient, stageActionToCommand } from "./index";
+import {
+  AgentApiClient,
+  reconcileStageTurnActions,
+  stageActionToCommand,
+} from "./index";
 
 describe("AgentApiClient", () => {
   it("uses the API key and creates a stage session", async () => {
@@ -116,5 +120,71 @@ describe("stageActionToCommand", () => {
       source: "agent",
       policy: "replace",
     });
+  });
+});
+
+describe("reconcileStageTurnActions", () => {
+  const reply = {
+    event_id: "event-1",
+    sequence: 1,
+    event_type: "character_reply",
+    content: "嗯，走吧。",
+    dialogue: "嗯，走吧。",
+    action: "轻轻点头",
+    actor: {
+      actor_id: "agent-admire-vega",
+      display_name: "爱慕织姬",
+    },
+  };
+  const bindings = [
+    {
+      agent_actor_id: "agent-admire-vega",
+      stage_actor_id: "uma_admire_vega",
+    },
+  ];
+
+  it("adds a speech action when an older Agent response only contains the reply event", () => {
+    expect(
+      reconcileStageTurnActions(
+        {
+          events: [reply],
+          stage_actions: [
+            {
+              type: "actor.approach",
+              actor_id: "uma_admire_vega",
+              target_actor_id: "trainer",
+              distance_tiles: 1,
+            },
+          ],
+        },
+        bindings,
+      ),
+    ).toEqual([
+      {
+        type: "actor.approach",
+        actor_id: "uma_admire_vega",
+        target_actor_id: "trainer",
+        distance_tiles: 1,
+      },
+      {
+        type: "dialogue.say",
+        actor_id: "uma_admire_vega",
+        text: "嗯，走吧。",
+      },
+    ]);
+  });
+
+  it("does not duplicate speech already appended by StageSceneService", () => {
+    const speech = {
+      type: "dialogue.say" as const,
+      actor_id: "uma_admire_vega",
+      text: "嗯，走吧。",
+    };
+    expect(
+      reconcileStageTurnActions(
+        { events: [reply], stage_actions: [speech] },
+        bindings,
+      ),
+    ).toEqual([speech]);
   });
 });

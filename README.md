@@ -95,7 +95,7 @@ schemas/                  从 Zod 生成的 JSON Schema
 docs/                     架构、内容管线与迁移说明
 ```
 
-设计边界见 [`docs/architecture.md`](docs/architecture.md)，共享短剧格式与 anime 联动见 [`docs/performance-script.md`](docs/performance-script.md)，角色与地图制作见 [`docs/content-pipeline.md`](docs/content-pipeline.md)。
+设计边界见 [`docs/architecture.md`](docs/architecture.md)，共享短剧格式与 anime 联动见 [`docs/performance-script.md`](docs/performance-script.md)，地图覆盖与建图顺序见 [`docs/map-coverage.md`](docs/map-coverage.md)，角色与地图制作见 [`docs/content-pipeline.md`](docs/content-pipeline.md)。
 
 ## 版权声明
 

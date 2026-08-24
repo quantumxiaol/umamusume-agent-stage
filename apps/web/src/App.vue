@@ -4,6 +4,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import {
   AgentApiClient,
   AgentApiError,
+  reconcileStageTurnActions,
   stageActionToCommand,
 } from "@uma-stage/agent-client";
 import {
@@ -20,6 +21,7 @@ import {
   type CharacterPack,
   type CharacterRegistry,
   type AgentStageAction,
+  type AgentStageEvent,
   type PerformanceCue,
   type PerformanceScript,
   type ScenePack,
@@ -78,6 +80,13 @@ interface ConversationLine {
   speaker: string;
   text: string;
   kind: "trainer" | "character" | "action" | "command" | "narrator" | "system";
+}
+
+interface PendingAgentReply {
+  event: AgentStageEvent;
+  stageActorId: string | null;
+  actionShown: boolean;
+  dialogueShown: boolean;
 }
 
 interface FollowBinding {
@@ -855,37 +864,39 @@ async function sendAgentMessage(): Promise<void> {
       })),
       liveStage,
     });
+    const pendingReplies: PendingAgentReply[] = result.events.flatMap((event) => {
+      if (event.event_type !== "character_reply") return [];
+      const actorBinding = session.actors.find(
+        (candidate) => candidate.agentActorId === event.actor?.actor_id,
+      );
+      return [{
+        event,
+        stageActorId: actorBinding?.stageActorId ?? null,
+        actionShown: false,
+        dialogueShown: false,
+      }];
+    });
     for (const event of result.events) {
-      if (event.event_type === "character_reply") {
-        if (event.action) {
-          pushConversation(
-            "action",
-            event.actor?.display_name ?? activeCharacterName.value,
-            event.action,
-          );
-        }
-        pushConversation(
-          "character",
-          event.actor?.display_name ?? activeCharacterName.value,
-          event.dialogue || event.content,
-        );
-      } else if (event.event_type === "narration" || event.event_type === "scene_change") {
+      if (event.event_type === "narration" || event.event_type === "scene_change") {
         pushConversation("narrator", "环境", event.content);
       }
     }
-    for (const action of result.stage_actions) {
-      pushConversation("command", "StageCommand", formatAgentAction(action));
-    }
+    const actions = reconcileStageTurnActions(result, session.actors.map((actorBinding) => ({
+      agent_actor_id: actorBinding.agentActorId,
+      stage_actor_id: actorBinding.stageActorId,
+    })));
     if (activeRuntime !== runtime) {
       throw new Error("Agent 返回期间舞台已切换，请重新发送本轮消息");
     }
     const boundStageActorIds = new Set(
       session.actors.map((actorBinding) => actorBinding.stageActorId),
     );
-    for (const action of result.stage_actions) {
+    for (const action of actions) {
       if (!boundStageActorIds.has(action.actor_id)) {
         throw new Error(`Agent 返回了未绑定角色动作：${action.actor_id}`);
       }
+      pushConversation("command", "StageCommand", formatAgentAction(action));
+      revealReplyForAgentAction(pendingReplies, action);
       const state = activeRuntime
         .snapshot()
         .actors.find((candidate) => candidate.actor_id === action.actor_id);
@@ -894,13 +905,76 @@ async function sendAgentMessage(): Promise<void> {
       }
       const command = stageActionToCommand(action, nextCommandId("agent"));
       const commandResult = await activeRuntime.execute(command).completion;
-      if (commandResult.status !== "completed") describeResult(commandResult);
+      if (commandResult.status !== "completed") {
+        throw new Error(
+          `舞台动作执行失败（${formatAgentAction(action)}）：${commandResult.status}` +
+          `${commandResult.error?.message ? ` · ${commandResult.error.message}` : ""}`,
+        );
+      }
     }
+    revealPendingAgentReplies(pendingReplies);
     agentStatus.value = "connected";
-    agentStatusMessage.value = `第 ${result.turn_index} 轮完成 · ${result.stage_actions.length} 条舞台动作`;
+    agentStatusMessage.value = `第 ${result.turn_index} 轮完成 · ${actions.length} 条舞台动作`;
   } catch (error) {
     agentStatus.value = "error";
     agentStatusMessage.value = errorMessage(error);
+  }
+}
+
+function revealReplyForAgentAction(
+  replies: PendingAgentReply[],
+  action: AgentStageAction,
+): void {
+  if (action.type === "dialogue.say") {
+    const normalizedText = action.text.trim();
+    const reply =
+      replies.find(
+        (candidate) =>
+          !candidate.dialogueShown &&
+          candidate.stageActorId === action.actor_id &&
+          (candidate.event.dialogue.trim() || candidate.event.content.trim()) === normalizedText,
+      ) ??
+      replies.find(
+        (candidate) =>
+          !candidate.dialogueShown && candidate.stageActorId === action.actor_id,
+      );
+    if (!reply) return;
+    revealAgentReplyAction(reply);
+    pushConversation(
+      "character",
+      reply.event.actor?.display_name ?? activeCharacterName.value,
+      reply.event.dialogue || reply.event.content,
+    );
+    reply.dialogueShown = true;
+    return;
+  }
+
+  const reply = replies.find(
+    (candidate) => !candidate.actionShown && candidate.stageActorId === action.actor_id,
+  );
+  if (reply) revealAgentReplyAction(reply);
+}
+
+function revealAgentReplyAction(reply: PendingAgentReply): void {
+  if (reply.actionShown || !reply.event.action.trim()) return;
+  pushConversation(
+    "action",
+    reply.event.actor?.display_name ?? activeCharacterName.value,
+    reply.event.action,
+  );
+  reply.actionShown = true;
+}
+
+function revealPendingAgentReplies(replies: PendingAgentReply[]): void {
+  for (const reply of replies) {
+    revealAgentReplyAction(reply);
+    if (reply.dialogueShown) continue;
+    pushConversation(
+      "character",
+      reply.event.actor?.display_name ?? activeCharacterName.value,
+      reply.event.dialogue || reply.event.content,
+    );
+    reply.dialogueShown = true;
   }
 }
 
