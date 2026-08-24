@@ -4,6 +4,7 @@ export * from "./character-pack";
 export * from "./character-agent-mapping";
 export * from "./character-registry";
 export * from "./common";
+export * from "./performance-script";
 export * from "./scene-pack";
 export * from "./stage-command";
 export * from "./stage-definition";

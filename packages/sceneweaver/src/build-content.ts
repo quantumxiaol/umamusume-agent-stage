@@ -6,6 +6,7 @@ import {
   characterAgentMappingSchema,
   characterPackSchema,
   characterRegistrySchema,
+  performanceScriptSchema,
   scenePackSchema,
   stageDefinitionSchema,
   stageRegistrySchema,
@@ -130,6 +131,13 @@ const stageFiles = (await readdir(stagesDirectory, { withFileTypes: true })).fil
   (entry) => entry.isFile() && entry.name.endsWith(".stage.json"),
 );
 const scenesById = new Map<string, ReturnType<typeof scenePackSchema.parse>>();
+const stagesById = new Map<
+  string,
+  {
+    stage: ReturnType<typeof stageDefinitionSchema.parse>;
+    scene: ReturnType<typeof scenePackSchema.parse>;
+  }
+>();
 for (const registryEntry of stageRegistry.stages) {
   const stagePath = resolveContentPath(registryEntry.definition_path);
   const stage = stageDefinitionSchema.parse(
@@ -148,6 +156,7 @@ for (const registryEntry of stageRegistry.stages) {
     );
   }
   scenesById.set(scene.scene_id, scene);
+  stagesById.set(stage.stage_id, { stage, scene });
   const spawnIds = new Set(scene.spawns.map((spawn) => spawn.id));
   const spawnById = new Map(scene.spawns.map((spawn) => [spawn.id, spawn]));
   const assignedSpawnPositions = new Map<string, string>();
@@ -199,6 +208,92 @@ for (const scene of scenesById.values()) {
       );
     }
   }
+}
+
+const performanceDirectory = resolve(contentRoot, "performances");
+const performanceFiles = (await readdir(performanceDirectory, { withFileTypes: true })).filter(
+  (entry) => entry.isFile() && entry.name.endsWith(".performance.json"),
+);
+const mappedCharacterIds = new Set(
+  agentMapping.characters.map((mapping) => mapping.character_id),
+);
+for (const entry of performanceFiles) {
+  const performancePath = resolve(performanceDirectory, entry.name);
+  const performance = performanceScriptSchema.parse(
+    JSON.parse(await readFile(performancePath, "utf8")) as unknown,
+  );
+  for (const member of performance.cast) {
+    if (member.character_id === "trainer") {
+      if (member.outfit_id !== "default") {
+        throw new Error(
+          `Performance ${performance.performance_id} trainer outfit must be default`,
+        );
+      }
+    } else {
+      if (!mappedCharacterIds.has(member.character_id)) {
+        throw new Error(
+          `Performance ${performance.performance_id} references unmapped character: ${member.character_id}`,
+        );
+      }
+      if (member.outfit_id !== "uniform" && member.outfit_id !== "race_outfit") {
+        throw new Error(
+          `Performance ${performance.performance_id} has unsupported Stage outfit: ${member.character_id}/${member.outfit_id}`,
+        );
+      }
+    }
+  }
+  for (const performanceScene of performance.scenes) {
+    const resolvedStage = stagesById.get(performanceScene.stage_id);
+    if (!resolvedStage) {
+      throw new Error(
+        `Performance ${performance.performance_id} references unknown stage: ${performanceScene.stage_id}`,
+      );
+    }
+    const { scene } = resolvedStage;
+    const spawnIds = new Set(scene.spawns.map((spawn) => spawn.id));
+    const anchorIds = new Set(scene.anchors.map((anchor) => anchor.id));
+    const zoneIds = new Set(scene.zones.map((zone) => zone.id));
+    const activityPathIds = new Set(scene.activity_paths.map((path) => path.id));
+    for (const placement of performanceScene.placements) {
+      if (placement.spawn_id && !spawnIds.has(placement.spawn_id)) {
+        throw new Error(
+          `Performance ${performance.performance_id}/${performanceScene.scene_id} references unknown spawn: ${placement.spawn_id}`,
+        );
+      }
+    }
+    for (const beat of performanceScene.beats) {
+      for (const cue of beat.cues) {
+        if (
+          cue.type === "actor.move_to" &&
+          cue.target.type === "anchor" &&
+          !anchorIds.has(cue.target.anchor_id)
+        ) {
+          throw new Error(
+            `Performance cue ${cue.cue_id} references unknown anchor: ${cue.target.anchor_id}`,
+          );
+        }
+        if (
+          cue.type === "actor.follow_activity_path" &&
+          !activityPathIds.has(cue.activity_path_id)
+        ) {
+          throw new Error(
+            `Performance cue ${cue.cue_id} references unknown activity path: ${cue.activity_path_id}`,
+          );
+        }
+        if (cue.type === "camera.focus_anchor" && !anchorIds.has(cue.anchor_id)) {
+          throw new Error(
+            `Performance cue ${cue.cue_id} references unknown anchor: ${cue.anchor_id}`,
+          );
+        }
+        if (cue.type === "camera.focus_zone" && !zoneIds.has(cue.zone_id)) {
+          throw new Error(
+            `Performance cue ${cue.cue_id} references unknown zone: ${cue.zone_id}`,
+          );
+        }
+      }
+    }
+  }
+  console.log(`Validated performance ${performance.performance_id}: ${performancePath}`);
 }
 
 const world = worldPackSchema.parse(

@@ -11,8 +11,10 @@
 - 大地图使用边界约束的 0.8 倍跟随相机与小地图；镜头可跟随训练员/角色、固定在 Anchor/Zone 或切到场景总览；
 - `WorldNavigation` 可根据实际 Portal 图规划跨地图最短路线，并返回每一步出口坐标与目标 spawn；
 - 用 `StageRegistry + StageDefinition` 决定场景、角色实例、控制权和出生点，不在 Vue 中硬编码内容；
+- 网页可动态组成 1–4 名角色的 cast，每名角色独立选择制服/决胜服、接受命令和切换观察镜头；同一首选 spawn 会自动扩展为就近编队站位，地图只有 2 个显式 spawn 时也能容纳训练员与 4 名角色；
 - 玩家可用 WASD / 方向键行走，Agent 可前往 Anchor、接近或持续跟随实时 Actor、停止跟随、转向、沿活动路径行动、说话和停止；
 - 浏览器可直接连接本地或 HF Space 上的 `umamusume-agent /stage/*`，把返回的 tool-call 数据转换成 `StageCommand`；
+- `PerformanceScript v1` 用同一份 JSON 描述 cast、场景、并行 beat、角色行动、对白、字幕/音频提示和镜头；网页已可回放示例短剧，构建期会交叉检查角色、舞台、spawn、anchor、zone 与 activity path；
 
 ## 启动
 
@@ -36,7 +38,9 @@ UMAMUSUME_AGENT_API_ACCESS_KEY=与 Agent 后端 API_ACCESS_KEY 相同
 pnpm dev
 ```
 
-打开 `http://127.0.0.1:4173/`。网页会读取仓库根目录的 `.env`，自动连接 Agent，并为当前选择的角色创建单角色 Stage 会话；切换角色时会自动创建对应的新会话。Agent 不可用时，角色切换、制服/决胜服、地图移动、寻路、ActivityPath 和 Portal 仍可单独测试。
+打开 `http://127.0.0.1:4173/`。网页会读取仓库根目录的 `.env`，自动连接 Agent，并为当前 cast 创建一个多人 Stage 会话；增删或更换角色时会自动创建对应的新会话。默认 cast 是爱慕织姬与杏目，可扩展到 4 名角色。Agent 不可用时，cast、制服/决胜服、地图移动、寻路、ActivityPath、Portal 和 JSON 短剧回放仍可单独测试。
+
+点击“运行 JSON 短剧”会回放 [`content/performances/fountain-meeting.performance.json`](content/performances/fountain-meeting.performance.json)。该示例验证并行走位、任务等待、镜头 cue、对白和演出结束后的控制权归还。
 
 完整校验：
 
@@ -71,7 +75,7 @@ pnpm sync:mapweaver -- ../chibi_weaver/map-lab
 
 前端的 `@uma-stage/agent-client` 负责 HTTP 与响应校验；浏览器将 `AgentStageAction` 转成严格 `StageCommand`，按顺序等待完成。Agent 不保存角色坐标，也不直接操作 Phaser。
 
-单角色 Stage 会话仍保留 Director：角色模型先按原有角色设定生成语言动作与对白，Director 再结合训练员输入、角色回复、场景语义和实时 `live_stage` 生成结构化舞台动作。单角色时只省略“选择哪位角色发言”这一步，不跳过动作导演。多人会话则继续由 Director 同时负责发言调度和舞台动作规划。
+单角色 Stage 会话仍保留 Director：角色模型先按原有角色设定生成语言动作与对白，Director 再结合训练员输入、角色回复、场景语义和实时 `live_stage` 生成结构化舞台动作。单角色时只省略“选择哪位角色发言”这一步，不跳过动作导演。多人 cast 会一次性提交全部 `target_actor_ids` 和 actor bindings，由 Director 同时负责发言调度和各角色舞台动作规划；前端拒绝执行任何未绑定 actor 的返回动作。
 
 相对角色移动使用 `actor.approach(target_actor_id)`；例如“爱织到我这来”只会走近训练员一次。需要在训练员继续移动后仍追踪时使用 `actor.follow(target_actor_id)`，直到 `actor.stop_follow`、`actor.stop` 或其他移动命令替换它。去喷泉、长椅等固定地点才使用 `actor.move_to(anchor_id)`，Agent 不生成或猜测地图坐标。
 
@@ -83,7 +87,7 @@ GitHub Pages 没有保密执行环境。`UMAMUSUME_AGENT_API_ACCESS_KEY` 即使�
 apps/web/                 Vue 3 外壳、舞台选择与观察面板
 packages/agent-client/    umamusume-agent /stage HTTP 客户端与动作转换
 packages/contracts/       Character/Scene/Stage/Command/CameraCue 的唯一契约
-packages/core/            权威 StageRuntime、场内 A* 与跨 Scene 路线规划
+packages/core/            权威 StageRuntime、cast/剧本编译、场内 A* 与跨 Scene 路线规划
 packages/renderer-phaser/ Phaser 4 瓦片渲染、相机、小地图与输入适配器
 packages/sceneweaver/     ScenePack 编译与内容交叉校验
 content/                  角色、场景、舞台和世界内容包
@@ -91,7 +95,7 @@ schemas/                  从 Zod 生成的 JSON Schema
 docs/                     架构、内容管线与迁移说明
 ```
 
-设计边界见 [`docs/architecture.md`](docs/architecture.md)，角色与地图制作见 [`docs/content-pipeline.md`](docs/content-pipeline.md)。
+设计边界见 [`docs/architecture.md`](docs/architecture.md)，共享短剧格式与 anime 联动见 [`docs/performance-script.md`](docs/performance-script.md)，角色与地图制作见 [`docs/content-pipeline.md`](docs/content-pipeline.md)。
 
 ## 版权声明
 

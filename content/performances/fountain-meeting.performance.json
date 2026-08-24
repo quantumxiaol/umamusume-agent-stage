@@ -1,0 +1,160 @@
+{
+  "schema_version": "performance_script.v1",
+  "performance_id": "fountain_meeting",
+  "title": "喷泉旁的会面",
+  "description": "用于验证多人并行动作、任务等待、角色对白和镜头 cue 的最小短剧。",
+  "cast": [
+    {
+      "role_id": "trainer",
+      "character_id": "trainer",
+      "display_name": "训练员",
+      "outfit_id": "default",
+      "render_hints": {
+        "anime_sprite": "characters/Trainer/Trainer.png",
+        "anime_scale": 0.72
+      }
+    },
+    {
+      "role_id": "admire_vega",
+      "character_id": "admire_vega",
+      "display_name": "爱慕织姬",
+      "outfit_id": "uniform",
+      "render_hints": {
+        "anime_sprite": "characters/admire_vega/JSF_Admire-Vega.png",
+        "anime_scale": 0.82
+      }
+    },
+    {
+      "role_id": "almond_eye",
+      "character_id": "almond_eye",
+      "display_name": "杏目",
+      "outfit_id": "uniform",
+      "render_hints": {
+        "anime_sprite": "characters/almond_eye/JSF_Almond-Eye.png",
+        "anime_scale": 0.82
+      }
+    }
+  ],
+  "scenes": [
+    {
+      "scene_id": "student_plaza_opening",
+      "stage_id": "student_plaza_stage",
+      "placements": [
+        {
+          "role_id": "trainer",
+          "spawn_id": "trainer_start",
+          "facing": "up",
+          "anime_slot": "center"
+        },
+        {
+          "role_id": "admire_vega",
+          "spawn_id": "from_main_gate",
+          "facing": "up",
+          "anime_slot": "left"
+        },
+        {
+          "role_id": "almond_eye",
+          "spawn_id": "from_main_gate",
+          "facing": "up",
+          "anime_slot": "right"
+        }
+      ],
+      "render_hints": {
+        "anime_background": "academy_courtyard_fountain_day"
+      },
+      "beats": [
+        {
+          "beat_id": "establishing_shot",
+          "cues": [
+            {
+              "cue_id": "show_plaza",
+              "type": "camera.overview"
+            },
+            {
+              "cue_id": "hold_plaza",
+              "type": "stage.wait",
+              "duration_ms": 800
+            }
+          ]
+        },
+        {
+          "beat_id": "parallel_entrance",
+          "cues": [
+            {
+              "cue_id": "vega_to_fountain",
+              "type": "actor.move_to",
+              "role_id": "admire_vega",
+              "target": {
+                "type": "anchor",
+                "anchor_id": "fountain_meeting"
+              }
+            },
+            {
+              "cue_id": "almond_to_training_path",
+              "type": "actor.move_to",
+              "role_id": "almond_eye",
+              "target": {
+                "type": "anchor",
+                "anchor_id": "training_meeting"
+              }
+            },
+            {
+              "cue_id": "follow_vega",
+              "type": "camera.follow_actor",
+              "role_id": "admire_vega",
+              "zoom": 0.8
+            }
+          ],
+          "wait_for": "all",
+          "hold_ms": 250
+        },
+        {
+          "beat_id": "vega_greeting",
+          "cues": [
+            {
+              "cue_id": "focus_vega",
+              "type": "camera.focus_actor",
+              "role_id": "admire_vega",
+              "zoom": 1
+            },
+            {
+              "cue_id": "vega_speaks",
+              "type": "dialogue.say",
+              "role_id": "admire_vega",
+              "text": "训练员，我到了。",
+              "spoken_text": "トレーナー、来たわ。",
+              "subtitle_ja": "トレーナー、来たわ。",
+              "subtitle_zh": "训练员，我到了。",
+              "duration_ms": 2200
+            }
+          ]
+        },
+        {
+          "beat_id": "almond_joins",
+          "cues": [
+            {
+              "cue_id": "almond_approaches_trainer",
+              "type": "actor.move_to",
+              "role_id": "almond_eye",
+              "target": {
+                "type": "actor",
+                "role_id": "trainer",
+                "distance_tiles": 2
+              }
+            },
+            {
+              "cue_id": "almond_speaks_while_walking",
+              "type": "dialogue.say",
+              "role_id": "almond_eye",
+              "text": "看来我没有迟到。",
+              "spoken_text": "間に合ったようね。",
+              "subtitle_ja": "間に合ったようね。",
+              "subtitle_zh": "看来我没有迟到。",
+              "duration_ms": 2400
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

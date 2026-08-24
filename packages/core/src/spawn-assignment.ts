@@ -18,10 +18,19 @@ export function assignStageSpawns(
     if (override !== undefined && !spawnById.has(override)) {
       throw new Error(`Unknown spawn override for ${actor.instance_id}: ${override}`);
     }
+    const preferredSpawn = spawnById.get(override ?? actor.spawn_id);
+    const nearestSpawnIds = [...scene.spawns]
+      .sort((left, right) =>
+        preferredSpawn
+          ? manhattan(left.position, preferredSpawn.position) -
+            manhattan(right.position, preferredSpawn.position)
+          : 0,
+      )
+      .map((spawn) => spawn.id);
     const candidateIds = uniqueStrings([
       ...(override === undefined ? [] : [override]),
       actor.spawn_id,
-      ...scene.spawns.map((spawn) => spawn.id),
+      ...nearestSpawnIds,
     ]);
     const selected = candidateIds.find((spawnId) => {
       const spawn = spawnById.get(spawnId);
@@ -45,4 +54,11 @@ function uniqueStrings(values: string[]): string[] {
 
 function positionKey(position: { x: number; y: number }): string {
   return `${position.x},${position.y}`;
+}
+
+function manhattan(
+  left: { x: number; y: number },
+  right: { x: number; y: number },
+): number {
+  return Math.abs(left.x - right.x) + Math.abs(left.y - right.y);
 }

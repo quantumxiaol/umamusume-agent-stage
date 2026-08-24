@@ -23,6 +23,7 @@ Stage 是三层系统中的演出与交互舞台，不承担长期记忆或高�
 ChibiWeaver ──► CharacterPack ─┐
 MapWeaver ────► ScenePack ─────┼─► StageDefinition ─► apps/web
 registries ────────────────────┘                       │
+PerformanceScript ─► role/cue compiler ───────────────┤
                                                        ▼
 StageRuntime.inspect ─► live_stage ─► Agent /stage/turn
         ▲                                  │
@@ -49,6 +50,7 @@ Script / Player ─────────────────────�
 - `CharacterAgentMapping` 将 `character_id`、Agent 中文名、Stage actor ID、制服/决胜服 bundle 绑定起来；
 - `StageRegistry` 列出可进入舞台及默认舞台；
 - `StageDefinition` 把一个 ScenePack、Actor 实例、出生点和控制权组合起来；
+- `PerformanceScript` 用稳定 `role_id` 描述 cast、场景与 beat；Stage 适配器把 role 绑定为 actor ID，anime 适配器把相同 role 映射为立绘、字幕与音轨；
 - `ScenePack` 保存 MapWeaver tileset/layer、navigation、landmark、zone、anchor/slot、spawn、portal 和 activity path；
 - `WorldPack` 描述学院场景拓扑；`WorldNavigation` 以实际 Portal 为边规划跨 Scene 最短路线，不把整所学校塞进一张地图。
 
@@ -77,6 +79,8 @@ Runtime 在 tile 语义层做 A*，在世界像素层连续插值。动态 Actor
 
 Actor 首次进入 Portal tile 时产生一次 `portal.entered`。Web 根据目标 scene/spawn 重新装配舞台；当前跟随绑定会在这次换图中恢复。
 
+动态 cast 不会把第二名以后角色随意丢到地图另一端：Runtime 装配先保留地图显式 spawn 与 Portal 目标，再围绕重复的首选 spawn 生成确定性的临时编队站位；`assignStageSpawns` 按与首选 spawn 的曼哈顿距离分配。临时站位只存在于运行时，不反写 MapWeaver 内容。
+
 场内路线与跨图路线是两层职责：
 
 ```text
@@ -97,7 +101,14 @@ GridNavigation: actor tile ─A*─► 当前 Scene 的 portal/anchor tile
 - `camera.fixed`：固定世界像素中心；
 - `camera.overview`：整图总览。
 
-Phaser Controller 执行 cue，同时保留跟随相机边界、小地图、Portal 标记和主视野框。当前网页提供本地镜头按钮验证这些模式；Agent Stage Director 尚未返回 CameraCue，后续应在 `/stage/turn` 响应中增加独立 `camera_cues` 字段，而不是伪装成角色动作。
+Phaser Controller 执行 cue，同时保留跟随相机边界、小地图、Portal 标记和主视野框。当前网页既可手动验证这些模式，也可从 `PerformanceScript` 的 camera cue 执行；Agent Stage Director 尚未返回 CameraCue，后续应在 `/stage/turn` 响应中增加独立 `camera_cues` 字段，而不是伪装成角色动作。
+
+## 两种导演输入，共用同一个舞台
+
+- **实时 Agent 模式**：`umamusume-agent` 根据训练员输入、角色回复与 `live_stage` 返回一个或多个结构化动作；网页把整组 cast 绑定到同一会话并依次等待动作终态。
+- **确定性短剧模式**：`PerformanceScript` 的 scene 依次切换，beat 依次执行，同一 beat 的 cues 并行；`wait_for: all` 会等待移动、对白和 wait cue 完成后才进入下一 beat。结束或失败后控制权会归还给 player/agent。
+
+两者都只通过 `StageCommand`、`CameraCue`、`StageTask` 和 `StageEvent` 接触 Runtime。Agent 不操作 Phaser；剧本也不保存第二份坐标状态。
 
 ### 当前跨地图边界
 
@@ -117,7 +128,8 @@ GitHub Pages 生产环境直接调用 HF Space。浏览器内 API key 只是轻�
 
 ## 下一阶段
 
-1. 增加浏览器端 `WorldRuntime`，让多名 Actor 可处于不同 Scene，并连续执行 `WorldRoutePlan`；
-2. 为 Agent `/stage/turn` 增加独立 `camera_cues`，由 Stage Director 选择演员跟拍或固定场景镜头；
-3. 把当前单角色选择扩展为多人 cast，再增加交互、表情和多人编队命令；
-4. 只有出现多客户端或持久世界需求后，再评估把 Runtime 权威迁到服务端。
+1. 为 `umamusume-anime` 增加 `PerformanceScript → structured script/timeline` 适配器，先复用对白、字幕、音频、场景背景和角色立绘提示；
+2. 把网页内的示例执行逻辑抽成独立 ShowRunner，增加暂停、跳过、取消、逐 beat 调试与执行报告；
+3. 增加浏览器端 `WorldRuntime`，让多名 Actor 可处于不同 Scene，并连续执行 `WorldRoutePlan`；
+4. 为 Agent `/stage/turn` 增加独立 `camera_cues`，并允许把一次实时会话录制为可编辑的 `PerformanceScript`；
+5. 增加表情、入场/退场、交互、道具与角色编队命令；只有出现多客户端或持久世界需求后，再评估把 Runtime 权威迁到服务端。

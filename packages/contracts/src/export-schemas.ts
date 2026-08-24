@@ -8,6 +8,7 @@ import { base20CharacterPackSchema, characterPackSchema } from "./character-pack
 import { cameraCueSchema } from "./camera-cue";
 import { characterAgentMappingSchema } from "./character-agent-mapping";
 import { characterRegistrySchema } from "./character-registry";
+import { performanceScriptSchema } from "./performance-script";
 import { scenePackSchema } from "./scene-pack";
 import { stageCommandSchema } from "./stage-command";
 import { stageDefinitionSchema } from "./stage-definition";
@@ -25,6 +26,7 @@ const schemas = [
   ["camera-cue.v1.json", cameraCueSchema],
   ["character-agent-mapping.v1.json", characterAgentMappingSchema],
   ["character-registry.v1.json", characterRegistrySchema],
+  ["performance-script.v1.json", performanceScriptSchema],
   ["scene-pack.v1.json", scenePackSchema],
   ["stage-command.v1.json", stageCommandSchema],
   ["stage-definition.v1.json", stageDefinitionSchema],

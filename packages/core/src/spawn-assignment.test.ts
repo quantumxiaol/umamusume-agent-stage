@@ -51,4 +51,31 @@ describe("assignStageSpawns", () => {
       "Unknown spawn override",
     );
   });
+
+  it("relocates duplicate spawn requests to the nearest free spawn", () => {
+    const expandedScene = scenePackSchema.parse({
+      ...scene,
+      spawns: [
+        ...scene.spawns,
+        { id: "nearby", position: { x: 2, y: 2 } },
+        { id: "far", position: { x: 7, y: 7 } },
+      ],
+    });
+    const cast = [
+      actors[0]!,
+      actors[1]!,
+      stageActorDefinitionSchema.parse({
+        instance_id: "character_two",
+        bundle_id: "character",
+        spawn_id: "portal_entry",
+        control_owner: "agent",
+      }),
+    ];
+
+    expect(assignStageSpawns(cast, expandedScene)).toEqual({
+      trainer: "trainer_default",
+      character: "portal_entry",
+      character_two: "nearby",
+    });
+  });
 });

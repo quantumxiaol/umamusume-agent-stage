@@ -177,14 +177,58 @@ h1 {
 }
 
 .character-toolbar {
-  display: flex;
-  align-items: end;
-  gap: 10px;
+  display: grid;
+  gap: 9px;
   margin-bottom: 12px;
   padding: 11px 14px;
   border: 1px solid #2c4940;
   border-radius: 12px;
   background: #111e1acc;
+}
+
+.cast-toolbar-heading,
+.cast-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cast-toolbar-heading {
+  justify-content: space-between;
+}
+
+.cast-toolbar-heading > div {
+  display: grid;
+  gap: 2px;
+}
+
+.cast-toolbar-heading strong {
+  color: #cbd7d0;
+  font-size: 12px;
+}
+
+.cast-toolbar-heading button,
+.cast-remove,
+.cast-focus {
+  padding: 6px 9px;
+  font-size: 10px;
+}
+
+.cast-list {
+  display: grid;
+  gap: 7px;
+}
+
+.cast-row {
+  padding: 8px;
+  border: 1px solid #29453c;
+  border-radius: 9px;
+  background: #0d1915;
+}
+
+.cast-row.active {
+  border-color: #649378;
+  box-shadow: inset 3px 0 #5ed29c;
 }
 
 .character-toolbar label {
@@ -201,18 +245,28 @@ h1 {
   padding: 8px 34px 8px 10px;
 }
 
-.character-toolbar label:nth-child(2) select {
+.cast-row label:nth-of-type(2) select {
   min-width: 120px;
+}
+
+.cast-focus {
+  width: 42px;
+  color: #87ad99;
+  font-family: ui-monospace, monospace;
 }
 
 .mapping-preview {
   overflow: hidden;
-  margin: 0 0 8px auto;
+  margin-left: auto;
   color: #7f988c;
   font-family: ui-monospace, monospace;
   font-size: 11px;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.cast-remove {
+  color: #b9968f;
 }
 
 .stage-card,
@@ -557,6 +611,22 @@ kbd {
   border-top: 1px solid #233a33;
 }
 
+.actor-row.active {
+  background: #142820;
+  box-shadow: inset 3px 0 #5ed29c;
+}
+
+.actor-row-tail {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+}
+
+.actor-row-tail button {
+  padding: 4px 7px;
+  font-size: 9px;
+}
+
 .actor-index {
   display: grid;
   width: 36px;
@@ -717,7 +787,11 @@ kbd {
 
   .character-toolbar {
     align-items: stretch;
-    flex-direction: column;
+  }
+
+  .cast-row {
+    align-items: stretch;
+    flex-wrap: wrap;
   }
 
   .character-toolbar select {
@@ -725,7 +799,8 @@ kbd {
   }
 
   .mapping-preview {
-    margin: 2px 0 0;
+    width: 100%;
+    margin: 2px 0 0 52px;
   }
 
   .stage-health {

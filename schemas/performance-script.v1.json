@@ -1,0 +1,724 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "performance_script.v1"
+    },
+    "performance_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "default": "",
+      "type": "string"
+    },
+    "cast": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "role_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+          },
+          "character_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$"
+          },
+          "display_name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "outfit_id": {
+            "default": "uniform",
+            "type": "string",
+            "pattern": "^[a-z0-9_-]+$"
+          },
+          "render_hints": {
+            "type": "object",
+            "properties": {
+              "anime_sprite": {
+                "type": "string",
+                "minLength": 1
+              },
+              "anime_scale": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "role_id",
+          "character_id",
+          "outfit_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "scenes": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "scene_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+          },
+          "stage_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+          },
+          "placements": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "role_id": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                },
+                "spawn_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "facing": {
+                  "type": "string",
+                  "enum": [
+                    "down",
+                    "left",
+                    "right",
+                    "up"
+                  ]
+                },
+                "anime_slot": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "role_id"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "render_hints": {
+            "type": "object",
+            "properties": {
+              "anime_background": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": false
+          },
+          "beats": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "beat_id": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                },
+                "cues": {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "cue_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          },
+                          "role_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "actor.move_to"
+                          },
+                          "target": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "anchor"
+                                  },
+                                  "anchor_id": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "slot_id": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "required": [
+                                  "type",
+                                  "anchor_id"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "actor"
+                                  },
+                                  "role_id": {
+                                    "type": "string",
+                                    "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                                  },
+                                  "distance_tiles": {
+                                    "default": 1,
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 4
+                                  }
+                                },
+                                "required": [
+                                  "type",
+                                  "role_id",
+                                  "distance_tiles"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "policy": {
+                            "default": "replace",
+                            "type": "string",
+                            "enum": [
+                              "reject",
+                              "queue",
+                              "replace"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "cue_id",
+                          "role_id",
+                          "type",
+                          "target",
+                          "policy"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "cue_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          },
+                          "role_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "actor.follow_activity_path"
+                          },
+                          "activity_path_id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "cycles": {
+                            "default": 1,
+                            "type": "integer",
+                            "exclusiveMinimum": 0,
+                            "maximum": 10
+                          },
+                          "policy": {
+                            "default": "replace",
+                            "type": "string",
+                            "enum": [
+                              "reject",
+                              "queue",
+                              "replace"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "cue_id",
+                          "role_id",
+                          "type",
+                          "activity_path_id",
+                          "cycles",
+                          "policy"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "cue_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          },
+                          "role_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "actor.follow"
+                          },
+                          "target_role_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          },
+                          "distance_tiles": {
+                            "default": 2,
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 4
+                          }
+                        },
+                        "required": [
+                          "cue_id",
+                          "role_id",
+                          "type",
+                          "target_role_id",
+                          "distance_tiles"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "cue_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          },
+                          "role_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "actor.stop_follow"
+                          }
+                        },
+                        "required": [
+                          "cue_id",
+                          "role_id",
+                          "type"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "cue_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          },
+                          "role_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "actor.face"
+                          },
+                          "facing": {
+                            "type": "string",
+                            "enum": [
+                              "down",
+                              "left",
+                              "right",
+                              "up"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "cue_id",
+                          "role_id",
+                          "type",
+                          "facing"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "cue_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          },
+                          "role_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "actor.stop"
+                          }
+                        },
+                        "required": [
+                          "cue_id",
+                          "role_id",
+                          "type"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "cue_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          },
+                          "role_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "dialogue.say"
+                          },
+                          "text": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "spoken_text": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "subtitle_ja": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "subtitle_zh": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "audio_path": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "duration_ms": {
+                            "type": "integer",
+                            "exclusiveMinimum": 0,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "cue_id",
+                          "role_id",
+                          "type",
+                          "text"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "cue_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "narration.say"
+                          },
+                          "text": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "subtitle_ja": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "subtitle_zh": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "audio_path": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "duration_ms": {
+                            "type": "integer",
+                            "exclusiveMinimum": 0,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "cue_id",
+                          "type",
+                          "text"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "cue_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "stage.wait"
+                          },
+                          "duration_ms": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "cue_id",
+                          "type",
+                          "duration_ms"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "cue_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "camera.follow_actor"
+                          },
+                          "role_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          },
+                          "zoom": {
+                            "default": 0.8,
+                            "type": "number",
+                            "exclusiveMinimum": 0,
+                            "maximum": 4
+                          }
+                        },
+                        "required": [
+                          "cue_id",
+                          "type",
+                          "role_id",
+                          "zoom"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "cue_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "camera.focus_actor"
+                          },
+                          "role_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          },
+                          "zoom": {
+                            "default": 0.8,
+                            "type": "number",
+                            "exclusiveMinimum": 0,
+                            "maximum": 4
+                          }
+                        },
+                        "required": [
+                          "cue_id",
+                          "type",
+                          "role_id",
+                          "zoom"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "cue_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "camera.focus_anchor"
+                          },
+                          "anchor_id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "zoom": {
+                            "default": 0.8,
+                            "type": "number",
+                            "exclusiveMinimum": 0,
+                            "maximum": 4
+                          }
+                        },
+                        "required": [
+                          "cue_id",
+                          "type",
+                          "anchor_id",
+                          "zoom"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "cue_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "camera.focus_zone"
+                          },
+                          "zone_id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "zoom": {
+                            "default": 0.8,
+                            "type": "number",
+                            "exclusiveMinimum": 0,
+                            "maximum": 4
+                          }
+                        },
+                        "required": [
+                          "cue_id",
+                          "type",
+                          "zone_id",
+                          "zoom"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "cue_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "camera.fixed"
+                          },
+                          "center": {
+                            "type": "object",
+                            "properties": {
+                              "x": {
+                                "type": "number"
+                              },
+                              "y": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "x",
+                              "y"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "zoom": {
+                            "default": 0.8,
+                            "type": "number",
+                            "exclusiveMinimum": 0,
+                            "maximum": 4
+                          }
+                        },
+                        "required": [
+                          "cue_id",
+                          "type",
+                          "center",
+                          "zoom"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "cue_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "camera.overview"
+                          }
+                        },
+                        "required": [
+                          "cue_id",
+                          "type"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  }
+                },
+                "wait_for": {
+                  "default": "all",
+                  "type": "string",
+                  "enum": [
+                    "all",
+                    "none"
+                  ]
+                },
+                "hold_ms": {
+                  "default": 0,
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                }
+              },
+              "required": [
+                "beat_id",
+                "cues",
+                "wait_for",
+                "hold_ms"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "scene_id",
+          "stage_id",
+          "placements",
+          "beats"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "performance_id",
+    "title",
+    "description",
+    "cast",
+    "scenes"
+  ],
+  "additionalProperties": false
+}

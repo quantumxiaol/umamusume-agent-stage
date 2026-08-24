@@ -11,6 +11,7 @@ import {
   characterAgentMappingSchema,
   characterPackSchema,
   characterRegistrySchema,
+  performanceScriptSchema,
   scenePackSchema,
   stageDefinitionSchema,
   stageRegistrySchema,
@@ -19,6 +20,8 @@ import {
   type CharacterPack,
   type CharacterRegistry,
   type AgentStageAction,
+  type PerformanceCue,
+  type PerformanceScript,
   type ScenePack,
   type StageActorState,
   type StageDefinition,
@@ -26,14 +29,30 @@ import {
   type StageRegistry,
   type StageRegistryEntry,
 } from "@uma-stage/contracts";
-import { assignStageSpawns, StageRuntime, type CommandResult } from "@uma-stage/core";
+import {
+  applyStageCast,
+  assignStageSpawns,
+  compilePerformanceCue,
+  ensureSceneSpawnCapacity,
+  StageRuntime,
+  type CommandResult,
+  type StageCastOutfit,
+} from "@uma-stage/core";
 
 import { useStageStore } from "./stores/stage";
 
 type RendererModule = typeof import("@uma-stage/renderer-phaser");
 type StageGame = ReturnType<RendererModule["createStageGame"]>;
 type AgentStatus = "disconnected" | "connecting" | "connected" | "busy" | "error";
-type Outfit = "uniform" | "race_outfit";
+
+interface CastSelection {
+  characterId: string;
+  outfit: StageCastOutfit;
+}
+
+interface ResolvedCastMember extends CastSelection {
+  mapping: CharacterAgentMappingEntry;
+}
 
 interface ActorPresentation {
   instanceId: string;
@@ -45,8 +64,13 @@ interface ActorPresentation {
 interface AgentSession {
   sessionId: string;
   userUuid: string;
-  characterId: string;
-  agentActorId: string;
+  castKey: string;
+  actors: Array<{
+    characterId: string;
+    displayName: string;
+    agentActorId: string;
+    stageActorId: string;
+  }>;
 }
 
 interface ConversationLine {
@@ -85,8 +109,10 @@ const sceneAnchors = ref<Array<{ id: string; displayName: string }>>([]);
 const sceneZones = ref<Array<{ id: string; displayName: string }>>([]);
 const activityPaths = ref<Array<{ id: string; activityId: string }>>([]);
 const characterMappings = ref<CharacterAgentMappingEntry[]>([]);
-const selectedCharacterId = ref("admire_vega");
-const selectedOutfit = ref<Outfit>("uniform");
+const selectedCast = ref<CastSelection[]>([
+  { characterId: "admire_vega", outfit: "uniform" },
+  { characterId: "almond_eye", outfit: "uniform" },
+]);
 const activeActorId = ref("uma_admire_vega");
 
 const agentStatus = ref<AgentStatus>("disconnected");
@@ -95,12 +121,27 @@ const agentCharacters = ref<string[]>([]);
 const agentSession = ref<AgentSession | null>(null);
 const agentInput = ref("");
 const conversation = ref<ConversationLine[]>([]);
+const performanceRunning = ref(false);
 
-const activeMapping = computed(() =>
-  characterMappings.value.find((entry) => entry.character_id === selectedCharacterId.value),
+const resolvedCast = computed<ResolvedCastMember[]>(() =>
+  selectedCast.value.flatMap((selection) => {
+    const mapping = characterMappings.value.find(
+      (entry) => entry.character_id === selection.characterId,
+    );
+    return mapping ? [{ ...selection, mapping }] : [];
+  }),
+);
+const activeMapping = computed(
+  () =>
+    resolvedCast.value.find(
+      (member) => member.mapping.stage_actor_id === activeActorId.value,
+    )?.mapping ?? resolvedCast.value[0]?.mapping,
 );
 const activeCharacterName = computed(
-  () => activeMapping.value?.agent_character_name ?? selectedCharacterId.value,
+  () => activeMapping.value?.agent_character_name ?? "当前角色",
+);
+const castCharacterNames = computed(
+  () => resolvedCast.value.map((member) => member.mapping.agent_character_name).join("、"),
 );
 const activeActorFollowsPlayer = computed(
   () => actor(activeActorId.value)?.following_actor_id === currentPlayerActorId.value,
@@ -146,21 +187,24 @@ async function initialize(
       loadCharacterMapping(contentUrl("characters/agent-mapping.json")),
     ]);
     characterMappings.value = mapping.characters;
-    const selected =
-      mapping.characters.find((entry) => entry.character_id === selectedCharacterId.value) ??
-      mapping.characters[0];
-    if (!selected) throw new Error("角色映射为空");
-    selectedCharacterId.value = selected.character_id;
-    activeActorId.value = selected.stage_actor_id;
+    normalizeSelectedCast(mapping.characters);
+    const cast = resolveCast(mapping.characters);
+    if (cast.length === 0) throw new Error("出演角色为空");
+    if (!cast.some((member) => member.mapping.stage_actor_id === activeActorId.value)) {
+      activeActorId.value = cast[0]!.mapping.stage_actor_id;
+    }
 
     const requestedStagePath =
       definitionPath || activeStagePath.value || stageRegistry.default_definition_path;
     const sourceStage = await loadStage(contentUrl(requestedStagePath));
-    const stage = applyCharacterSelection(sourceStage, selected, selectedOutfit.value);
+    const stage = applyStageCast(
+      sourceStage,
+      cast.map((member) => ({ mapping: member.mapping, outfit: member.outfit })),
+    );
     const registryByBundle = new Map(
       registry.characters.map((entry) => [entry.bundle_id, entry]),
     );
-    const [scene, renderer, ...packs] = await Promise.all([
+    const [sourceScene, renderer, ...packs] = await Promise.all([
       loadScene(contentUrl(stage.scene_path)),
       import("@uma-stage/renderer-phaser"),
       ...stage.actors.map((actorDefinition) => {
@@ -171,6 +215,11 @@ async function initialize(
         return loadActor(contentUrl(entry.actor_path));
       }),
     ]);
+    const scene = ensureSceneSpawnCapacity(
+      sourceScene,
+      stage.actors.length,
+      stage.actors.map((actorDefinition) => actorDefinition.spawn_id),
+    );
     if (currentGeneration !== generation) return;
 
     const nextRuntime = new StageRuntime(scene);
@@ -258,28 +307,42 @@ async function initialize(
   }
 }
 
-function applyCharacterSelection(
-  stage: StageDefinition,
-  mapping: CharacterAgentMappingEntry,
-  outfit: Outfit,
-): StageDefinition {
-  const bundleId =
-    outfit === "uniform" ? mapping.uniform_bundle_id : mapping.race_outfit_bundle_id;
-  let replaced = false;
-  return {
-    ...stage,
-    actors: stage.actors.map((actorDefinition) => {
-      if (replaced || actorDefinition.player || actorDefinition.control_owner !== "agent") {
-        return actorDefinition;
-      }
-      replaced = true;
-      return {
-        ...actorDefinition,
-        instance_id: mapping.stage_actor_id,
-        bundle_id: bundleId,
-      };
-    }),
-  };
+function normalizeSelectedCast(mappings: CharacterAgentMappingEntry[]): void {
+  const available = new Set(mappings.map((mapping) => mapping.character_id));
+  const seen = new Set<string>();
+  const normalized = selectedCast.value.filter((selection) => {
+    if (!available.has(selection.characterId) || seen.has(selection.characterId)) return false;
+    seen.add(selection.characterId);
+    return true;
+  });
+  const first = mappings[0];
+  if (normalized.length === 0 && first) {
+    normalized.push({ characterId: first.character_id, outfit: "uniform" });
+  }
+  selectedCast.value = normalized.slice(0, 4);
+}
+
+function resolveCast(mappings = characterMappings.value): ResolvedCastMember[] {
+  return selectedCast.value.flatMap((selection) => {
+    const mapping = mappings.find((entry) => entry.character_id === selection.characterId);
+    return mapping ? [{ ...selection, mapping }] : [];
+  });
+}
+
+function mappingFor(characterId: string): CharacterAgentMappingEntry | undefined {
+  return characterMappings.value.find((entry) => entry.character_id === characterId);
+}
+
+function castKey(): string {
+  return resolveCast()
+    .map((member) => member.mapping.character_id)
+    .join("|");
+}
+
+function isCharacterSelectedElsewhere(characterId: string, castIndex: number): boolean {
+  return selectedCast.value.some(
+    (selection, index) => index !== castIndex && selection.characterId === characterId,
+  );
 }
 
 function handlePortalEvent(
@@ -341,15 +404,211 @@ function dispose(invalidate = true): void {
   runtime = null;
 }
 
-async function changeCharacter(): Promise<void> {
+async function changeCast(castIndex?: number): Promise<void> {
+  normalizeSelectedCast(characterMappings.value);
+  if (castIndex !== undefined) {
+    const selected = selectedCast.value[castIndex];
+    const mapping = selected && mappingFor(selected.characterId);
+    if (mapping) activeActorId.value = mapping.stage_actor_id;
+  }
   agentSession.value = null;
   conversation.value = [];
   await initialize(activeStagePath.value);
   if (store.phase === "ready") await prepareAgentSession();
 }
 
-async function changeOutfit(): Promise<void> {
+async function runPerformanceDemo(): Promise<void> {
+  if (performanceRunning.value) return;
+  performanceRunning.value = true;
+  agentSession.value = null;
+  conversation.value = [];
+  try {
+    const script = await loadPerformance(
+      contentUrl("performances/fountain-meeting.performance.json"),
+    );
+    const characterCast = script.cast.filter((member) => member.character_id !== "trainer");
+    if (characterCast.length === 0 || characterCast.length > 4) {
+      throw new Error(`当前 Stage 支持 1–4 位角色，剧本声明了 ${characterCast.length} 位`);
+    }
+    selectedCast.value = characterCast.map((member) => ({
+      characterId: member.character_id,
+      outfit: performanceOutfit(member.outfit_id),
+    }));
+    normalizeSelectedCast(characterMappings.value);
+    activeActorId.value = resolveCast()[0]?.mapping.stage_actor_id ?? "";
+    pushConversation("system", "演出", `开始《${script.title}》`);
+
+    for (const performanceScene of script.scenes) {
+      const stage = stageChoices.value.find(
+        (choice) => choice.stage_id === performanceScene.stage_id,
+      );
+      if (!stage) throw new Error(`剧本引用了未知舞台：${performanceScene.stage_id}`);
+      const actorIdsBeforeLoad = performanceRoleBindings(script, "trainer");
+      const spawnOverrides = Object.fromEntries(
+        performanceScene.placements.flatMap((placement) => {
+          const actorId = actorIdsBeforeLoad[placement.role_id];
+          return actorId && placement.spawn_id ? [[actorId, placement.spawn_id]] : [];
+        }),
+      );
+      await initialize(stage.definition_path, spawnOverrides);
+      if (store.phase !== "ready" || !runtime) {
+        throw new Error(store.error || `无法装载剧本舞台：${stage.display_name}`);
+      }
+      await executePerformanceScene(script, performanceScene);
+    }
+    restoreLiveControl(script);
+    store.setMessage(`《${script.title}》演出完成`);
+    pushConversation("system", "演出", `《${script.title}》演出完成`);
+  } catch (error) {
+    restoreLiveControl();
+    store.setMessage(`剧本演出失败：${errorMessage(error)}`);
+    pushConversation("system", "演出", `失败：${errorMessage(error)}`);
+  } finally {
+    performanceRunning.value = false;
+  }
+}
+
+async function executePerformanceScene(
+  script: PerformanceScript,
+  scene: PerformanceScript["scenes"][number],
+): Promise<void> {
+  const activeRuntime = runtime;
+  if (!activeRuntime) throw new Error("舞台 Runtime 尚未就绪");
+  const actorIdsByRole = performanceRoleBindings(script, currentPlayerActorId.value);
+  for (const actorId of Object.values(actorIdsByRole)) {
+    activeRuntime.setControlOwner(actorId, "script");
+  }
+  const backgroundTasks: Array<Promise<void>> = [];
+
+  for (const beat of scene.beats) {
+    if (runtime !== activeRuntime) throw new Error("剧本执行期间舞台已切换");
+    const tasks = beat.cues.map((cue) =>
+      executePerformanceCue(script, cue, actorIdsByRole, activeRuntime),
+    );
+    if (beat.wait_for === "all") await Promise.all(tasks);
+    else backgroundTasks.push(...tasks);
+    if (beat.hold_ms > 0) await delay(beat.hold_ms);
+  }
+  await Promise.all(backgroundTasks);
+}
+
+async function executePerformanceCue(
+  script: PerformanceScript,
+  cue: PerformanceCue,
+  actorIdsByRole: Readonly<Record<string, string>>,
+  activeRuntime: StageRuntime,
+): Promise<void> {
+  const compiled = compilePerformanceCue(cue, actorIdsByRole);
+  if (compiled.kind === "camera") {
+    game?.setCameraCue(compiled.cue);
+    return;
+  }
+  if (compiled.kind === "wait") {
+    await delay(compiled.durationMs);
+    return;
+  }
+  if (compiled.kind === "narration") {
+    pushConversation(
+      "narrator",
+      "环境",
+      compiled.subtitleZh ?? compiled.subtitleJa ?? compiled.text,
+    );
+    if (compiled.durationMs) await delay(compiled.durationMs);
+    return;
+  }
+  if (cue.type === "dialogue.say") {
+    const member = script.cast.find((candidate) => candidate.role_id === cue.role_id);
+    pushConversation(
+      "character",
+      member?.display_name ?? member?.character_id ?? cue.role_id,
+      cue.subtitle_zh ?? cue.subtitle_ja ?? cue.text,
+    );
+  }
+  const result = await activeRuntime.execute(compiled.command).completion;
+  if (result.status !== "completed") {
+    throw new Error(
+      `Cue ${cue.cue_id} ${result.status}: ${result.error?.message ?? "未知原因"}`,
+    );
+  }
+}
+
+function performanceRoleBindings(
+  script: PerformanceScript,
+  trainerActorId: string,
+): Record<string, string> {
+  return Object.fromEntries(
+    script.cast.map((member) => {
+      if (member.character_id === "trainer") {
+        return [member.role_id, trainerActorId || "trainer"];
+      }
+      const mapping = characterMappings.value.find(
+        (candidate) => candidate.character_id === member.character_id,
+      );
+      if (!mapping) {
+        throw new Error(`剧本角色没有 Stage 映射：${member.character_id}`);
+      }
+      return [member.role_id, mapping.stage_actor_id];
+    }),
+  );
+}
+
+function performanceOutfit(outfitId: string): StageCastOutfit {
+  if (outfitId === "uniform" || outfitId === "race_outfit") return outfitId;
+  throw new Error(`Stage 不支持角色服装：${outfitId}`);
+}
+
+function restoreLiveControl(script?: PerformanceScript): void {
+  const activeRuntime = runtime;
+  if (!activeRuntime) return;
+  const bindings = script
+    ? performanceRoleBindings(script, currentPlayerActorId.value)
+    : Object.fromEntries(
+        activeRuntime.snapshot().actors.map((state) => [state.actor_id, state.actor_id]),
+      );
+  for (const actorId of new Set(Object.values(bindings))) {
+    const state = activeRuntime
+      .snapshot()
+      .actors.find((candidate) => candidate.actor_id === actorId);
+    if (!state) continue;
+    activeRuntime.setControlOwner(
+      actorId,
+      actorId === currentPlayerActorId.value ? "player" : "agent",
+    );
+  }
+}
+
+function delay(durationMs: number): Promise<void> {
+  return new Promise((resolve) => window.setTimeout(resolve, durationMs));
+}
+
+async function changeCastOutfit(): Promise<void> {
   await initialize(activeStagePath.value);
+}
+
+async function addCastMember(): Promise<void> {
+  const used = new Set(selectedCast.value.map((selection) => selection.characterId));
+  const mapping = characterMappings.value.find(
+    (entry) => !used.has(entry.character_id) && isAgentCharacterAvailable(entry),
+  );
+  if (!mapping || selectedCast.value.length >= 4) return;
+  selectedCast.value.push({ characterId: mapping.character_id, outfit: "uniform" });
+  activeActorId.value = mapping.stage_actor_id;
+  await changeCast();
+}
+
+async function removeCastMember(index: number): Promise<void> {
+  if (selectedCast.value.length <= 1) return;
+  const removed = selectedCast.value[index];
+  selectedCast.value.splice(index, 1);
+  if (mappingFor(removed?.characterId ?? "")?.stage_actor_id === activeActorId.value) {
+    activeActorId.value = resolveCast()[0]?.mapping.stage_actor_id ?? "";
+  }
+  await changeCast();
+}
+
+function selectActiveActor(actorId: string): void {
+  if (!resolvedCast.value.some((member) => member.mapping.stage_actor_id === actorId)) return;
+  activeActorId.value = actorId;
 }
 
 async function runMeeting(): Promise<void> {
@@ -504,40 +763,57 @@ async function prepareAgentSession(): Promise<boolean> {
 }
 
 async function createAgentSession(): Promise<boolean> {
-  const mapping = activeMapping.value;
-  if (!mapping) return false;
+  const cast = resolveCast();
+  if (cast.length === 0) return false;
   if (!agentClient && !(await connectAgent())) return false;
   if (!agentClient) return false;
-  if (!agentCharacters.value.includes(mapping.agent_character_name)) {
+  const unavailable = cast.filter(
+    (member) => !agentCharacters.value.includes(member.mapping.agent_character_name),
+  );
+  if (unavailable.length > 0) {
     agentStatus.value = "error";
-    agentStatusMessage.value = `Agent 尚未提供角色：${mapping.agent_character_name}`;
+    agentStatusMessage.value = `Agent 尚未提供角色：${unavailable.map((member) => member.mapping.agent_character_name).join("、")}`;
     return false;
   }
   agentStatus.value = "busy";
-  agentStatusMessage.value = `正在加载 ${mapping.agent_character_name}…`;
+  agentStatusMessage.value = `正在加载 ${cast.length} 位出演角色…`;
   try {
     const session = await agentClient.createStageSession({
-      characterNames: [mapping.agent_character_name],
+      characterNames: cast.map((member) => member.mapping.agent_character_name),
       sceneName: stageName.value,
     });
-    const agentActor = session.actors.find(
-      (actor) =>
-        actor.actorType === "umamusume" &&
-        actor.displayName === mapping.agent_character_name,
-    );
-    if (!agentActor) {
-      throw new Error(`Agent 会话未返回角色 actor_id：${mapping.agent_character_name}`);
-    }
+    const sessionActors = cast.map((member) => {
+      const agentActor = session.actors.find(
+        (actor) =>
+          actor.actorType === "umamusume" &&
+          actor.displayName === member.mapping.agent_character_name,
+      );
+      if (!agentActor) {
+        throw new Error(
+          `Agent 会话未返回角色 actor_id：${member.mapping.agent_character_name}`,
+        );
+      }
+      return {
+        characterId: member.mapping.character_id,
+        displayName: member.mapping.agent_character_name,
+        agentActorId: agentActor.actorId,
+        stageActorId: member.mapping.stage_actor_id,
+      };
+    });
     agentSession.value = {
       sessionId: session.sessionId,
       userUuid: session.userUuid,
-      characterId: mapping.character_id,
-      agentActorId: agentActor.actorId,
+      castKey: castKey(),
+      actors: sessionActors,
     };
     conversation.value = [];
-    pushConversation("system", "舞台", `${mapping.agent_character_name} 已进入角色会话`);
+    pushConversation(
+      "system",
+      "舞台",
+      `${cast.map((member) => member.mapping.agent_character_name).join("、")} 已进入多人角色会话`,
+    );
     agentStatus.value = "connected";
-    agentStatusMessage.value = `${mapping.agent_character_name} 会话已就绪`;
+    agentStatusMessage.value = `${cast.length} 位角色会话已就绪`;
     return true;
   } catch (error) {
     agentStatus.value = "error";
@@ -548,13 +824,10 @@ async function createAgentSession(): Promise<boolean> {
 
 async function sendAgentMessage(): Promise<void> {
   const message = agentInput.value.trim();
-  const mapping = activeMapping.value;
+  const cast = resolveCast();
   const activeRuntime = runtime;
-  if (!message || !mapping || !activeRuntime || agentStatus.value === "busy") return;
-  if (
-    !agentSession.value ||
-    agentSession.value.characterId !== mapping.character_id
-  ) {
+  if (!message || cast.length === 0 || !activeRuntime || agentStatus.value === "busy") return;
+  if (!agentSession.value || agentSession.value.castKey !== castKey()) {
     if (!(await createAgentSession())) return;
   }
   const session = agentSession.value;
@@ -575,13 +848,11 @@ async function sendAgentMessage(): Promise<void> {
       sessionId: session.sessionId,
       userUuid: session.userUuid,
       message,
-      targetActorIds: [session.agentActorId],
-      actorBindings: [
-        {
-          agent_actor_id: session.agentActorId,
-          stage_actor_id: mapping.stage_actor_id,
-        },
-      ],
+      targetActorIds: session.actors.map((actorBinding) => actorBinding.agentActorId),
+      actorBindings: session.actors.map((actorBinding) => ({
+        agent_actor_id: actorBinding.agentActorId,
+        stage_actor_id: actorBinding.stageActorId,
+      })),
       liveStage,
     });
     for (const event of result.events) {
@@ -589,13 +860,13 @@ async function sendAgentMessage(): Promise<void> {
         if (event.action) {
           pushConversation(
             "action",
-            event.actor?.display_name ?? mapping.agent_character_name,
+            event.actor?.display_name ?? activeCharacterName.value,
             event.action,
           );
         }
         pushConversation(
           "character",
-          event.actor?.display_name ?? mapping.agent_character_name,
+          event.actor?.display_name ?? activeCharacterName.value,
           event.dialogue || event.content,
         );
       } else if (event.event_type === "narration" || event.event_type === "scene_change") {
@@ -608,8 +879,19 @@ async function sendAgentMessage(): Promise<void> {
     if (activeRuntime !== runtime) {
       throw new Error("Agent 返回期间舞台已切换，请重新发送本轮消息");
     }
-    activeRuntime.setControlOwner(mapping.stage_actor_id, "agent");
+    const boundStageActorIds = new Set(
+      session.actors.map((actorBinding) => actorBinding.stageActorId),
+    );
     for (const action of result.stage_actions) {
+      if (!boundStageActorIds.has(action.actor_id)) {
+        throw new Error(`Agent 返回了未绑定角色动作：${action.actor_id}`);
+      }
+      const state = activeRuntime
+        .snapshot()
+        .actors.find((candidate) => candidate.actor_id === action.actor_id);
+      if (state?.control_owner !== "agent") {
+        activeRuntime.setControlOwner(action.actor_id, "agent");
+      }
       const command = stageActionToCommand(action, nextCommandId("agent"));
       const commandResult = await activeRuntime.execute(command).completion;
       if (commandResult.status !== "completed") describeResult(commandResult);
@@ -719,6 +1001,10 @@ async function loadStage(url: string): Promise<StageDefinition> {
   return stageDefinitionSchema.parse(await fetchJson(url));
 }
 
+async function loadPerformance(url: string): Promise<PerformanceScript> {
+  return performanceScriptSchema.parse(await fetchJson(url));
+}
+
 function contentUrl(path: string): string {
   const encoded = path.split("/").map(encodeURIComponent).join("/");
   return `${import.meta.env.BASE_URL}${encoded}`;
@@ -768,29 +1054,75 @@ function formatEvent(event: (typeof store.events)[number]): string {
     </header>
 
     <section class="character-toolbar">
-      <label>
-        <span>出演角色</span>
-        <select v-model="selectedCharacterId" :disabled="store.phase === 'loading' || agentStatus === 'connecting' || agentStatus === 'busy'" @change="changeCharacter">
-          <option
-            v-for="mapping in characterMappings"
-            :key="mapping.character_id"
-            :value="mapping.character_id"
-            :disabled="!isAgentCharacterAvailable(mapping)"
+      <div class="cast-toolbar-heading">
+        <div>
+          <span class="eyebrow">CAST · {{ selectedCast.length }} / 4</span>
+          <strong>出演角色与当前测试角色</strong>
+        </div>
+        <button
+          type="button"
+          :disabled="selectedCast.length >= 4 || store.phase === 'loading' || agentStatus === 'busy' || performanceRunning"
+          @click="addCastMember"
+        >
+          ＋ 添加角色
+        </button>
+      </div>
+      <div class="cast-list">
+        <article
+          v-for="(member, index) in selectedCast"
+          :key="`${index}-${member.characterId}`"
+          class="cast-row"
+          :class="{ active: mappingFor(member.characterId)?.stage_actor_id === activeActorId }"
+        >
+          <button
+            class="cast-focus"
+            type="button"
+            :aria-label="`选择第 ${index + 1} 位角色作为当前测试角色`"
+            @click="selectActiveActor(mappingFor(member.characterId)?.stage_actor_id ?? '')"
           >
-            {{ mapping.agent_character_name }}{{ isAgentCharacterAvailable(mapping) ? '' : '（Agent 未加载）' }}
-          </option>
-        </select>
-      </label>
-      <label>
-        <span>服装</span>
-        <select v-model="selectedOutfit" :disabled="store.phase === 'loading' || agentStatus === 'busy'" @change="changeOutfit">
-          <option value="uniform">制服</option>
-          <option value="race_outfit">决胜服</option>
-        </select>
-      </label>
-      <span class="mapping-preview">
-        {{ activeMapping?.character_id }} → {{ activeMapping?.stage_actor_id }}
-      </span>
+            {{ mappingFor(member.characterId)?.stage_actor_id === activeActorId ? '当前' : `#${index + 1}` }}
+          </button>
+          <label>
+            <span>出演角色</span>
+            <select
+              v-model="member.characterId"
+              :disabled="store.phase === 'loading' || agentStatus === 'connecting' || agentStatus === 'busy' || performanceRunning"
+              @change="changeCast(index)"
+            >
+              <option
+                v-for="mapping in characterMappings"
+                :key="mapping.character_id"
+                :value="mapping.character_id"
+                :disabled="!isAgentCharacterAvailable(mapping) || isCharacterSelectedElsewhere(mapping.character_id, index)"
+              >
+                {{ mapping.agent_character_name }}{{ isAgentCharacterAvailable(mapping) ? '' : '（Agent 未加载）' }}
+              </option>
+            </select>
+          </label>
+          <label>
+            <span>服装</span>
+            <select
+              v-model="member.outfit"
+              :disabled="store.phase === 'loading' || agentStatus === 'busy' || performanceRunning"
+              @change="changeCastOutfit"
+            >
+              <option value="uniform">制服</option>
+              <option value="race_outfit">决胜服</option>
+            </select>
+          </label>
+          <span class="mapping-preview">
+            {{ mappingFor(member.characterId)?.character_id }} → {{ mappingFor(member.characterId)?.stage_actor_id }}
+          </span>
+          <button
+            class="cast-remove"
+            type="button"
+            :disabled="selectedCast.length <= 1 || store.phase === 'loading' || agentStatus === 'busy' || performanceRunning"
+            @click="removeCastMember(index)"
+          >
+            移除
+          </button>
+        </article>
+      </div>
     </section>
 
     <section class="workspace">
@@ -814,38 +1146,41 @@ function formatEvent(event: (typeof store.events)[number]): string {
           </div>
         </div>
         <div class="action-dock">
+          <button class="primary-action" :disabled="store.phase !== 'ready' || performanceRunning" type="button" @click="runPerformanceDemo">
+            <span>▶</span> {{ performanceRunning ? '正在演出 JSON 短剧…' : '运行 JSON 短剧' }}
+          </button>
           <div class="camera-actions" aria-label="镜头控制">
             <span>CAMERA</span>
-            <button :disabled="store.phase !== 'ready' || !currentPlayerActorId" type="button" @click="followCamera(currentPlayerActorId)">跟随训练员</button>
-            <button :disabled="store.phase !== 'ready'" type="button" @click="followCamera(activeActorId)">跟随角色</button>
-            <button :disabled="store.phase !== 'ready'" type="button" @click="showCameraOverview">场景总览</button>
-            <button v-for="zone in sceneZones.slice(0, 2)" :key="`camera-zone-${zone.id}`" :disabled="store.phase !== 'ready'" type="button" @click="focusCameraOnZone(zone.id)">
+            <button :disabled="store.phase !== 'ready' || !currentPlayerActorId || performanceRunning" type="button" @click="followCamera(currentPlayerActorId)">跟随训练员</button>
+            <button :disabled="store.phase !== 'ready' || performanceRunning" type="button" @click="followCamera(activeActorId)">跟随角色</button>
+            <button :disabled="store.phase !== 'ready' || performanceRunning" type="button" @click="showCameraOverview">场景总览</button>
+            <button v-for="zone in sceneZones.slice(0, 2)" :key="`camera-zone-${zone.id}`" :disabled="store.phase !== 'ready' || performanceRunning" type="button" @click="focusCameraOnZone(zone.id)">
               定镜 · {{ zone.displayName }}
             </button>
-            <button v-if="sceneZones.length === 0 && sceneAnchors[0]" :disabled="store.phase !== 'ready'" type="button" @click="focusCameraOnAnchor(sceneAnchors[0].id)">
+            <button v-if="sceneZones.length === 0 && sceneAnchors[0]" :disabled="store.phase !== 'ready' || performanceRunning" type="button" @click="focusCameraOnAnchor(sceneAnchors[0].id)">
               定镜 · {{ sceneAnchors[0].displayName }}
             </button>
           </div>
           <div class="actor-actions" aria-label="角色跟随控制">
             <span>ACTOR</span>
-            <button :disabled="store.phase !== 'ready' || !currentPlayerActorId || activeActorFollowsPlayer" type="button" @click="startActorFollow">
+            <button :disabled="store.phase !== 'ready' || !currentPlayerActorId || activeActorFollowsPlayer || performanceRunning" type="button" @click="startActorFollow">
               跟随训练员
             </button>
-            <button :disabled="store.phase !== 'ready' || !activeActorFollowsPlayer" type="button" @click="stopActorFollow">
+            <button :disabled="store.phase !== 'ready' || !activeActorFollowsPlayer || performanceRunning" type="button" @click="stopActorFollow">
               停止跟随
             </button>
           </div>
-          <button v-if="currentSceneId === 'tracen_student_plaza'" class="primary-action" :disabled="store.phase !== 'ready'" type="button" @click="runMeeting">
+          <button v-if="currentSceneId === 'tracen_student_plaza'" :disabled="store.phase !== 'ready' || performanceRunning" type="button" @click="runMeeting">
             <span>▶</span> 运行会面演出
           </button>
-          <button v-for="anchor in sceneAnchors.slice(0, 3)" :key="anchor.id" :disabled="store.phase !== 'ready'" type="button" @click="sendActorTo(anchor.id, anchor.displayName)">
+          <button v-for="anchor in sceneAnchors.slice(0, 3)" :key="anchor.id" :disabled="store.phase !== 'ready' || performanceRunning" type="button" @click="sendActorTo(anchor.id, anchor.displayName)">
             {{ anchor.displayName }}
           </button>
-          <button v-for="path in activityPaths" :key="path.id" :disabled="store.phase !== 'ready'" type="button" @click="runActivityPath(path.id, path.activityId)">
+          <button v-for="path in activityPaths" :key="path.id" :disabled="store.phase !== 'ready' || performanceRunning" type="button" @click="runActivityPath(path.id, path.activityId)">
             执行 {{ path.activityId }}
           </button>
-          <button type="button" @click="() => initialize()">重置场景</button>
-          <button v-for="choice in stageChoices" :key="choice.stage_id" :class="{ 'stage-choice-active': choice.definition_path === activeStagePath }" :disabled="store.phase !== 'ready' || choice.definition_path === activeStagePath" type="button" @click="initialize(choice.definition_path)">
+          <button :disabled="performanceRunning" type="button" @click="() => initialize()">重置场景</button>
+          <button v-for="choice in stageChoices" :key="choice.stage_id" :class="{ 'stage-choice-active': choice.definition_path === activeStagePath }" :disabled="store.phase !== 'ready' || choice.definition_path === activeStagePath || performanceRunning" type="button" @click="initialize(choice.definition_path)">
             {{ choice.display_name }}
           </button>
         </div>
@@ -858,8 +1193,8 @@ function formatEvent(event: (typeof store.events)[number]): string {
             <span class="agent-dot" :class="agentStatus"></span>
           </div>
           <div class="agent-session-summary">
-            <strong>训练员 ↔ {{ activeCharacterName }}</strong>
-            <span>连接与角色会话由 .env 自动初始化</span>
+            <strong>训练员 ↔ {{ castCharacterNames || '出演角色' }}</strong>
+            <span>多人 Stage Director · 会话由 .env 自动初始化</span>
           </div>
           <div class="agent-status-row">
             <p class="agent-message">{{ agentStatusMessage }}</p>
@@ -871,12 +1206,12 @@ function formatEvent(event: (typeof store.events)[number]): string {
               <span>{{ line.text }}</span>
             </li>
             <li v-if="conversation.length === 0" class="conversation-empty">
-              输入一句话，测试当前角色的对白、语言动作与舞台行为响应。
+              输入一句话，测试多角色发言调度、对白与舞台行为响应。
             </li>
           </ol>
           <form class="agent-compose" @submit.prevent="sendAgentMessage">
-            <textarea v-model="agentInput" rows="2" :disabled="agentStatus === 'busy'" placeholder="例如：我们去喷泉旁聊聊吧。" @keydown.enter.exact.prevent="sendAgentMessage"></textarea>
-            <button type="submit" :disabled="!agentInput.trim() || agentStatus === 'busy'">发送</button>
+            <textarea v-model="agentInput" rows="2" :disabled="agentStatus === 'busy' || performanceRunning" placeholder="例如：我们去喷泉旁聊聊吧。" @keydown.enter.exact.prevent="sendAgentMessage"></textarea>
+            <button type="submit" :disabled="!agentInput.trim() || agentStatus === 'busy' || performanceRunning">发送</button>
           </form>
         </section>
 
@@ -885,13 +1220,18 @@ function formatEvent(event: (typeof store.events)[number]): string {
             <span class="eyebrow">LIVE ACTORS</span>
             <span class="count">{{ actorViews.length }} / {{ actorViews.length }}</span>
           </div>
-          <article v-for="view in actorViews" :key="view.instanceId" class="actor-row">
+          <article v-for="view in actorViews" :key="view.instanceId" class="actor-row" :class="{ active: !view.player && view.instanceId === activeActorId }">
             <div class="actor-index" :class="view.player ? 'trainer-index' : 'vega-index'">{{ view.initials }}</div>
             <div>
               <strong>{{ view.displayName }}</strong>
               <small>{{ actor(view.instanceId)?.control_owner ?? '—' }} · {{ actor(view.instanceId)?.locomotion ?? '—' }}/{{ actor(view.instanceId)?.facing ?? '—' }}</small>
             </div>
-            <span class="coordinate">{{ actor(view.instanceId) ? `${Math.round(actor(view.instanceId)!.position.x)}, ${Math.round(actor(view.instanceId)!.position.y)}` : '—' }}</span>
+            <div class="actor-row-tail">
+              <span class="coordinate">{{ actor(view.instanceId) ? `${Math.round(actor(view.instanceId)!.position.x)}, ${Math.round(actor(view.instanceId)!.position.y)}` : '—' }}</span>
+              <button v-if="!view.player" type="button" @click="selectActiveActor(view.instanceId)">
+                {{ view.instanceId === activeActorId ? '当前' : '选择' }}
+              </button>
+            </div>
           </article>
         </section>
 
