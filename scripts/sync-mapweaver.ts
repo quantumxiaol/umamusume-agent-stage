@@ -83,7 +83,7 @@ interface MapWorld {
   connections: Array<{
     from: string;
     to: string;
-    kind: "walk" | "portal" | "door";
+    kind: "walk" | "portal" | "door" | "transit";
   }>;
 }
 

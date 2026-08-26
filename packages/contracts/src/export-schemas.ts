@@ -12,6 +12,7 @@ import { performanceScriptSchema } from "./performance-script";
 import { scenePackSchema } from "./scene-pack";
 import { stageCommandSchema } from "./stage-command";
 import { stageDefinitionSchema } from "./stage-definition";
+import { stageEnvironmentSchema } from "./stage-environment";
 import { stageRegistrySchema } from "./stage-registry";
 import { worldPackSchema } from "./world-pack";
 
@@ -30,6 +31,7 @@ const schemas = [
   ["scene-pack.v1.json", scenePackSchema],
   ["stage-command.v1.json", stageCommandSchema],
   ["stage-definition.v1.json", stageDefinitionSchema],
+  ["stage-environment.v1.json", stageEnvironmentSchema],
   ["stage-registry.v1.json", stageRegistrySchema],
   ["world-pack.v1.json", worldPackSchema],
 ] as const;

@@ -1,0 +1,146 @@
+schema_version: map_scene_plan.v1
+scene_id: tracen_commercial_street
+display_name: 特雷森周边商业街
+description: 从河边步道进入的现代日式商业街，串联咖啡店、便利店、书店、餐饮店、露台和车站前广场。
+size_tiles: { width: 64, height: 40 }
+source_tile_size: 16
+runtime_tile_size: 32
+surfaces:
+  - { tile: ground.commercial.paver.warm, bounds: { x: 0, y: 0, width: 64, height: 40 } }
+  - { tile: ground.commercial.asphalt, bounds: { x: 0, y: 16, width: 48, height: 8 } }
+  - { tile: ground.commercial.sidewalk, bounds: { x: 0, y: 10, width: 48, height: 6 } }
+  - { tile: ground.commercial.sidewalk, bounds: { x: 0, y: 24, width: 48, height: 6 } }
+  - { tile: ground.commercial.crosswalk, bounds: { x: 27, y: 16, width: 8, height: 8 } }
+  - { tile: ground.commercial.station.checker, bounds: { x: 48, y: 10, width: 16, height: 20 } }
+  - { tile: ground.commercial.tactile.yellow, bounds: { x: 46, y: 10, width: 2, height: 20 } }
+  - { tile: ground.commercial.terrace.deck, bounds: { x: 42, y: 30, width: 22, height: 10 } }
+  - { tile: structure.commercial.wall.brick, bounds: { x: 0, y: 0, width: 16, height: 10 } }
+  - { tile: structure.commercial.wall.cream, bounds: { x: 16, y: 0, width: 16, height: 10 } }
+  - { tile: structure.commercial.wall.brick, bounds: { x: 32, y: 0, width: 16, height: 10 } }
+  - { tile: structure.commercial.wall.cream, bounds: { x: 48, y: 0, width: 16, height: 10 } }
+  - { tile: structure.commercial.window.glass, bounds: { x: 2, y: 4, width: 12, height: 3 } }
+  - { tile: structure.commercial.window.glass, bounds: { x: 18, y: 4, width: 12, height: 3 } }
+  - { tile: structure.commercial.window.glass, bounds: { x: 34, y: 4, width: 12, height: 3 } }
+  - { tile: structure.commercial.window.glass, bounds: { x: 50, y: 3, width: 12, height: 4 } }
+  - { tile: structure.commercial.door.cafe, bounds: { x: 8, y: 9, width: 1, height: 1 } }
+  - { tile: structure.commercial.door.shop, bounds: { x: 23, y: 9, width: 1, height: 1 } }
+  - { tile: structure.commercial.door.shop, bounds: { x: 38, y: 9, width: 1, height: 1 } }
+  - { tile: structure.commercial.door.station, bounds: { x: 55, y: 9, width: 1, height: 1 } }
+  - { tile: structure.commercial.wall.cream, bounds: { x: 0, y: 30, width: 20, height: 10 } }
+  - { tile: structure.commercial.wall.brick, bounds: { x: 20, y: 30, width: 20, height: 10 } }
+  - { tile: structure.commercial.window.glass, bounds: { x: 2, y: 33, width: 16, height: 3 } }
+  - { tile: structure.commercial.window.glass, bounds: { x: 22, y: 33, width: 16, height: 3 } }
+  - { tile: structure.commercial.door.shop, bounds: { x: 12, y: 30, width: 1, height: 1 } }
+  - { tile: structure.commercial.door.shop, bounds: { x: 27, y: 30, width: 1, height: 1 } }
+tile_props:
+  - { tile: prop.commercial.awning.green, x: 3, y: 8, blocking: true }
+  - { tile: prop.commercial.awning.green, x: 7, y: 8, blocking: true }
+  - { tile: prop.commercial.awning.green, x: 11, y: 8, blocking: true }
+  - { tile: prop.commercial.sign.cafe, x: 8, y: 6, blocking: true }
+  - { tile: prop.commercial.awning.orange, x: 18, y: 8, blocking: true }
+  - { tile: prop.commercial.awning.orange, x: 22, y: 8, blocking: true }
+  - { tile: prop.commercial.awning.orange, x: 26, y: 8, blocking: true }
+  - { tile: prop.commercial.sign.convenience, x: 23, y: 6, blocking: true }
+  - { tile: prop.commercial.awning.blue, x: 34, y: 8, blocking: true }
+  - { tile: prop.commercial.awning.blue, x: 38, y: 8, blocking: true }
+  - { tile: prop.commercial.awning.blue, x: 42, y: 8, blocking: true }
+  - { tile: prop.commercial.sign.bookstore, x: 38, y: 6, blocking: true }
+  - { tile: prop.commercial.sign.station, x: 55, y: 7, blocking: true }
+  - { tile: prop.commercial.station_info, x: 59, y: 12, blocking: true }
+  - { tile: prop.commercial.vending_machine, x: 45, y: 11, blocking: true }
+  - { tile: prop.commercial.bicycle, x: 16, y: 11, blocking: true }
+  - { tile: prop.commercial.menu_board, x: 11, y: 11, blocking: true }
+  - { tile: prop.commercial.planter, x: 4, y: 12, blocking: true }
+  - { tile: prop.commercial.planter, x: 42, y: 12, blocking: true }
+  - { tile: prop.commercial.street_lamp, x: 20, y: 12, blocking: true }
+  - { tile: prop.commercial.street_lamp, x: 39, y: 12, blocking: true }
+  - { tile: prop.commercial.bollard, x: 2, y: 14, blocking: true }
+  - { tile: prop.commercial.bollard, x: 45, y: 14, blocking: true }
+  - { tile: prop.commercial.bus_stop, x: 52, y: 18, blocking: true }
+  - { tile: prop.commercial.bench, x: 57, y: 22, blocking: true }
+  - { tile: prop.commercial.postbox, x: 61, y: 25, blocking: true }
+  - { tile: prop.commercial.trash_bin, x: 44, y: 28, blocking: true }
+  - { tile: prop.commercial.street_lamp, x: 6, y: 27, blocking: true }
+  - { tile: prop.commercial.street_lamp, x: 37, y: 27, blocking: true }
+  - { tile: prop.commercial.planter, x: 16, y: 28, blocking: true }
+  - { tile: prop.commercial.planter, x: 34, y: 28, blocking: true }
+  - { tile: prop.commercial.awning.green, x: 4, y: 30, blocking: true }
+  - { tile: prop.commercial.awning.green, x: 8, y: 30, blocking: true }
+  - { tile: prop.commercial.sign.bakery, x: 12, y: 32, blocking: true }
+  - { tile: prop.commercial.awning.orange, x: 23, y: 30, blocking: true }
+  - { tile: prop.commercial.awning.orange, x: 31, y: 30, blocking: true }
+  - { tile: prop.commercial.fruit_display, x: 36, y: 30, blocking: true }
+  - { tile: prop.commercial.delivery_crate, x: 39, y: 29, blocking: true }
+  - { tile: prop.commercial.arcade_banner, x: 41, y: 28, blocking: true }
+  - { tile: prop.commercial.cafe_table, x: 47, y: 33, blocking: true }
+  - { tile: prop.commercial.cafe_chair, x: 45, y: 34, blocking: true }
+  - { tile: prop.commercial.cafe_chair, x: 50, y: 34, blocking: true }
+  - { tile: prop.commercial.cafe_table, x: 56, y: 33, blocking: true }
+  - { tile: prop.commercial.cafe_chair, x: 54, y: 34, blocking: true }
+  - { tile: prop.commercial.cafe_chair, x: 59, y: 34, blocking: true }
+  - { tile: prop.commercial.planter, x: 43, y: 38, blocking: true }
+  - { tile: prop.commercial.planter, x: 62, y: 38, blocking: true }
+  - { tile: prop.commercial.utility_pole, x: 1, y: 28, blocking: true }
+  - { tile: prop.commercial.guardrail, x: 14, y: 25, blocking: true }
+  - { tile: prop.commercial.guardrail, x: 18, y: 25, blocking: true }
+landmarks:
+  - { id: north_shopfronts, display_name: 北侧沿街店面, kind: retail, render_mode: tile_stamp, bounds: { x: 0, y: 0, width: 48, height: 10 } }
+  - { id: station_front, display_name: 车站前广场, kind: station, render_mode: tile_stamp, bounds: { x: 48, y: 0, width: 16, height: 30 } }
+  - { id: shopping_avenue, display_name: 商业街主轴, kind: street, render_mode: tile_stamp, bounds: { x: 0, y: 10, width: 48, height: 20 } }
+  - { id: south_shops, display_name: 南侧餐饮与生鲜店, kind: retail, render_mode: tile_stamp, bounds: { x: 0, y: 30, width: 40, height: 10 } }
+  - { id: cafe_terrace, display_name: 街角咖啡露台, kind: cafe, render_mode: tile_stamp, bounds: { x: 42, y: 30, width: 22, height: 10 } }
+collision:
+  - { x: 0, y: 0, width: 64, height: 9 }
+  - { x: 0, y: 9, width: 8, height: 1 }
+  - { x: 9, y: 9, width: 14, height: 1 }
+  - { x: 24, y: 9, width: 14, height: 1 }
+  - { x: 39, y: 9, width: 16, height: 1 }
+  - { x: 56, y: 9, width: 8, height: 1 }
+  - { x: 0, y: 31, width: 40, height: 9 }
+  - { x: 0, y: 30, width: 12, height: 1 }
+  - { x: 13, y: 30, width: 14, height: 1 }
+  - { x: 28, y: 30, width: 12, height: 1 }
+zones:
+  - { id: north_retail, display_name: 北侧零售带, kind: retail, bounds: { x: 0, y: 0, width: 48, height: 14 } }
+  - { id: main_street, display_name: 商业街主路, kind: street, bounds: { x: 0, y: 14, width: 48, height: 12 } }
+  - { id: station_plaza, display_name: 车站前广场, kind: transit, bounds: { x: 48, y: 10, width: 16, height: 20 } }
+  - { id: south_retail, display_name: 南侧生活商店, kind: retail, bounds: { x: 0, y: 26, width: 40, height: 14 } }
+  - { id: cafe_terrace, display_name: 咖啡露台, kind: cafe, bounds: { x: 42, y: 30, width: 22, height: 10 } }
+anchors:
+  - { id: cafe_front, display_name: 咖啡店门前, position: { x: 8, y: 11 }, facing: up }
+  - { id: convenience_front, display_name: 便利店门前, position: { x: 23, y: 11 }, facing: up }
+  - { id: bookstore_front, display_name: 书店门前, position: { x: 38, y: 11 }, facing: up }
+  - { id: station_entrance, display_name: 车站入口, position: { x: 55, y: 11 }, facing: up }
+  - { id: bus_stop_wait, display_name: 巴士站等候点, position: { x: 54, y: 18 }, facing: left }
+  - { id: crosswalk_meeting, display_name: 斑马线会合点, position: { x: 31, y: 20 }, facing: down }
+  - { id: bakery_front, display_name: 面包店门前, position: { x: 12, y: 28 }, facing: down }
+  - { id: fresh_market_front, display_name: 生鲜店门前, position: { x: 27, y: 28 }, facing: down }
+  - { id: cafe_terrace_talk, display_name: 露台谈话位, position: { x: 52, y: 37 }, facing: up }
+  - { id: shrine_route, display_name: 神社方向路口, position: { x: 61, y: 20 }, facing: right }
+spawns:
+  - { id: from_riverside, position: { x: 2, y: 12 }, facing: right }
+  - { id: commercial_start, position: { x: 20, y: 20 }, facing: right }
+  - { id: from_shrine, position: { x: 61, y: 20 }, facing: left }
+portals:
+  - { id: to_riverside, position: { x: 0, y: 12 }, target_scene_id: tracen_riverside_path, target_spawn_id: from_commercial_street }
+  - { id: to_shrine, position: { x: 63, y: 20 }, target_scene_id: tracen_shrine, target_spawn_id: from_commercial_street }
+activity_paths:
+  - id: shopping_street_loop
+    activity_id: city_shopping_walk
+    loop: true
+    points: [{ x: 5, y: 12 }, { x: 44, y: 12 }, { x: 44, y: 27 }, { x: 5, y: 27 }, { x: 5, y: 12 }]
+  - id: riverside_to_station
+    activity_id: riverside_station_walk
+    loop: false
+    points: [{ x: 2, y: 12 }, { x: 31, y: 12 }, { x: 31, y: 20 }, { x: 47, y: 20 }, { x: 55, y: 18 }, { x: 55, y: 11 }]
+  - id: cafe_and_market_stroll
+    activity_id: commercial_daily_life
+    loop: false
+    points: [{ x: 8, y: 11 }, { x: 23, y: 11 }, { x: 31, y: 20 }, { x: 27, y: 28 }, { x: 40, y: 28 }, { x: 52, y: 37 }]
+visual_references:
+  - { catalog_id: shopping_street_day, usage: 现代白灰建筑、灰蓝道路、斑马线、绿化和橙色街具 }
+  - { catalog_id: covered_shopping_street_day, usage: 绿橙连续店招、密集沿街陈列和商店街生活感 }
+  - { catalog_id: terrace_cafe_day, usage: 暖木露台、浅色桌椅、花箱和开阔休息尺度 }
+  - { catalog_id: convenience_store_exterior, usage: 砖墙、紫色品牌带、玻璃店面、自行车和售货设施 }
+  - { catalog_id: station_concourse_day, usage: 米色棋盘铺地、蓝灰金属、绿色导视和宽阔车站前空间 }
+missing_tile_families: []

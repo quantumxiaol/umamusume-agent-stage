@@ -93,10 +93,12 @@ spawns:
   - { id: visitor_start, position: { x: 28, y: 34 }, facing: up }
   - { id: from_riverside, position: { x: 52, y: 34 }, facing: left }
   - { id: from_dormitory, position: { x: 3, y: 34 }, facing: right }
+  - { id: from_racecourse, position: { x: 52, y: 32 }, facing: left }
 portals:
   - { id: to_student_plaza, position: { x: 28, y: 0 }, target_scene_id: tracen_student_plaza, target_spawn_id: from_main_gate }
   - { id: to_riverside_path, position: { x: 55, y: 34 }, target_scene_id: tracen_riverside_path, target_spawn_id: from_academy_gate }
   - { id: to_dormitory_life, position: { x: 0, y: 34 }, target_scene_id: tracen_dormitory_life, target_spawn_id: from_academy_gate }
+  - { id: to_racecourse_complex, position: { x: 55, y: 32 }, target_scene_id: tracen_racecourse_complex, target_spawn_id: from_academy_gate }
 activity_paths:
   - id: gate_to_plaza_route
     activity_id: campus_walk

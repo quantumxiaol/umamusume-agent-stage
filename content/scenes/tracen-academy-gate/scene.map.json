@@ -14,7 +14,7 @@
     "tile_width": 32,
     "tile_height": 32,
     "columns": 8,
-    "tile_count": 57
+    "tile_count": 312
   },
   "layers": [
     {
@@ -8645,6 +8645,14 @@
         "y": 34
       },
       "facing": "right"
+    },
+    {
+      "id": "from_racecourse",
+      "position": {
+        "x": 52,
+        "y": 32
+      },
+      "facing": "left"
     }
   ],
   "portals": [
@@ -8673,6 +8681,15 @@
         "y": 34
       },
       "target_scene_id": "tracen_dormitory_life",
+      "target_spawn_id": "from_academy_gate"
+    },
+    {
+      "id": "to_racecourse_complex",
+      "position": {
+        "x": 55,
+        "y": 32
+      },
+      "target_scene_id": "tracen_racecourse_complex",
       "target_spawn_id": "from_academy_gate"
     }
   ],

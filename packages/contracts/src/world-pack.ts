@@ -23,7 +23,7 @@ export const worldPackSchema = z.object({
       z.object({
         from: z.string().min(1),
         to: z.string().min(1),
-        kind: z.enum(["walk", "portal", "door"]).default("walk"),
+        kind: z.enum(["walk", "portal", "door", "transit"]).default("walk"),
       }),
     )
     .default([]),

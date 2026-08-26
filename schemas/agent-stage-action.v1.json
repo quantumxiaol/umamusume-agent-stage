@@ -139,6 +139,33 @@
       "properties": {
         "type": {
           "type": "string",
+          "const": "actor.travel_to_scene"
+        },
+        "actor_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target_scene_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target_spawn_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "type",
+        "actor_id",
+        "target_scene_id"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
           "const": "actor.stop"
         },
         "actor_id": {

@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "default": "stage_environment.v1",
+      "type": "string",
+      "const": "stage_environment.v1"
+    },
+    "time_of_day": {
+      "default": "day",
+      "type": "string",
+      "enum": [
+        "day",
+        "evening",
+        "night"
+      ]
+    },
+    "weather": {
+      "default": "clear",
+      "type": "string",
+      "enum": [
+        "clear",
+        "rain",
+        "snow"
+      ]
+    },
+    "intensity": {
+      "default": 0.55,
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "transition_ms": {
+      "default": 800,
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10000
+    }
+  },
+  "required": [
+    "schema_version",
+    "time_of_day",
+    "weather",
+    "intensity",
+    "transition_ms"
+  ],
+  "additionalProperties": false
+}

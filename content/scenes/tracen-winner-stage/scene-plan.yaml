@@ -1,0 +1,162 @@
+schema_version: map_scene_plan.v1
+scene_id: tracen_winner_stage
+display_name: 特雷森胜者舞台与后台
+description: 连接户外胜者舞台、观众区、舞台侧翼、后台控制、换装准备和胜者采访区的演出地图。
+size_tiles: { width: 60, height: 40 }
+source_tile_size: 16
+runtime_tile_size: 32
+surfaces:
+  - { tile: ground.winner_stage.plaza.brick, bounds: { x: 0, y: 0, width: 60, height: 40 } }
+  - { tile: ground.winner_stage.audience.paver, bounds: { x: 0, y: 18, width: 39, height: 22 } }
+  - { tile: ground.winner_stage.deck.wood, bounds: { x: 3, y: 3, width: 33, height: 15 } }
+  - { tile: ground.winner_stage.runway.gold, bounds: { x: 17, y: 14, width: 5, height: 24 } }
+  - { tile: ground.winner_stage.backstage.dark, bounds: { x: 40, y: 1, width: 19, height: 13 } }
+  - { tile: ground.winner_stage.dressing.carpet, bounds: { x: 40, y: 15, width: 19, height: 13 } }
+  - { tile: ground.winner_stage.interview.parquet, bounds: { x: 40, y: 29, width: 19, height: 10 } }
+  - { tile: structure.winner_stage.curtain.red, bounds: { x: 3, y: 2, width: 33, height: 1 } }
+  - { tile: structure.winner_stage.wall.dark, bounds: { x: 39, y: 0, width: 21, height: 1 } }
+  - { tile: structure.winner_stage.wall.dark, bounds: { x: 39, y: 0, width: 1, height: 40 } }
+  - { tile: structure.winner_stage.wall.cream, bounds: { x: 59, y: 0, width: 1, height: 40 } }
+  - { tile: structure.winner_stage.wall.dark, bounds: { x: 39, y: 14, width: 21, height: 1 } }
+  - { tile: structure.winner_stage.backdrop.green, bounds: { x: 39, y: 28, width: 21, height: 1 } }
+  - { tile: structure.winner_stage.wall.cream, bounds: { x: 39, y: 39, width: 21, height: 1 } }
+  - { tile: structure.winner_stage.door.stage, bounds: { x: 39, y: 10, width: 1, height: 1 } }
+  - { tile: structure.winner_stage.door.service, bounds: { x: 49, y: 14, width: 1, height: 1 } }
+  - { tile: structure.winner_stage.door.service, bounds: { x: 52, y: 28, width: 1, height: 1 } }
+  - { tile: structure.winner_stage.door.service, bounds: { x: 59, y: 34, width: 1, height: 1 } }
+tile_props:
+  - { tile: prop.winner_stage.canopy.red, x: 4, y: 2, blocking: true }
+  - { tile: prop.winner_stage.canopy.white, x: 7, y: 2, blocking: true }
+  - { tile: prop.winner_stage.canopy.red, x: 10, y: 2, blocking: true }
+  - { tile: prop.winner_stage.canopy.white, x: 13, y: 2, blocking: true }
+  - { tile: prop.winner_stage.canopy.red, x: 16, y: 2, blocking: true }
+  - { tile: prop.winner_stage.canopy.white, x: 19, y: 2, blocking: true }
+  - { tile: prop.winner_stage.canopy.red, x: 22, y: 2, blocking: true }
+  - { tile: prop.winner_stage.canopy.white, x: 25, y: 2, blocking: true }
+  - { tile: prop.winner_stage.canopy.red, x: 28, y: 2, blocking: true }
+  - { tile: prop.winner_stage.canopy.white, x: 31, y: 2, blocking: true }
+  - { tile: prop.winner_stage.canopy.red, x: 34, y: 2, blocking: true }
+  - { tile: prop.winner_stage.banner, x: 19, y: 4, blocking: true }
+  - { tile: prop.winner_stage.horseshoe_emblem, x: 19, y: 6, blocking: true }
+  - { tile: prop.winner_stage.spotlight.blue, x: 7, y: 6, blocking: true }
+  - { tile: prop.winner_stage.spotlight.pink, x: 12, y: 6, blocking: true }
+  - { tile: prop.winner_stage.spotlight.gold, x: 26, y: 6, blocking: true }
+  - { tile: prop.winner_stage.spotlight.blue, x: 31, y: 6, blocking: true }
+  - { tile: prop.winner_stage.microphone, x: 18, y: 10, blocking: true }
+  - { tile: prop.winner_stage.podium, x: 23, y: 10, blocking: true }
+  - { tile: prop.winner_stage.flower_stand, x: 6, y: 12, blocking: true }
+  - { tile: prop.winner_stage.flower_stand, x: 32, y: 12, blocking: true }
+  - { tile: prop.winner_stage.speaker, x: 4, y: 14, blocking: true }
+  - { tile: prop.winner_stage.speaker, x: 34, y: 14, blocking: true }
+  - { tile: prop.winner_stage.footlights, x: 7, y: 16, blocking: true }
+  - { tile: prop.winner_stage.footlights, x: 12, y: 16, blocking: true }
+  - { tile: prop.winner_stage.footlights, x: 17, y: 16, blocking: true }
+  - { tile: prop.winner_stage.footlights, x: 22, y: 16, blocking: true }
+  - { tile: prop.winner_stage.footlights, x: 27, y: 16, blocking: true }
+  - { tile: prop.winner_stage.footlights, x: 32, y: 16, blocking: true }
+  - { tile: prop.winner_stage.stairs, x: 19, y: 17, blocking: false }
+  - { tile: prop.winner_stage.rope_barrier, x: 14, y: 20, blocking: true }
+  - { tile: prop.winner_stage.rope_barrier, x: 24, y: 20, blocking: true }
+  - { tile: prop.winner_stage.confetti, x: 11, y: 10, blocking: false }
+  - { tile: prop.winner_stage.confetti, x: 27, y: 11, blocking: false }
+  - { tile: prop.winner_stage.confetti, x: 19, y: 13, blocking: false }
+  - { tile: prop.winner_stage.audience_bench, x: 3, y: 24, blocking: true }
+  - { tile: prop.winner_stage.audience_bench, x: 7, y: 24, blocking: true }
+  - { tile: prop.winner_stage.audience_bench, x: 11, y: 24, blocking: true }
+  - { tile: prop.winner_stage.audience_bench, x: 27, y: 24, blocking: true }
+  - { tile: prop.winner_stage.audience_bench, x: 31, y: 24, blocking: true }
+  - { tile: prop.winner_stage.audience_bench, x: 35, y: 24, blocking: true }
+  - { tile: prop.winner_stage.audience_bench, x: 3, y: 29, blocking: true }
+  - { tile: prop.winner_stage.audience_bench, x: 7, y: 29, blocking: true }
+  - { tile: prop.winner_stage.audience_bench, x: 11, y: 29, blocking: true }
+  - { tile: prop.winner_stage.audience_bench, x: 27, y: 29, blocking: true }
+  - { tile: prop.winner_stage.audience_bench, x: 31, y: 29, blocking: true }
+  - { tile: prop.winner_stage.audience_bench, x: 35, y: 29, blocking: true }
+  - { tile: prop.winner_stage.audience_bench, x: 3, y: 34, blocking: true }
+  - { tile: prop.winner_stage.audience_bench, x: 7, y: 34, blocking: true }
+  - { tile: prop.winner_stage.audience_bench, x: 11, y: 34, blocking: true }
+  - { tile: prop.winner_stage.audience_bench, x: 27, y: 34, blocking: true }
+  - { tile: prop.winner_stage.audience_bench, x: 31, y: 34, blocking: true }
+  - { tile: prop.winner_stage.audience_bench, x: 35, y: 34, blocking: true }
+  - { tile: prop.backstage.light_truss, x: 41, y: 1, blocking: true }
+  - { tile: prop.backstage.light_truss, x: 57, y: 1, blocking: true }
+  - { tile: prop.backstage.equipment_rack, x: 41, y: 4, blocking: true }
+  - { tile: prop.backstage.equipment_rack, x: 43, y: 4, blocking: true }
+  - { tile: prop.backstage.mixing_console, x: 48, y: 6, blocking: true }
+  - { tile: prop.backstage.folding_chair, x: 48, y: 8, blocking: true }
+  - { tile: prop.backstage.flight_case, x: 55, y: 5, blocking: true }
+  - { tile: prop.backstage.flight_case, x: 57, y: 8, blocking: true }
+  - { tile: prop.backstage.costume_rack, x: 41, y: 17, blocking: true }
+  - { tile: prop.backstage.costume_rack, x: 43, y: 17, blocking: true }
+  - { tile: prop.backstage.sofa, x: 43, y: 24, blocking: true }
+  - { tile: prop.backstage.makeup_mirror, x: 51, y: 17, blocking: true }
+  - { tile: prop.backstage.makeup_mirror, x: 55, y: 17, blocking: true }
+  - { tile: prop.backstage.dressing_table, x: 51, y: 20, blocking: true }
+  - { tile: prop.backstage.dressing_table, x: 55, y: 20, blocking: true }
+  - { tile: prop.backstage.folding_chair, x: 52, y: 22, blocking: true }
+  - { tile: prop.backstage.folding_chair, x: 56, y: 22, blocking: true }
+  - { tile: prop.backstage.sofa, x: 42, y: 36, blocking: true }
+  - { tile: prop.backstage.interview_microphone, x: 49, y: 34, blocking: true }
+  - { tile: prop.backstage.camera_tripod, x: 55, y: 35, blocking: true }
+landmarks:
+  - { id: winner_stage, display_name: 胜者舞台, kind: performance_stage, render_mode: tile_stamp, bounds: { x: 3, y: 2, width: 33, height: 16 } }
+  - { id: audience_plaza, display_name: 舞台观众区, kind: audience, render_mode: tile_stamp, bounds: { x: 0, y: 18, width: 39, height: 22 } }
+  - { id: backstage_control, display_name: 后台控制区, kind: backstage_control, render_mode: tile_stamp, bounds: { x: 40, y: 1, width: 19, height: 13 } }
+  - { id: dressing_room, display_name: 换装准备区, kind: dressing_room, render_mode: tile_stamp, bounds: { x: 40, y: 15, width: 19, height: 13 } }
+  - { id: winner_interview, display_name: 胜者采访区, kind: interview, render_mode: tile_stamp, bounds: { x: 40, y: 29, width: 19, height: 10 } }
+collision:
+  - { x: 3, y: 2, width: 33, height: 1 }
+  - { x: 39, y: 0, width: 21, height: 1 }
+  - { x: 39, y: 0, width: 1, height: 10 }
+  - { x: 39, y: 11, width: 1, height: 29 }
+  - { x: 59, y: 0, width: 1, height: 34 }
+  - { x: 59, y: 35, width: 1, height: 5 }
+  - { x: 39, y: 14, width: 10, height: 1 }
+  - { x: 50, y: 14, width: 10, height: 1 }
+  - { x: 39, y: 28, width: 13, height: 1 }
+  - { x: 53, y: 28, width: 7, height: 1 }
+  - { x: 39, y: 39, width: 21, height: 1 }
+zones:
+  - { id: winner_stage_zone, display_name: 胜者舞台表演区, kind: performance, bounds: { x: 3, y: 3, width: 33, height: 15 } }
+  - { id: audience_zone, display_name: 观众与庆祝区, kind: audience, bounds: { x: 0, y: 18, width: 39, height: 22 } }
+  - { id: backstage_control_zone, display_name: 后台灯光与音控区, kind: backstage_control, bounds: { x: 40, y: 1, width: 19, height: 13 } }
+  - { id: dressing_zone, display_name: 换装与候场区, kind: dressing, bounds: { x: 40, y: 15, width: 19, height: 13 } }
+  - { id: interview_zone, display_name: 胜者采访区, kind: interview, bounds: { x: 40, y: 29, width: 19, height: 10 } }
+anchors:
+  - { id: stage_center, display_name: 舞台中央表演位, position: { x: 19, y: 9 }, facing: down }
+  - { id: winner_podium, display_name: 胜者致辞位, position: { x: 22, y: 11 }, facing: down }
+  - { id: curtain_call, display_name: 谢幕集合位, position: { x: 19, y: 14 }, facing: down }
+  - { id: runway_pose, display_name: 延伸台定点位, position: { x: 19, y: 21 }, facing: down }
+  - { id: audience_center, display_name: 观众中轴演出位, position: { x: 19, y: 27 }, facing: up }
+  - { id: control_console, display_name: 后台音控位, position: { x: 50, y: 7 }, facing: left }
+  - { id: stage_wing, display_name: 舞台侧翼候场位, position: { x: 41, y: 10 }, facing: left }
+  - { id: dressing_station, display_name: 换装梳理位, position: { x: 53, y: 24 }, facing: up }
+  - { id: backstage_sofa_talk, display_name: 后台沙发谈话位, position: { x: 45, y: 24 }, facing: left }
+  - { id: winner_interview, display_name: 胜者采访位, position: { x: 48, y: 34 }, facing: right }
+  - { id: interview_camera, display_name: 采访摄影位, position: { x: 54, y: 35 }, facing: left }
+spawns:
+  - { id: from_racecourse, position: { x: 57, y: 34 }, facing: left }
+  - { id: winner_stage_start, position: { x: 19, y: 37 }, facing: up }
+  - { id: backstage_call, position: { x: 42, y: 10 }, facing: left }
+portals:
+  - { id: to_racecourse_complex, position: { x: 59, y: 34 }, target_scene_id: tracen_racecourse_complex, target_spawn_id: from_winner_stage }
+activity_paths:
+  - id: backstage_to_stage
+    activity_id: stage_call
+    loop: false
+    points: [{ x: 42, y: 10 }, { x: 39, y: 10 }, { x: 35, y: 10 }, { x: 27, y: 10 }, { x: 19, y: 9 }]
+  - id: winner_runway_walk
+    activity_id: victory_walk
+    loop: false
+    points: [{ x: 19, y: 9 }, { x: 19, y: 14 }, { x: 19, y: 21 }, { x: 19, y: 27 }, { x: 19, y: 35 }]
+  - id: stage_to_interview
+    activity_id: winner_interview_transition
+    loop: false
+    points: [{ x: 19, y: 9 }, { x: 35, y: 10 }, { x: 39, y: 10 }, { x: 49, y: 13 }, { x: 49, y: 14 }, { x: 52, y: 27 }, { x: 52, y: 28 }, { x: 48, y: 34 }]
+visual_references:
+  - { catalog_id: racecourse_stage_day, usage: 户外红白顶棚、砖红广场、木质观众长椅与中轴舞台 }
+  - { catalog_id: decorated_podium_stage, usage: 金色灯串、绿色胜者旗帜和庆典灯光点缀 }
+  - { catalog_id: stage_backstage_day, usage: 深蓝设备区、灯架、音控台、航空箱和后场侧翼 }
+  - { catalog_id: winner_backdrop_room, usage: 绿白棋盘采访墙、木地板、话筒和摄影机位 }
+  - { catalog_id: theater_stage, usage: 红幕金边、舞台侧翼和观众中轴动线 }
+missing_tile_families: []

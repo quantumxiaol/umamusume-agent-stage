@@ -1,0 +1,22 @@
+{
+  "schema_version": "stage_definition.v1",
+  "stage_id": "beach_stage",
+  "display_name": "特雷森周边海边",
+  "scene_path": "scenes/tracen-beach/scene.json",
+  "actors": [
+    {
+      "instance_id": "trainer",
+      "bundle_id": "trainer",
+      "spawn_id": "from_observatory",
+      "control_owner": "player",
+      "player": true
+    },
+    {
+      "instance_id": "uma_admire_vega",
+      "bundle_id": "admire-vega-uniform",
+      "spawn_id": "from_forest",
+      "control_owner": "agent",
+      "player": false
+    }
+  ]
+}

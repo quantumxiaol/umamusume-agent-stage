@@ -1,0 +1,22 @@
+{
+  "schema_version": "stage_definition.v1",
+  "stage_id": "commercial_street_stage",
+  "display_name": "商业街与车站前",
+  "scene_path": "scenes/tracen-commercial-street/scene.json",
+  "actors": [
+    {
+      "instance_id": "trainer",
+      "bundle_id": "trainer",
+      "spawn_id": "commercial_start",
+      "control_owner": "player",
+      "player": true
+    },
+    {
+      "instance_id": "uma_admire_vega",
+      "bundle_id": "admire-vega-uniform",
+      "spawn_id": "from_riverside",
+      "control_owner": "agent",
+      "player": false
+    }
+  ]
+}

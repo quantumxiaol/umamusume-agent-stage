@@ -1,0 +1,22 @@
+{
+  "schema_version": "stage_definition.v1",
+  "stage_id": "winner_stage_stage",
+  "display_name": "胜者舞台与后台",
+  "scene_path": "scenes/tracen-winner-stage/scene.json",
+  "actors": [
+    {
+      "instance_id": "trainer",
+      "bundle_id": "trainer",
+      "spawn_id": "winner_stage_start",
+      "control_owner": "player",
+      "player": true
+    },
+    {
+      "instance_id": "uma_admire_vega",
+      "bundle_id": "admire-vega-uniform",
+      "spawn_id": "from_racecourse",
+      "control_owner": "agent",
+      "player": false
+    }
+  ]
+}

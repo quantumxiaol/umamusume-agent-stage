@@ -74,8 +74,13 @@ anchors:
 spawns:
   - { id: from_school_courtyard, position: { x: 24, y: 25 }, facing: up }
   - { id: entrance_hall_start, position: { x: 24, y: 20 }, facing: up }
+  - { id: from_trainer_office, position: { x: 41, y: 8 }, facing: down }
+  - { id: from_academic_rooms, position: { x: 24, y: 8 }, facing: down }
 portals:
   - { id: to_school_courtyard, position: { x: 24, y: 27 }, target_scene_id: tracen_school_courtyard, target_spawn_id: from_main_school }
+  - { id: to_trainer_office, position: { x: 41, y: 7 }, target_scene_id: tracen_trainer_office, target_spawn_id: from_main_school }
+  - { id: to_academic_rooms_classroom, position: { x: 7, y: 7 }, target_scene_id: tracen_academic_rooms, target_spawn_id: from_main_school_classroom }
+  - { id: to_academic_rooms_library, position: { x: 24, y: 7 }, target_scene_id: tracen_academic_rooms, target_spawn_id: from_main_school_library }
 activity_paths:
   - id: entrance_to_library
     activity_id: indoor_walk
@@ -90,5 +95,4 @@ visual_references:
   - { catalog_id: classroom_day, usage: tall windows and orderly academic furniture }
   - { catalog_id: trainer_office_morning, usage: warm wood furniture and formal office threshold }
   - { catalog_id: library_day, usage: long wooden bookshelves and quiet central approach }
-missing_tile_families:
-  - classroom_trainer_office_and_library_room_sets
+missing_tile_families: []

@@ -121,6 +121,46 @@ describe("stageActionToCommand", () => {
       policy: "replace",
     });
   });
+
+  it("accepts a Director request for one actor to travel to another scene", async () => {
+    const response = {
+      schema_version: "agent_stage_turn.v1" as const,
+      session_id: "s1",
+      turn_index: 2,
+      events: [],
+      stage_actions: [{
+        type: "actor.travel_to_scene" as const,
+        actor_id: "uma_admire_vega",
+        target_scene_id: "tracen_training_ground",
+        target_spawn_id: "from_student_plaza",
+      }],
+      scene_state: {},
+    };
+    const fetch = vi.fn<typeof globalThis.fetch>(async () =>
+      new Response(JSON.stringify(response)),
+    );
+    const client = new AgentApiClient({ baseUrl: "https://agent.example", fetch });
+
+    await expect(client.turn({
+      sessionId: "s1",
+      userUuid: "u1",
+      message: "先去训练场等我。",
+      targetActorIds: ["agent-admire-vega"],
+      actorBindings: [{
+        agent_actor_id: "agent-admire-vega",
+        stage_actor_id: "uma_admire_vega",
+      }],
+      liveStage: {
+        schema_version: "live_stage.v1",
+        stage_id: "student_plaza_stage",
+        scene_id: "tracen_student_plaza",
+        actors: [],
+        anchors: [],
+        activity_paths: [],
+        portals: [],
+      },
+    })).resolves.toMatchObject({ stage_actions: response.stage_actions });
+  });
 });
 
 describe("reconcileStageTurnActions", () => {

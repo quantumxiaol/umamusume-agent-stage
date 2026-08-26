@@ -27,6 +27,18 @@
       "definition_path": "stages/tracen-main-school-interior.stage.json"
     },
     {
+      "stage_id": "trainer_office_stage",
+      "scene_id": "tracen_trainer_office",
+      "display_name": "训练员室",
+      "definition_path": "stages/tracen-trainer-office.stage.json"
+    },
+    {
+      "stage_id": "academic_rooms_stage",
+      "scene_id": "tracen_academic_rooms",
+      "display_name": "教学楼房间层",
+      "definition_path": "stages/tracen-academic-rooms.stage.json"
+    },
+    {
       "stage_id": "training_ground_stage",
       "scene_id": "tracen_training_ground",
       "display_name": "综合训练场",
@@ -51,10 +63,58 @@
       "definition_path": "stages/tracen-dormitory-life.stage.json"
     },
     {
+      "stage_id": "dorm_interiors_stage",
+      "scene_id": "tracen_dorm_interiors",
+      "display_name": "宿舍内部",
+      "definition_path": "stages/tracen-dorm-interiors.stage.json"
+    },
+    {
       "stage_id": "riverside_path_stage",
       "scene_id": "tracen_riverside_path",
       "display_name": "河边步道",
       "definition_path": "stages/tracen-riverside-path.stage.json"
+    },
+    {
+      "stage_id": "racecourse_complex_stage",
+      "scene_id": "tracen_racecourse_complex",
+      "display_name": "赛马场综合区",
+      "definition_path": "stages/tracen-racecourse-complex.stage.json"
+    },
+    {
+      "stage_id": "winner_stage_stage",
+      "scene_id": "tracen_winner_stage",
+      "display_name": "胜者舞台与后台",
+      "definition_path": "stages/tracen-winner-stage.stage.json"
+    },
+    {
+      "stage_id": "commercial_street_stage",
+      "scene_id": "tracen_commercial_street",
+      "display_name": "商业街与车站前",
+      "definition_path": "stages/tracen-commercial-street.stage.json"
+    },
+    {
+      "stage_id": "shrine_stage",
+      "scene_id": "tracen_shrine",
+      "display_name": "山麓神社",
+      "definition_path": "stages/tracen-shrine.stage.json"
+    },
+    {
+      "stage_id": "forest_trail_stage",
+      "scene_id": "tracen_forest_trail",
+      "display_name": "森林步道",
+      "definition_path": "stages/tracen-forest-trail.stage.json"
+    },
+    {
+      "stage_id": "beach_stage",
+      "scene_id": "tracen_beach",
+      "display_name": "特雷森周边海边",
+      "definition_path": "stages/tracen-beach.stage.json"
+    },
+    {
+      "stage_id": "observatory_stage",
+      "scene_id": "tracen_observatory",
+      "display_name": "海岬观景台",
+      "definition_path": "stages/tracen-observatory.stage.json"
     }
   ]
 }

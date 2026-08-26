@@ -1,0 +1,135 @@
+schema_version: map_scene_plan.v1
+scene_id: tracen_dorm_interiors
+display_name: 特雷森宿舍内部
+description: 由公共休息室、共享走廊、美浦寮双人房和栗东寮双人房组成的宿舍内部组合地图。
+size_tiles: { width: 52, height: 36 }
+source_tile_size: 16
+runtime_tile_size: 32
+surfaces:
+  - { tile: ground.interior.carpet.green, bounds: { x: 0, y: 0, width: 52, height: 36 } }
+  - { tile: ground.dorm_interior.wood, bounds: { x: 1, y: 4, width: 50, height: 12 } }
+  - { tile: ground.dorm_interior.wood, bounds: { x: 1, y: 21, width: 23, height: 14 } }
+  - { tile: ground.dorm_interior.wood, bounds: { x: 28, y: 21, width: 23, height: 14 } }
+  - { tile: ground.interior.carpet.green, bounds: { x: 15, y: 8, width: 22, height: 7 } }
+  - { tile: ground.dorm_interior.rug.blue, bounds: { x: 3, y: 26, width: 19, height: 7 } }
+  - { tile: ground.dorm_interior.rug.pink, bounds: { x: 30, y: 26, width: 19, height: 7 } }
+  - { tile: structure.dorm_interior.wall.cool, bounds: { x: 0, y: 0, width: 52, height: 3 } }
+  - { tile: structure.dorm_interior.wall.wainscot, bounds: { x: 0, y: 3, width: 52, height: 1 } }
+  - { tile: structure.dorm_interior.window.day, bounds: { x: 5, y: 1, width: 8, height: 1 } }
+  - { tile: structure.dorm_interior.window.day, bounds: { x: 39, y: 1, width: 8, height: 1 } }
+  - { tile: structure.dorm_interior.wall.wainscot, bounds: { x: 1, y: 16, width: 50, height: 1 } }
+  - { tile: structure.dorm_interior.wall.wainscot, bounds: { x: 1, y: 20, width: 23, height: 1 } }
+  - { tile: structure.dorm_interior.wall.wainscot, bounds: { x: 28, y: 20, width: 23, height: 1 } }
+  - { tile: structure.dorm_interior.door.miho, bounds: { x: 25, y: 16, width: 1, height: 1 } }
+  - { tile: structure.dorm_interior.door.ritto, bounds: { x: 26, y: 16, width: 1, height: 1 } }
+  - { tile: structure.dorm_interior.door.miho, bounds: { x: 12, y: 20, width: 1, height: 1 } }
+  - { tile: structure.dorm_interior.door.ritto, bounds: { x: 39, y: 20, width: 1, height: 1 } }
+  - { tile: ground.interior.border.dark, bounds: { x: 0, y: 4, width: 1, height: 14 } }
+  - { tile: ground.interior.border.dark, bounds: { x: 0, y: 19, width: 1, height: 17 } }
+  - { tile: ground.interior.border.dark, bounds: { x: 51, y: 4, width: 1, height: 14 } }
+  - { tile: ground.interior.border.dark, bounds: { x: 51, y: 19, width: 1, height: 17 } }
+  - { tile: ground.interior.border.dark, bounds: { x: 1, y: 35, width: 50, height: 1 } }
+  - { tile: ground.interior.carpet.green, bounds: { x: 0, y: 18, width: 1, height: 1 } }
+  - { tile: ground.interior.carpet.green, bounds: { x: 51, y: 18, width: 1, height: 1 } }
+tile_props:
+  - { tile: prop.dorm_common.tv, x: 5, y: 5, blocking: true }
+  - { tile: prop.dorm_common.wall_clock, x: 25, y: 5, blocking: true }
+  - { tile: prop.dorm_common.schedule_board, x: 44, y: 5, blocking: true }
+  - { tile: prop.interior.notice_board, x: 13, y: 5, blocking: true }
+  - { tile: prop.interior.notice_board, x: 38, y: 5, blocking: true }
+  - { tile: prop.interior.plant, x: 2, y: 6, blocking: true }
+  - { tile: prop.interior.plant, x: 49, y: 6, blocking: true }
+  - { tile: prop.dorm_common.sofa.orange, x: 19, y: 9, blocking: true }
+  - { tile: prop.dorm_common.sofa.orange, x: 20, y: 9, blocking: true }
+  - { tile: prop.dorm_common.sofa.orange, x: 21, y: 9, blocking: true }
+  - { tile: prop.dorm_common.sofa.green, x: 31, y: 9, blocking: true }
+  - { tile: prop.dorm_common.sofa.green, x: 32, y: 9, blocking: true }
+  - { tile: prop.dorm_common.sofa.green, x: 33, y: 9, blocking: true }
+  - { tile: prop.dorm_common.low_table, x: 21, y: 12, blocking: true }
+  - { tile: prop.dorm_common.low_table, x: 22, y: 12, blocking: true }
+  - { tile: prop.dorm_common.low_table, x: 30, y: 12, blocking: true }
+  - { tile: prop.dorm_common.low_table, x: 31, y: 12, blocking: true }
+  - { tile: prop.dorm_interior.stool.green, x: 8, y: 11, blocking: true }
+  - { tile: prop.dorm_interior.stool.green, x: 43, y: 11, blocking: true }
+  - { tile: prop.dorm_interior.bed.blue, x: 3, y: 23, blocking: true }
+  - { tile: prop.dorm_interior.bed.blue, x: 19, y: 23, blocking: true }
+  - { tile: prop.dorm_interior.dresser, x: 9, y: 23, blocking: true }
+  - { tile: prop.dorm_interior.mini_fridge, x: 11, y: 23, blocking: true }
+  - { tile: prop.dorm_interior.shelf, x: 13, y: 23, blocking: true }
+  - { tile: prop.dorm_interior.lamp, x: 5, y: 24, blocking: true }
+  - { tile: prop.dorm_interior.lamp, x: 17, y: 24, blocking: true }
+  - { tile: prop.dorm_interior.stool.green, x: 8, y: 28, blocking: true }
+  - { tile: prop.dorm_interior.stool.green, x: 15, y: 28, blocking: true }
+  - { tile: prop.dorm_interior.desk, x: 4, y: 31, blocking: true }
+  - { tile: prop.dorm_interior.chair.purple, x: 4, y: 30, blocking: true }
+  - { tile: prop.dorm_interior.desk, x: 18, y: 31, blocking: true }
+  - { tile: prop.dorm_interior.chair.purple, x: 18, y: 30, blocking: true }
+  - { tile: prop.dorm_interior.laundry_basket, x: 22, y: 33, blocking: true }
+  - { tile: prop.dorm_interior.bed.pink, x: 30, y: 23, blocking: true }
+  - { tile: prop.dorm_interior.bed.pink, x: 47, y: 23, blocking: true }
+  - { tile: prop.dorm_interior.dresser, x: 36, y: 23, blocking: true }
+  - { tile: prop.dorm_interior.mini_fridge, x: 38, y: 23, blocking: true }
+  - { tile: prop.dorm_interior.shelf, x: 40, y: 23, blocking: true }
+  - { tile: prop.dorm_interior.lamp, x: 32, y: 24, blocking: true }
+  - { tile: prop.dorm_interior.lamp, x: 45, y: 24, blocking: true }
+  - { tile: prop.dorm_interior.stool.green, x: 35, y: 28, blocking: true }
+  - { tile: prop.dorm_interior.stool.green, x: 43, y: 28, blocking: true }
+  - { tile: prop.dorm_interior.desk, x: 31, y: 31, blocking: true }
+  - { tile: prop.dorm_interior.chair.purple, x: 31, y: 30, blocking: true }
+  - { tile: prop.dorm_interior.desk, x: 46, y: 31, blocking: true }
+  - { tile: prop.dorm_interior.chair.purple, x: 46, y: 30, blocking: true }
+  - { tile: prop.dorm_interior.laundry_basket, x: 49, y: 33, blocking: true }
+landmarks:
+  - { id: common_room, display_name: 宿舍公共休息室, kind: common_room, render_mode: tile_stamp, bounds: { x: 1, y: 4, width: 50, height: 12 } }
+  - { id: miho_shared_room, display_name: 美浦寮双人房, kind: dorm_room, render_mode: tile_stamp, bounds: { x: 1, y: 21, width: 23, height: 14 } }
+  - { id: ritto_shared_room, display_name: 栗东寮双人房, kind: dorm_room, render_mode: tile_stamp, bounds: { x: 28, y: 21, width: 23, height: 14 } }
+  - { id: shared_hallway, display_name: 宿舍共享走廊, kind: corridor, render_mode: tile_stamp, bounds: { x: 0, y: 17, width: 52, height: 3 } }
+collision:
+  - { x: 0, y: 0, width: 52, height: 4 }
+  - { x: 0, y: 4, width: 1, height: 14 }
+  - { x: 0, y: 19, width: 1, height: 17 }
+  - { x: 51, y: 4, width: 1, height: 14 }
+  - { x: 51, y: 19, width: 1, height: 17 }
+  - { x: 1, y: 35, width: 50, height: 1 }
+  - { x: 1, y: 16, width: 24, height: 1 }
+  - { x: 27, y: 16, width: 24, height: 1 }
+  - { x: 1, y: 20, width: 11, height: 1 }
+  - { x: 13, y: 20, width: 11, height: 1 }
+  - { x: 28, y: 20, width: 11, height: 1 }
+  - { x: 40, y: 20, width: 11, height: 1 }
+zones:
+  - { id: common_room_zone, display_name: 公共休息与公告区, kind: common_room, bounds: { x: 1, y: 4, width: 50, height: 12 } }
+  - { id: hallway_zone, display_name: 宿舍共享走廊, kind: corridor, bounds: { x: 0, y: 17, width: 52, height: 3 } }
+  - { id: miho_room_zone, display_name: 美浦寮双人生活区, kind: dorm_room, bounds: { x: 1, y: 21, width: 23, height: 14 } }
+  - { id: ritto_room_zone, display_name: 栗东寮双人生活区, kind: dorm_room, bounds: { x: 28, y: 21, width: 23, height: 14 } }
+anchors:
+  - { id: common_tv_gathering, display_name: 电视前集合位, position: { x: 10, y: 10 }, facing: left }
+  - { id: common_orange_sofa, display_name: 橙色沙发会谈位, position: { x: 21, y: 11 }, facing: up }
+  - { id: common_green_sofa, display_name: 绿色沙发会谈位, position: { x: 31, y: 11 }, facing: up }
+  - { id: common_schedule, display_name: 公共排程板讨论位, position: { x: 43, y: 7 }, facing: right }
+  - { id: miho_bedside, display_name: 美浦寮床边谈话位, position: { x: 6, y: 25 }, facing: left }
+  - { id: miho_roommate_desks, display_name: 美浦寮同桌学习位, position: { x: 11, y: 31 }, facing: left }
+  - { id: ritto_bedside, display_name: 栗东寮床边谈话位, position: { x: 34, y: 25 }, facing: left }
+  - { id: ritto_roommate_desks, display_name: 栗东寮同桌学习位, position: { x: 39, y: 31 }, facing: right }
+  - { id: hallway_meeting, display_name: 宿舍走廊碰面位, position: { x: 26, y: 18 }, facing: down }
+spawns:
+  - { id: from_miho_entrance, position: { x: 3, y: 18 }, facing: right }
+  - { id: from_ritto_entrance, position: { x: 48, y: 18 }, facing: left }
+  - { id: dorm_interiors_start, position: { x: 26, y: 18 }, facing: up }
+portals:
+  - { id: to_miho_dormitory_life, position: { x: 0, y: 18 }, target_scene_id: tracen_dormitory_life, target_spawn_id: from_miho_interior }
+  - { id: to_ritto_dormitory_life, position: { x: 51, y: 18 }, target_scene_id: tracen_dormitory_life, target_spawn_id: from_ritto_interior }
+activity_paths:
+  - id: room_to_common_room
+    activity_id: evening_common_room
+    loop: false
+    points: [{ x: 11, y: 31 }, { x: 12, y: 21 }, { x: 12, y: 18 }, { x: 26, y: 18 }, { x: 26, y: 15 }, { x: 31, y: 11 }]
+  - id: dorm_roommate_route
+    activity_id: roommate_daily_life
+    loop: true
+    points: [{ x: 6, y: 25 }, { x: 11, y: 31 }, { x: 18, y: 29 }, { x: 15, y: 28 }, { x: 6, y: 25 }]
+visual_references:
+  - { catalog_id: dorm_room_day, usage: 双床、双书桌、紫色椅、绿色脚凳、小冰箱和开放收纳 }
+  - { catalog_id: dorm_room_night, usage: 后续环境 preset 保持同一碰撞布局 }
+  - { catalog_id: common_room_day, usage: 电视、低桌、绿橙沙发、公告排程板和公共交流尺度 }
+missing_tile_families: []

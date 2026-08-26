@@ -44,6 +44,26 @@
       }
     },
     {
+      "id": "trainer_office",
+      "scene_id": "tracen_trainer_office",
+      "display_name": "训练员室",
+      "status": "playable",
+      "map_position": {
+        "x": 1,
+        "y": -1
+      }
+    },
+    {
+      "id": "academic_rooms",
+      "scene_id": "tracen_academic_rooms",
+      "display_name": "教学楼房间层",
+      "status": "playable",
+      "map_position": {
+        "x": -1,
+        "y": -1
+      }
+    },
+    {
       "id": "training_ground",
       "scene_id": "tracen_training_ground",
       "display_name": "综合训练场",
@@ -84,6 +104,16 @@
       }
     },
     {
+      "id": "dorm_interiors",
+      "scene_id": "tracen_dorm_interiors",
+      "display_name": "宿舍内部",
+      "status": "playable",
+      "map_position": {
+        "x": -2,
+        "y": 2
+      }
+    },
+    {
       "id": "riverside_path",
       "scene_id": "tracen_riverside_path",
       "display_name": "河边步道",
@@ -91,6 +121,76 @@
       "map_position": {
         "x": 1,
         "y": 2
+      }
+    },
+    {
+      "id": "racecourse_complex",
+      "scene_id": "tracen_racecourse_complex",
+      "display_name": "赛马场综合区",
+      "status": "playable",
+      "map_position": {
+        "x": 2,
+        "y": 3
+      }
+    },
+    {
+      "id": "winner_stage",
+      "scene_id": "tracen_winner_stage",
+      "display_name": "胜者舞台与后台",
+      "status": "playable",
+      "map_position": {
+        "x": 3,
+        "y": 3
+      }
+    },
+    {
+      "id": "commercial_street",
+      "scene_id": "tracen_commercial_street",
+      "display_name": "商业街与车站前",
+      "status": "playable",
+      "map_position": {
+        "x": 2,
+        "y": 2
+      }
+    },
+    {
+      "id": "shrine",
+      "scene_id": "tracen_shrine",
+      "display_name": "山麓神社",
+      "status": "playable",
+      "map_position": {
+        "x": 3,
+        "y": 2
+      }
+    },
+    {
+      "id": "forest_trail",
+      "scene_id": "tracen_forest_trail",
+      "display_name": "森林步道",
+      "status": "playable",
+      "map_position": {
+        "x": 4,
+        "y": 2
+      }
+    },
+    {
+      "id": "beach",
+      "scene_id": "tracen_beach",
+      "display_name": "特雷森周边海边",
+      "status": "playable",
+      "map_position": {
+        "x": 5,
+        "y": 2
+      }
+    },
+    {
+      "id": "observatory",
+      "scene_id": "tracen_observatory",
+      "display_name": "海岬观景台",
+      "status": "playable",
+      "map_position": {
+        "x": 5,
+        "y": 1
       }
     }
   ],
@@ -116,6 +216,16 @@
       "kind": "door"
     },
     {
+      "from": "main_school_interior",
+      "to": "trainer_office",
+      "kind": "door"
+    },
+    {
+      "from": "main_school_interior",
+      "to": "academic_rooms",
+      "kind": "door"
+    },
+    {
       "from": "student_plaza",
       "to": "training_ground",
       "kind": "portal"
@@ -137,7 +247,47 @@
     },
     {
       "from": "dormitory_life",
+      "to": "dorm_interiors",
+      "kind": "door"
+    },
+    {
+      "from": "dormitory_life",
       "to": "academy_gate",
+      "kind": "walk"
+    },
+    {
+      "from": "academy_gate",
+      "to": "racecourse_complex",
+      "kind": "transit"
+    },
+    {
+      "from": "racecourse_complex",
+      "to": "winner_stage",
+      "kind": "door"
+    },
+    {
+      "from": "riverside_path",
+      "to": "commercial_street",
+      "kind": "walk"
+    },
+    {
+      "from": "commercial_street",
+      "to": "shrine",
+      "kind": "walk"
+    },
+    {
+      "from": "shrine",
+      "to": "forest_trail",
+      "kind": "walk"
+    },
+    {
+      "from": "forest_trail",
+      "to": "beach",
+      "kind": "walk"
+    },
+    {
+      "from": "beach",
+      "to": "observatory",
       "kind": "walk"
     }
   ]

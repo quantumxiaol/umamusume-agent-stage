@@ -14,7 +14,7 @@
     "tile_width": 32,
     "tile_height": 32,
     "columns": 8,
-    "tile_count": 192
+    "tile_count": 392
   },
   "layers": [
     {
@@ -19735,6 +19735,14 @@
         "y": 8
       },
       "facing": "right"
+    },
+    {
+      "id": "from_commercial_street",
+      "position": {
+        "x": 55,
+        "y": 45
+      },
+      "facing": "up"
     }
   ],
   "portals": [
@@ -19745,6 +19753,15 @@
         "y": 8
       },
       "target_scene_id": "tracen_academy_gate",
+      "target_spawn_id": "from_riverside"
+    },
+    {
+      "id": "to_commercial_street",
+      "position": {
+        "x": 55,
+        "y": 47
+      },
+      "target_scene_id": "tracen_commercial_street",
       "target_spawn_id": "from_riverside"
     }
   ],

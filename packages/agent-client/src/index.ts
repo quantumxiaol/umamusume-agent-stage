@@ -158,7 +158,7 @@ export class AgentApiClient {
 }
 
 export function stageActionToCommand(
-  action: AgentStageAction,
+  action: Exclude<AgentStageAction, { type: "actor.travel_to_scene" }>,
   commandId: string,
 ): StageCommand {
   const base = {

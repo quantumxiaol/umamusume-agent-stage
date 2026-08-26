@@ -1,0 +1,175 @@
+schema_version: map_scene_plan.v1
+scene_id: tracen_racecourse_complex
+display_name: 特雷森赛马场综合区
+description: 连接赛道看台、Paddock 展示区、公众大厅与两间赛前后场空间的现代赛马场综合地图。
+size_tiles: { width: 68, height: 44 }
+source_tile_size: 16
+runtime_tile_size: 32
+surfaces:
+  - { tile: ground.racecourse.plaza.brick, bounds: { x: 0, y: 0, width: 68, height: 44 } }
+  - { tile: ground.racecourse.track.turf, bounds: { x: 0, y: 0, width: 68, height: 5 } }
+  - { tile: ground.racecourse.concourse.light, bounds: { x: 0, y: 5, width: 68, height: 10 } }
+  - { tile: ground.racecourse.stands.step, bounds: { x: 36, y: 5, width: 32, height: 10 } }
+  - { tile: ground.racecourse.paddock.paver, shape: rounded_ring, radius: 8, thickness: 3, bounds: { x: 2, y: 16, width: 32, height: 21 } }
+  - { tile: ground.racecourse.paddock.turf, bounds: { x: 6, y: 20, width: 24, height: 13 } }
+  - { tile: ground.racecourse.interior.checker, bounds: { x: 36, y: 16, width: 31, height: 13 } }
+  - { tile: ground.racecourse.ready_room.vinyl, bounds: { x: 36, y: 30, width: 15, height: 13 } }
+  - { tile: ground.racecourse.ready_room.vinyl, bounds: { x: 52, y: 30, width: 15, height: 13 } }
+  - { tile: structure.racecourse.glass.blue, bounds: { x: 36, y: 15, width: 31, height: 1 } }
+  - { tile: structure.racecourse.wall.white, bounds: { x: 35, y: 15, width: 1, height: 28 } }
+  - { tile: structure.racecourse.wall.white, bounds: { x: 67, y: 15, width: 1, height: 29 } }
+  - { tile: structure.racecourse.wall.rose, bounds: { x: 35, y: 29, width: 33, height: 1 } }
+  - { tile: structure.racecourse.wall.rose, bounds: { x: 51, y: 30, width: 1, height: 13 } }
+  - { tile: structure.racecourse.wall.rose, bounds: { x: 35, y: 43, width: 33, height: 1 } }
+  - { tile: structure.racecourse.door.public, bounds: { x: 50, y: 15, width: 1, height: 1 } }
+  - { tile: structure.racecourse.door.public, bounds: { x: 35, y: 22, width: 1, height: 1 } }
+  - { tile: structure.racecourse.door.staff, bounds: { x: 43, y: 29, width: 1, height: 1 } }
+  - { tile: structure.racecourse.door.staff, bounds: { x: 58, y: 29, width: 1, height: 1 } }
+  - { tile: structure.racecourse.door.public, bounds: { x: 67, y: 27, width: 1, height: 1 } }
+tile_props:
+  - { tile: prop.racecourse.rail.white, x: 0, y: 4, blocking: true }
+  - { tile: prop.racecourse.rail.white, x: 4, y: 4, blocking: true }
+  - { tile: prop.racecourse.rail.white, x: 8, y: 4, blocking: true }
+  - { tile: prop.racecourse.rail.white, x: 12, y: 4, blocking: true }
+  - { tile: prop.racecourse.rail.white, x: 16, y: 4, blocking: true }
+  - { tile: prop.racecourse.rail.white, x: 20, y: 4, blocking: true }
+  - { tile: prop.racecourse.rail.white, x: 24, y: 4, blocking: true }
+  - { tile: prop.racecourse.rail.white, x: 28, y: 4, blocking: true }
+  - { tile: prop.racecourse.rail.white, x: 32, y: 4, blocking: true }
+  - { tile: prop.racecourse.rail.white, x: 36, y: 4, blocking: true }
+  - { tile: prop.racecourse.rail.white, x: 40, y: 4, blocking: true }
+  - { tile: prop.racecourse.rail.white, x: 44, y: 4, blocking: true }
+  - { tile: prop.racecourse.rail.white, x: 48, y: 4, blocking: true }
+  - { tile: prop.racecourse.rail.white, x: 52, y: 4, blocking: true }
+  - { tile: prop.racecourse.rail.white, x: 56, y: 4, blocking: true }
+  - { tile: prop.racecourse.rail.white, x: 60, y: 4, blocking: true }
+  - { tile: prop.racecourse.rail.white, x: 64, y: 4, blocking: true }
+  - { tile: prop.racecourse.big_screen, x: 32, y: 7, blocking: true }
+  - { tile: prop.racecourse.digital_sign, x: 3, y: 7, blocking: true }
+  - { tile: prop.racecourse.rubbish_bin, x: 28, y: 11, blocking: true }
+  - { tile: prop.racecourse.seat.blue, x: 38, y: 7, blocking: true }
+  - { tile: prop.racecourse.seat.blue, x: 41, y: 7, blocking: true }
+  - { tile: prop.racecourse.seat.blue, x: 44, y: 7, blocking: true }
+  - { tile: prop.racecourse.seat.blue, x: 47, y: 7, blocking: true }
+  - { tile: prop.racecourse.seat.green, x: 54, y: 7, blocking: true }
+  - { tile: prop.racecourse.seat.green, x: 57, y: 7, blocking: true }
+  - { tile: prop.racecourse.seat.green, x: 60, y: 7, blocking: true }
+  - { tile: prop.racecourse.seat.green, x: 63, y: 7, blocking: true }
+  - { tile: prop.racecourse.seat.blue, x: 38, y: 10, blocking: true }
+  - { tile: prop.racecourse.seat.blue, x: 41, y: 10, blocking: true }
+  - { tile: prop.racecourse.seat.blue, x: 44, y: 10, blocking: true }
+  - { tile: prop.racecourse.seat.blue, x: 47, y: 10, blocking: true }
+  - { tile: prop.racecourse.seat.green, x: 54, y: 10, blocking: true }
+  - { tile: prop.racecourse.seat.green, x: 57, y: 10, blocking: true }
+  - { tile: prop.racecourse.seat.green, x: 60, y: 10, blocking: true }
+  - { tile: prop.racecourse.seat.green, x: 63, y: 10, blocking: true }
+  - { tile: prop.racecourse.seat.orange, x: 38, y: 13, blocking: true }
+  - { tile: prop.racecourse.seat.orange, x: 41, y: 13, blocking: true }
+  - { tile: prop.racecourse.seat.orange, x: 44, y: 13, blocking: true }
+  - { tile: prop.racecourse.seat.orange, x: 47, y: 13, blocking: true }
+  - { tile: prop.racecourse.seat.orange, x: 54, y: 13, blocking: true }
+  - { tile: prop.racecourse.seat.orange, x: 57, y: 13, blocking: true }
+  - { tile: prop.racecourse.seat.orange, x: 60, y: 13, blocking: true }
+  - { tile: prop.racecourse.seat.orange, x: 63, y: 13, blocking: true }
+  - { tile: prop.paddock.number_board, x: 16, y: 18, blocking: true }
+  - { tile: prop.paddock.judge_booth, x: 3, y: 25, blocking: true }
+  - { tile: prop.paddock.rail, x: 7, y: 19, blocking: true }
+  - { tile: prop.paddock.rail, x: 11, y: 19, blocking: true }
+  - { tile: prop.paddock.rail, x: 15, y: 19, blocking: true }
+  - { tile: prop.paddock.rail, x: 19, y: 19, blocking: true }
+  - { tile: prop.paddock.rail, x: 23, y: 19, blocking: true }
+  - { tile: prop.paddock.rail, x: 27, y: 19, blocking: true }
+  - { tile: prop.paddock.rail, x: 7, y: 33, blocking: true }
+  - { tile: prop.paddock.rail, x: 11, y: 33, blocking: true }
+  - { tile: prop.paddock.rail, x: 15, y: 33, blocking: true }
+  - { tile: prop.paddock.rail, x: 19, y: 33, blocking: true }
+  - { tile: prop.paddock.rail, x: 23, y: 33, blocking: true }
+  - { tile: prop.paddock.rail, x: 27, y: 33, blocking: true }
+  - { tile: prop.racecourse.potted_shrub, x: 33, y: 18, blocking: true }
+  - { tile: prop.racecourse.potted_shrub, x: 33, y: 27, blocking: true }
+  - { tile: prop.racecourse.hall.reception, x: 39, y: 18, blocking: true }
+  - { tile: prop.racecourse.hall.reception, x: 40, y: 18, blocking: true }
+  - { tile: prop.racecourse.hall.reception, x: 41, y: 18, blocking: true }
+  - { tile: prop.racecourse.ticket_gate, x: 48, y: 18, blocking: true }
+  - { tile: prop.racecourse.ticket_gate, x: 51, y: 18, blocking: true }
+  - { tile: prop.racecourse.ticket_gate, x: 54, y: 18, blocking: true }
+  - { tile: prop.racecourse.info_board, x: 64, y: 17, blocking: true }
+  - { tile: prop.racecourse.trophy_display, x: 64, y: 21, blocking: true }
+  - { tile: prop.racecourse.hall.bench, x: 42, y: 24, blocking: true }
+  - { tile: prop.racecourse.hall.bench, x: 46, y: 24, blocking: true }
+  - { tile: prop.racecourse.hall.vending, x: 64, y: 25, blocking: true }
+  - { tile: prop.racecourse.ready.poster, x: 37, y: 31, blocking: true }
+  - { tile: prop.racecourse.ready.counter, x: 38, y: 32, blocking: true }
+  - { tile: prop.racecourse.ready.counter, x: 39, y: 32, blocking: true }
+  - { tile: prop.racecourse.ready.counter, x: 40, y: 32, blocking: true }
+  - { tile: prop.racecourse.ready.stool, x: 38, y: 34, blocking: true }
+  - { tile: prop.racecourse.ready.stool, x: 40, y: 34, blocking: true }
+  - { tile: prop.racecourse.ready.sofa.blue, x: 47, y: 38, blocking: true }
+  - { tile: prop.racecourse.ready.water_dispenser, x: 48, y: 33, blocking: true }
+  - { tile: prop.racecourse.ready.locker, x: 53, y: 31, blocking: true }
+  - { tile: prop.racecourse.ready.locker, x: 55, y: 31, blocking: true }
+  - { tile: prop.racecourse.ready.locker, x: 57, y: 31, blocking: true }
+  - { tile: prop.racecourse.ready.locker, x: 59, y: 31, blocking: true }
+  - { tile: prop.racecourse.ready.coat_rack, x: 64, y: 32, blocking: true }
+  - { tile: prop.racecourse.ready.sofa.blue, x: 54, y: 39, blocking: true }
+  - { tile: prop.racecourse.ready.towel_cart, x: 62, y: 38, blocking: true }
+  - { tile: prop.racecourse.wall_clock, x: 65, y: 40, blocking: true }
+landmarks:
+  - { id: trackside_stands, display_name: 赛道边看台, kind: grandstand, render_mode: tile_stamp, bounds: { x: 36, y: 5, width: 32, height: 10 } }
+  - { id: paddock, display_name: Paddock 展示区, kind: paddock, render_mode: tile_stamp, bounds: { x: 2, y: 16, width: 32, height: 21 } }
+  - { id: public_hall, display_name: 赛马场公众大厅, kind: hall, render_mode: tile_stamp, bounds: { x: 36, y: 16, width: 31, height: 13 } }
+  - { id: ready_room, display_name: 赛前准备室, kind: ready_room, render_mode: tile_stamp, bounds: { x: 36, y: 30, width: 15, height: 13 } }
+  - { id: staging_room, display_name: 赛前整备室, kind: staging_room, render_mode: tile_stamp, bounds: { x: 52, y: 30, width: 15, height: 13 } }
+collision:
+  - { x: 0, y: 0, width: 68, height: 5 }
+  - { x: 35, y: 15, width: 15, height: 1 }
+  - { x: 51, y: 15, width: 17, height: 1 }
+  - { x: 35, y: 15, width: 1, height: 7 }
+  - { x: 35, y: 23, width: 1, height: 21 }
+  - { x: 67, y: 15, width: 1, height: 12 }
+  - { x: 67, y: 28, width: 1, height: 16 }
+  - { x: 35, y: 29, width: 8, height: 1 }
+  - { x: 44, y: 29, width: 14, height: 1 }
+  - { x: 59, y: 29, width: 9, height: 1 }
+  - { x: 51, y: 30, width: 1, height: 13 }
+  - { x: 35, y: 43, width: 33, height: 1 }
+zones:
+  - { id: trackside_zone, display_name: 赛道边与看台, kind: spectator, bounds: { x: 0, y: 5, width: 68, height: 10 } }
+  - { id: paddock_zone, display_name: Paddock 展示区, kind: paddock, bounds: { x: 2, y: 16, width: 32, height: 21 } }
+  - { id: public_hall_zone, display_name: 公众大厅, kind: public_hall, bounds: { x: 36, y: 16, width: 31, height: 13 } }
+  - { id: ready_room_zone, display_name: 赛前准备室, kind: ready_room, bounds: { x: 36, y: 30, width: 15, height: 13 } }
+  - { id: staging_room_zone, display_name: 后场整备室, kind: staging_room, bounds: { x: 52, y: 30, width: 15, height: 13 } }
+anchors:
+  - { id: trackside_rail, display_name: 赛道边观赛位, position: { x: 20, y: 6 }, facing: up }
+  - { id: grandstand_meeting, display_name: 看台集合位, position: { x: 51, y: 12 }, facing: up }
+  - { id: paddock_parade, display_name: Paddock 亮相位, position: { x: 17, y: 17 }, facing: down }
+  - { id: paddock_inspection, display_name: Paddock 观察位, position: { x: 17, y: 35 }, facing: up }
+  - { id: hall_reception, display_name: 大厅接待位, position: { x: 42, y: 19 }, facing: left }
+  - { id: hall_waiting, display_name: 大厅等候位, position: { x: 44, y: 25 }, facing: up }
+  - { id: ready_counter, display_name: 准备室梳理位, position: { x: 40, y: 35 }, facing: up }
+  - { id: ready_sofa_talk, display_name: 准备室沙发谈话位, position: { x: 46, y: 38 }, facing: right }
+  - { id: prep_lockers, display_name: 后场储物柜位, position: { x: 58, y: 33 }, facing: up }
+  - { id: prep_briefing, display_name: 后场战术确认位, position: { x: 58, y: 39 }, facing: down }
+spawns:
+  - { id: from_academy_gate, position: { x: 17, y: 41 }, facing: up }
+  - { id: racecourse_start, position: { x: 17, y: 39 }, facing: up }
+  - { id: staff_arrival, position: { x: 34, y: 22 }, facing: right }
+  - { id: from_winner_stage, position: { x: 65, y: 27 }, facing: left }
+portals:
+  - { id: to_academy_gate, position: { x: 17, y: 43 }, target_scene_id: tracen_academy_gate, target_spawn_id: from_racecourse }
+  - { id: to_winner_stage, position: { x: 67, y: 27 }, target_scene_id: tracen_winner_stage, target_spawn_id: from_racecourse }
+activity_paths:
+  - id: paddock_parade_loop
+    activity_id: paddock_parade
+    loop: true
+    points: [{ x: 7, y: 18 }, { x: 28, y: 18 }, { x: 31, y: 26 }, { x: 28, y: 35 }, { x: 7, y: 35 }, { x: 4, y: 26 }]
+  - id: ready_room_to_trackside
+    activity_id: pre_race_walkout
+    loop: false
+    points: [{ x: 40, y: 35 }, { x: 43, y: 30 }, { x: 43, y: 27 }, { x: 50, y: 20 }, { x: 50, y: 15 }, { x: 51, y: 12 }, { x: 20, y: 6 }]
+visual_references:
+  - { catalog_id: racecourse_track_stands_day, usage: 白灰看台结构、浅灰栏杆、蓝色座椅和暖色步道 }
+  - { catalog_id: racecourse_paddock_day, usage: 白色阶梯看台、蓝绿橙座椅和开阔展示环道 }
+  - { catalog_id: racecourse_concourse_day, usage: 蓝色玻璃幕墙、砖红通道与现代公众流线 }
+  - { catalog_id: pre_race_ready_room_day, usage: 米白墙、灰米棋盘地面、暖木台面和深蓝座椅 }
+missing_tile_families: []

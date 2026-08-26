@@ -1,0 +1,157 @@
+schema_version: map_scene_plan.v1
+scene_id: tracen_academic_rooms
+display_name: 特雷森教学楼房间层
+description: 由共享十字走廊连接教室、图书馆、学生会室和医务室的多功能教学楼楼层。
+size_tiles: { width: 60, height: 40 }
+source_tile_size: 16
+runtime_tile_size: 32
+surfaces:
+  - { tile: ground.interior.carpet.green, bounds: { x: 0, y: 0, width: 60, height: 40 } }
+  - { tile: ground.academic_rooms.parquet, bounds: { x: 1, y: 4, width: 27, height: 13 } }
+  - { tile: ground.academic_rooms.parquet, bounds: { x: 32, y: 4, width: 27, height: 13 } }
+  - { tile: ground.academic_rooms.parquet, bounds: { x: 1, y: 23, width: 27, height: 16 } }
+  - { tile: ground.academic_rooms.parquet, bounds: { x: 32, y: 23, width: 27, height: 16 } }
+  - { tile: ground.academic_rooms.rug.crimson, bounds: { x: 4, y: 27, width: 20, height: 9 } }
+  - { tile: structure.academic_rooms.wall.cream, bounds: { x: 0, y: 0, width: 60, height: 3 } }
+  - { tile: structure.academic_rooms.wall.wainscot, bounds: { x: 0, y: 3, width: 60, height: 1 } }
+  - { tile: structure.academic_rooms.wall.wainscot, bounds: { x: 1, y: 17, width: 27, height: 1 } }
+  - { tile: structure.academic_rooms.wall.wainscot, bounds: { x: 32, y: 17, width: 27, height: 1 } }
+  - { tile: structure.academic_rooms.wall.wainscot, bounds: { x: 1, y: 22, width: 27, height: 1 } }
+  - { tile: structure.academic_rooms.wall.wainscot, bounds: { x: 32, y: 22, width: 27, height: 1 } }
+  - { tile: ground.interior.border.dark, bounds: { x: 0, y: 4, width: 1, height: 36 } }
+  - { tile: ground.interior.border.dark, bounds: { x: 59, y: 4, width: 1, height: 36 } }
+  - { tile: ground.interior.border.dark, bounds: { x: 1, y: 39, width: 58, height: 1 } }
+  - { tile: ground.interior.carpet.green, bounds: { x: 29, y: 39, width: 2, height: 1 } }
+  - { tile: structure.academic_rooms.window.day, bounds: { x: 4, y: 1, width: 8, height: 1 } }
+  - { tile: structure.academic_rooms.window.day, bounds: { x: 18, y: 1, width: 8, height: 1 } }
+  - { tile: structure.academic_rooms.window.day, bounds: { x: 34, y: 1, width: 8, height: 1 } }
+  - { tile: structure.academic_rooms.window.day, bounds: { x: 48, y: 1, width: 8, height: 1 } }
+  - { tile: structure.academic_rooms.door.classroom, bounds: { x: 14, y: 17, width: 1, height: 1 } }
+  - { tile: structure.academic_rooms.door.library, bounds: { x: 45, y: 17, width: 1, height: 1 } }
+  - { tile: structure.academic_rooms.door.council, bounds: { x: 14, y: 22, width: 1, height: 1 } }
+  - { tile: structure.academic_rooms.door.infirmary, bounds: { x: 45, y: 22, width: 1, height: 1 } }
+tile_props:
+  - { tile: prop.classroom.blackboard, x: 3, y: 4, blocking: true }
+  - { tile: prop.classroom.blackboard, x: 4, y: 4, blocking: true }
+  - { tile: prop.classroom.blackboard, x: 5, y: 4, blocking: true }
+  - { tile: prop.classroom.blackboard, x: 6, y: 4, blocking: true }
+  - { tile: prop.classroom.teacher_desk, x: 5, y: 6, blocking: true }
+  - { tile: prop.classroom.trophy_case, x: 25, y: 4, blocking: true }
+  - { tile: prop.classroom.lockers, x: 2, y: 15, blocking: true }
+  - { tile: prop.classroom.lockers, x: 3, y: 15, blocking: true }
+  - { tile: prop.classroom.lockers, x: 4, y: 15, blocking: true }
+  - { tile: prop.classroom.desk, x: 6, y: 9, blocking: true }
+  - { tile: prop.classroom.chair, x: 6, y: 10, blocking: true }
+  - { tile: prop.classroom.desk, x: 11, y: 9, blocking: true }
+  - { tile: prop.classroom.chair, x: 11, y: 10, blocking: true }
+  - { tile: prop.classroom.desk, x: 16, y: 9, blocking: true }
+  - { tile: prop.classroom.chair, x: 16, y: 10, blocking: true }
+  - { tile: prop.classroom.desk, x: 21, y: 9, blocking: true }
+  - { tile: prop.classroom.chair, x: 21, y: 10, blocking: true }
+  - { tile: prop.classroom.desk, x: 6, y: 13, blocking: true }
+  - { tile: prop.classroom.desk, x: 11, y: 13, blocking: true }
+  - { tile: prop.classroom.desk, x: 16, y: 13, blocking: true }
+  - { tile: prop.classroom.desk, x: 21, y: 13, blocking: true }
+  - { tile: prop.library.bookshelf, x: 33, y: 4, blocking: true }
+  - { tile: prop.library.bookshelf, x: 34, y: 4, blocking: true }
+  - { tile: prop.library.bookshelf, x: 35, y: 4, blocking: true }
+  - { tile: prop.library.bookshelf, x: 36, y: 4, blocking: true }
+  - { tile: prop.library.bookshelf, x: 37, y: 4, blocking: true }
+  - { tile: prop.library.bookshelf, x: 57, y: 5, blocking: true }
+  - { tile: prop.library.bookshelf, x: 57, y: 8, blocking: true }
+  - { tile: prop.library.bookshelf, x: 57, y: 11, blocking: true }
+  - { tile: prop.library.bookshelf, x: 57, y: 14, blocking: true }
+  - { tile: prop.library.low_shelf, x: 40, y: 7, blocking: true }
+  - { tile: prop.library.low_shelf, x: 41, y: 7, blocking: true }
+  - { tile: prop.library.low_shelf, x: 42, y: 7, blocking: true }
+  - { tile: prop.library.reading_table, x: 39, y: 11, blocking: true }
+  - { tile: prop.library.chair.green, x: 39, y: 12, blocking: true }
+  - { tile: prop.library.reading_table, x: 46, y: 11, blocking: true }
+  - { tile: prop.library.chair.green, x: 46, y: 12, blocking: true }
+  - { tile: prop.library.reading_table, x: 52, y: 11, blocking: true }
+  - { tile: prop.library.chair.green, x: 52, y: 12, blocking: true }
+  - { tile: prop.library.catalog, x: 43, y: 15, blocking: true }
+  - { tile: prop.library.catalog, x: 44, y: 15, blocking: true }
+  - { tile: prop.council.curtain, x: 4, y: 24, blocking: true }
+  - { tile: prop.council.curtain, x: 5, y: 24, blocking: true }
+  - { tile: prop.council.curtain, x: 6, y: 24, blocking: true }
+  - { tile: prop.council.chair.red, x: 7, y: 27, blocking: true }
+  - { tile: prop.council.desk, x: 7, y: 29, blocking: true }
+  - { tile: prop.council.cabinet, x: 2, y: 25, blocking: true }
+  - { tile: prop.council.cabinet, x: 25, y: 25, blocking: true }
+  - { tile: prop.council.sofa, x: 14, y: 31, blocking: true }
+  - { tile: prop.council.sofa, x: 15, y: 31, blocking: true }
+  - { tile: prop.council.sofa, x: 16, y: 31, blocking: true }
+  - { tile: prop.council.coffee_table, x: 15, y: 34, blocking: true }
+  - { tile: prop.council.coffee_table, x: 16, y: 34, blocking: true }
+  - { tile: prop.infirmary.medical_cabinet, x: 33, y: 24, blocking: true }
+  - { tile: prop.infirmary.medical_cabinet, x: 34, y: 24, blocking: true }
+  - { tile: prop.infirmary.bed, x: 36, y: 28, blocking: true }
+  - { tile: prop.infirmary.curtain, x: 36, y: 27, blocking: true }
+  - { tile: prop.infirmary.bed, x: 41, y: 28, blocking: true }
+  - { tile: prop.infirmary.curtain, x: 41, y: 27, blocking: true }
+  - { tile: prop.infirmary.screen, x: 47, y: 29, blocking: true }
+  - { tile: prop.infirmary.cart, x: 49, y: 32, blocking: true }
+  - { tile: prop.infirmary.desk, x: 54, y: 27, blocking: true }
+  - { tile: prop.trainer_office.chair.guest, x: 54, y: 29, blocking: true }
+  - { tile: prop.interior.plant, x: 27, y: 19, blocking: true }
+  - { tile: prop.interior.plant, x: 32, y: 19, blocking: true }
+landmarks:
+  - { id: classroom, display_name: 普通教室, kind: classroom, render_mode: tile_stamp, bounds: { x: 1, y: 4, width: 27, height: 13 } }
+  - { id: library, display_name: 图书馆, kind: library, render_mode: tile_stamp, bounds: { x: 32, y: 4, width: 27, height: 13 } }
+  - { id: student_council_room, display_name: 学生会室, kind: student_council, render_mode: tile_stamp, bounds: { x: 1, y: 23, width: 27, height: 16 } }
+  - { id: infirmary, display_name: 医务室, kind: infirmary, render_mode: tile_stamp, bounds: { x: 32, y: 23, width: 27, height: 16 } }
+  - { id: shared_corridor, display_name: 教学楼共享走廊, kind: corridor, render_mode: tile_stamp, bounds: { x: 28, y: 4, width: 4, height: 36 } }
+collision:
+  - { x: 0, y: 0, width: 60, height: 4 }
+  - { x: 0, y: 4, width: 1, height: 36 }
+  - { x: 59, y: 4, width: 1, height: 36 }
+  - { x: 1, y: 39, width: 28, height: 1 }
+  - { x: 31, y: 39, width: 28, height: 1 }
+  - { x: 1, y: 17, width: 13, height: 1 }
+  - { x: 15, y: 17, width: 13, height: 1 }
+  - { x: 32, y: 17, width: 13, height: 1 }
+  - { x: 46, y: 17, width: 13, height: 1 }
+  - { x: 1, y: 22, width: 13, height: 1 }
+  - { x: 15, y: 22, width: 13, height: 1 }
+  - { x: 32, y: 22, width: 13, height: 1 }
+  - { x: 46, y: 22, width: 13, height: 1 }
+zones:
+  - { id: classroom_zone, display_name: 教室授课区, kind: classroom, bounds: { x: 1, y: 4, width: 27, height: 13 } }
+  - { id: library_zone, display_name: 图书馆阅读区, kind: library, bounds: { x: 32, y: 4, width: 27, height: 13 } }
+  - { id: council_zone, display_name: 学生会会谈区, kind: student_council, bounds: { x: 1, y: 23, width: 27, height: 16 } }
+  - { id: infirmary_zone, display_name: 医务与恢复区, kind: infirmary, bounds: { x: 32, y: 23, width: 27, height: 16 } }
+  - { id: corridor_zone, display_name: 房间层共享走廊, kind: corridor, bounds: { x: 28, y: 4, width: 4, height: 36 } }
+anchors:
+  - { id: classroom_teacher, display_name: 讲台授课位, position: { x: 8, y: 6 }, facing: left }
+  - { id: classroom_student_pair, display_name: 同桌对话位, position: { x: 10, y: 11 }, facing: right }
+  - { id: classroom_blackboard, display_name: 黑板讲解位, position: { x: 8, y: 5 }, facing: left }
+  - { id: library_reading, display_name: 图书馆阅读位, position: { x: 41, y: 13 }, facing: up }
+  - { id: library_shelves, display_name: 书架找书位, position: { x: 37, y: 6 }, facing: up }
+  - { id: council_president_desk, display_name: 学生会长办公位, position: { x: 7, y: 28 }, facing: down }
+  - { id: council_sofa_talk, display_name: 学生会沙发会谈位, position: { x: 15, y: 35 }, facing: up }
+  - { id: infirmary_bedside, display_name: 医务室床边位, position: { x: 38, y: 29 }, facing: left }
+  - { id: infirmary_consultation, display_name: 校医问诊位, position: { x: 53, y: 29 }, facing: right }
+  - { id: corridor_waiting, display_name: 共享走廊等候位, position: { x: 30, y: 20 }, facing: up }
+spawns:
+  - { id: from_main_school_classroom, position: { x: 14, y: 19 }, facing: up }
+  - { id: from_main_school_library, position: { x: 45, y: 19 }, facing: up }
+  - { id: academic_rooms_start, position: { x: 30, y: 36 }, facing: up }
+portals:
+  - { id: to_main_school_interior, position: { x: 29, y: 39 }, target_scene_id: tracen_main_school_interior, target_spawn_id: from_academic_rooms }
+  - { id: to_main_school_interior_wide, position: { x: 30, y: 39 }, target_scene_id: tracen_main_school_interior, target_spawn_id: from_academic_rooms }
+activity_paths:
+  - id: classroom_to_library
+    activity_id: class_break_reading
+    loop: false
+    points: [{ x: 10, y: 11 }, { x: 14, y: 16 }, { x: 14, y: 20 }, { x: 30, y: 20 }, { x: 45, y: 20 }, { x: 45, y: 16 }, { x: 41, y: 13 }]
+  - id: council_to_infirmary
+    activity_id: student_support
+    loop: false
+    points: [{ x: 15, y: 35 }, { x: 14, y: 23 }, { x: 14, y: 20 }, { x: 45, y: 20 }, { x: 45, y: 23 }, { x: 53, y: 29 }]
+visual_references:
+  - { catalog_id: classroom_day, usage: 灰白课桌、绿储物柜、黑板、奖杯柜与高窗日照 }
+  - { catalog_id: library_day, usage: 长木书架、阅读桌、绿色座椅和安静通道 }
+  - { catalog_id: student_council_room_day, usage: 酒红帘幕与沙发、深木办公桌和正式会谈布局 }
+  - { catalog_id: infirmary_day, usage: 浅绿隔帘、黄白病床、蓝灰医疗柜和校医办公位 }
+missing_tile_families: []

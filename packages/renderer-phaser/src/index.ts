@@ -7,8 +7,15 @@ import type {
   Direction,
   ScenePack,
   StageActorState,
+  StageEnvironment,
 } from "@uma-stage/contracts";
 import type { StageRuntime } from "@uma-stage/core";
+
+import {
+  interpolateEnvironmentVisual,
+  resolveEnvironmentVisual,
+  type EnvironmentVisual,
+} from "./environment";
 
 export interface ActorViewConfig {
   actorId: string;
@@ -23,6 +30,7 @@ export interface StageRendererOptions {
   sceneBaseUrl: string;
   actors: ActorViewConfig[];
   playerActorId?: string;
+  environment?: StageEnvironment;
   debug?: boolean;
 }
 
@@ -36,6 +44,8 @@ export interface StageGameController {
   destroy(removeCanvas?: boolean): void;
   setCameraCue(cue: CameraCue): void;
   cameraState(): StageCameraState | null;
+  setEnvironment(environment: StageEnvironment): void;
+  environmentState(): StageEnvironment;
 }
 
 interface ActorDisplay {
@@ -62,6 +72,14 @@ const surfaceColors: Record<ScenePack["surfaces"][number]["kind"], number> = {
   floor: 0xc9c4b6,
 };
 
+const defaultEnvironment: StageEnvironment = {
+  schema_version: "stage_environment.v1",
+  time_of_day: "day",
+  weather: "clear",
+  intensity: 0.55,
+  transition_ms: 800,
+};
+
 class RuntimeScene extends Phaser.Scene {
   readonly #options: StageRendererOptions;
   readonly #displays = new Map<string, ActorDisplay>();
@@ -70,10 +88,23 @@ class RuntimeScene extends Phaser.Scene {
   #minimap: Phaser.Cameras.Scene2D.Camera | null = null;
   #minimapViewport: Phaser.GameObjects.Graphics | null = null;
   #minimapFrame: Phaser.GameObjects.Graphics | null = null;
+  #environment: StageEnvironment;
+  #environmentOverlay: Phaser.GameObjects.Rectangle | null = null;
+  #weatherOverlay: Phaser.GameObjects.Graphics | null = null;
+  #environmentVisual: EnvironmentVisual;
+  #environmentTransitionFrom: EnvironmentVisual;
+  #environmentTransitionTarget: EnvironmentVisual;
+  #environmentTransitionElapsedMs = 0;
+  #environmentTransitionDurationMs = 0;
+  #weatherElapsedMs = 0;
 
   constructor(options: StageRendererOptions) {
     super({ key: "uma-stage-runtime" });
     this.#options = options;
+    this.#environment = { ...(options.environment ?? defaultEnvironment) };
+    this.#environmentVisual = resolveEnvironmentVisual(this.#environment);
+    this.#environmentTransitionFrom = this.#environmentVisual;
+    this.#environmentTransitionTarget = this.#environmentVisual;
     this.#cameraCue = {
       type: "camera.follow_actor",
       actor_id: options.playerActorId ?? options.actors[0]?.actorId ?? "stage",
@@ -108,6 +139,7 @@ class RuntimeScene extends Phaser.Scene {
     this.game.canvas.tabIndex = 0;
     this.input.on("pointerdown", this.focusStageInput, this);
     this.createMinimap();
+    this.createEnvironment();
     this.scale.on("resize", this.handleResize, this);
     this.applyCameraCue();
   }
@@ -121,6 +153,7 @@ class RuntimeScene extends Phaser.Scene {
     this.#options.runtime.tick(delta);
     for (const state of this.#options.runtime.snapshot().actors) this.syncActor(state);
     this.updateMinimapViewport();
+    this.updateEnvironment(delta);
   }
 
   private drawMap(): void {
@@ -196,6 +229,92 @@ class RuntimeScene extends Phaser.Scene {
       center: { x: this.cameras.main.midPoint.x, y: this.cameras.main.midPoint.y },
       zoom: this.cameras.main.zoom,
     };
+  }
+
+  setEnvironment(environment: StageEnvironment): void {
+    this.#environment = { ...environment };
+    this.#environmentTransitionFrom = this.#environmentVisual;
+    this.#environmentTransitionTarget = resolveEnvironmentVisual(environment);
+    this.#environmentTransitionElapsedMs = 0;
+    this.#environmentTransitionDurationMs = environment.transition_ms;
+    if (environment.transition_ms === 0) {
+      this.#environmentVisual = this.#environmentTransitionTarget;
+      this.applyEnvironmentVisual();
+    }
+  }
+
+  environmentState(): StageEnvironment {
+    return { ...this.#environment };
+  }
+
+  private createEnvironment(): void {
+    this.#environmentOverlay = this.add
+      .rectangle(0, 0, this.scale.width, this.scale.height, this.#environmentVisual.shadeColor, this.#environmentVisual.shadeAlpha)
+      .setOrigin(0)
+      .setDepth(59000);
+    this.#weatherOverlay = this.add.graphics().setDepth(59010);
+    this.#minimap?.ignore([this.#environmentOverlay, this.#weatherOverlay]);
+    this.applyEnvironmentVisual();
+  }
+
+  private updateEnvironment(deltaMs: number): void {
+    this.#weatherElapsedMs += deltaMs;
+    if (this.#environmentTransitionDurationMs > 0) {
+      this.#environmentTransitionElapsedMs = Math.min(
+        this.#environmentTransitionDurationMs,
+        this.#environmentTransitionElapsedMs + deltaMs,
+      );
+      this.#environmentVisual = interpolateEnvironmentVisual(
+        this.#environmentTransitionFrom,
+        this.#environmentTransitionTarget,
+        this.#environmentTransitionElapsedMs / this.#environmentTransitionDurationMs,
+      );
+      if (this.#environmentTransitionElapsedMs >= this.#environmentTransitionDurationMs) {
+        this.#environmentTransitionDurationMs = 0;
+      }
+    }
+    this.applyEnvironmentVisual();
+  }
+
+  private applyEnvironmentVisual(): void {
+    const cameraZoom = Math.max(this.cameras.main.zoom, 0.01);
+    const view = this.cameras.main.worldView;
+    this.#environmentOverlay
+      ?.setPosition(view.x, view.y)
+      .setSize(view.width, view.height)
+      .setScale(1)
+      .setFillStyle(this.#environmentVisual.shadeColor, this.#environmentVisual.shadeAlpha);
+    this.#weatherOverlay?.setPosition(view.x, view.y).setScale(1 / cameraZoom);
+    this.drawWeather();
+  }
+
+  private drawWeather(): void {
+    const graphics = this.#weatherOverlay;
+    if (!graphics) return;
+    graphics.clear();
+    const visual = this.#environmentVisual;
+    if (visual.particleCount === 0 || this.#environment.weather === "clear") return;
+    const width = this.scale.width;
+    const height = this.scale.height;
+    const phase = this.#weatherElapsedMs;
+
+    if (this.#environment.weather === "rain") {
+      graphics.lineStyle(1.5, visual.particleColor, visual.particleAlpha);
+      for (let index = 0; index < visual.particleCount; index += 1) {
+        const x = modulo(index * 83 + phase * 0.12, width + 60) - 30;
+        const y = modulo(index * 47 + phase * 0.42, height + 80) - 40;
+        graphics.lineBetween(x, y, x - 8, y + 19);
+      }
+      return;
+    }
+
+    graphics.fillStyle(visual.particleColor, visual.particleAlpha);
+    for (let index = 0; index < visual.particleCount; index += 1) {
+      const drift = Math.sin(phase * 0.0012 + index * 0.9) * 12;
+      const x = modulo(index * 97 + drift, width + 40) - 20;
+      const y = modulo(index * 61 + phase * 0.055, height + 50) - 25;
+      graphics.fillCircle(x, y, 1.5 + (index % 3) * 0.55);
+    }
   }
 
   private drawLandmark(landmark: ScenePack["landmarks"][number], tileSize: number): void {
@@ -494,6 +613,7 @@ class RuntimeScene extends Phaser.Scene {
       this.drawMinimapFrame();
     }
     this.applyCameraCue();
+    this.applyEnvironmentVisual();
   }
 
   private applyCameraCue(): void {
@@ -561,6 +681,8 @@ export function createStageGame(options: StageRendererOptions): StageGameControl
     destroy: (removeCanvas = true) => game.destroy(removeCanvas),
     setCameraCue: (cue) => runtimeScene.setCameraCue(cue),
     cameraState: () => runtimeScene.cameraState(),
+    setEnvironment: (environment) => runtimeScene.setEnvironment(environment),
+    environmentState: () => runtimeScene.environmentState(),
   };
 }
 
@@ -597,6 +719,10 @@ function assetUrl(baseUrl: string, path: string): string {
 
 function parseColor(color: string): number {
   return Number.parseInt(color.slice(1), 16);
+}
+
+function modulo(value: number, divisor: number): number {
+  return ((value % divisor) + divisor) % divisor;
 }
 
 function pixelBounds(

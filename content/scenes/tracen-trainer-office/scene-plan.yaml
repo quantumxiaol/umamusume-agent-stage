@@ -1,0 +1,92 @@
+schema_version: map_scene_plan.v1
+scene_id: tracen_trainer_office
+display_name: 特雷森训练员室
+description: 兼顾办公、训练复盘、接任务和长对话的学院训练员室。
+size_tiles: { width: 32, height: 24 }
+source_tile_size: 16
+runtime_tile_size: 32
+surfaces:
+  - { tile: ground.trainer_office.parquet, bounds: { x: 0, y: 0, width: 32, height: 24 } }
+  - { tile: structure.trainer_office.wall.cream, bounds: { x: 0, y: 0, width: 32, height: 4 } }
+  - { tile: structure.trainer_office.wall.wainscot, bounds: { x: 0, y: 3, width: 32, height: 1 } }
+  - { tile: ground.interior.border.dark, bounds: { x: 0, y: 4, width: 1, height: 20 } }
+  - { tile: ground.interior.border.dark, bounds: { x: 31, y: 4, width: 1, height: 20 } }
+  - { tile: ground.interior.border.dark, bounds: { x: 1, y: 23, width: 30, height: 1 } }
+  - { tile: ground.trainer_office.parquet, bounds: { x: 15, y: 23, width: 1, height: 1 } }
+  - { tile: ground.trainer_office.rug, bounds: { x: 18, y: 13, width: 11, height: 8 } }
+tile_props:
+  - { tile: prop.trainer_office.poster, x: 14, y: 1, blocking: true }
+  - { tile: prop.trainer_office.poster, x: 30, y: 1, blocking: true }
+  - { tile: prop.trainer_office.file_cabinet, x: 25, y: 4, blocking: true }
+  - { tile: prop.trainer_office.bookshelf, x: 27, y: 4, blocking: true }
+  - { tile: prop.trainer_office.document_box, x: 29, y: 4, blocking: true }
+  - { tile: prop.trainer_office.chair.executive, x: 5, y: 6, blocking: true }
+  - { tile: prop.trainer_office.laptop, x: 5, y: 7, blocking: false }
+  - { tile: prop.trainer_office.desk_lamp, x: 7, y: 7, blocking: false }
+  - { tile: prop.trainer_office.chair.guest, x: 4, y: 10, blocking: true }
+  - { tile: prop.trainer_office.chair.guest, x: 8, y: 10, blocking: true }
+  - { tile: prop.trainer_office.chair.guest, x: 16, y: 8, blocking: true }
+  - { tile: prop.trainer_office.meeting_table, x: 18, y: 8, blocking: true }
+  - { tile: prop.trainer_office.meeting_table, x: 19, y: 8, blocking: true }
+  - { tile: prop.trainer_office.meeting_table, x: 20, y: 8, blocking: true }
+  - { tile: prop.trainer_office.chair.guest, x: 22, y: 8, blocking: true }
+  - { tile: prop.trainer_office.chair.guest, x: 18, y: 10, blocking: true }
+  - { tile: prop.trainer_office.chair.guest, x: 20, y: 10, blocking: true }
+  - { tile: prop.trainer_office.whiteboard, x: 24, y: 7, blocking: true }
+  - { tile: prop.interior.plant, x: 2, y: 17, blocking: true }
+  - { tile: prop.interior.plant, x: 29, y: 17, blocking: true }
+  - { tile: prop.trainer_office.coffee_table, x: 22, y: 18, blocking: true }
+  - { tile: prop.trainer_office.coffee_table, x: 23, y: 18, blocking: true }
+  - { tile: prop.trainer_office.coat_rack, x: 29, y: 21, blocking: true }
+  - { tile: structure.trainer_office.door, x: 15, y: 22, blocking: false }
+tile_stamps:
+  - { id: west_window_row, stamp: structure.trainer_office.window.row, x: 1, y: 1 }
+  - { id: east_window_row, stamp: structure.trainer_office.window.row, x: 18, y: 1 }
+  - { id: trainer_work_desk, stamp: furniture.trainer_office.desk.long, x: 3, y: 7 }
+  - { id: office_lounge_sofa, stamp: furniture.trainer_office.sofa.long, x: 21, y: 15 }
+landmarks:
+  - { id: trainer_work_desk, display_name: 训练员办公桌, kind: office_desk, render_mode: tile_stamp, bounds: { x: 3, y: 6, width: 6, height: 5 } }
+  - { id: window_side, display_name: 窗边, kind: window, render_mode: tile_stamp, bounds: { x: 1, y: 1, width: 29, height: 5 } }
+  - { id: briefing_area, display_name: 训练复盘区, kind: meeting, render_mode: tile_stamp, bounds: { x: 15, y: 6, width: 11, height: 7 } }
+  - { id: sofa_lounge, display_name: 沙发会谈区, kind: lounge, render_mode: tile_stamp, bounds: { x: 18, y: 13, width: 11, height: 8 } }
+  - { id: office_door, display_name: 训练员室门口, kind: door, render_mode: tile_stamp, bounds: { x: 14, y: 21, width: 3, height: 3 } }
+collision:
+  - { x: 0, y: 0, width: 32, height: 4 }
+  - { x: 0, y: 4, width: 1, height: 20 }
+  - { x: 31, y: 4, width: 1, height: 20 }
+  - { x: 1, y: 23, width: 14, height: 1 }
+  - { x: 16, y: 23, width: 15, height: 1 }
+  - { x: 3, y: 7, width: 5, height: 1 }
+  - { x: 21, y: 15, width: 5, height: 1 }
+zones:
+  - { id: work_zone, display_name: 办公与任务区, kind: office, bounds: { x: 1, y: 4, width: 12, height: 10 } }
+  - { id: briefing_zone, display_name: 训练复盘区, kind: meeting, bounds: { x: 14, y: 4, width: 13, height: 9 } }
+  - { id: lounge_zone, display_name: 长对话休息区, kind: lounge, bounds: { x: 17, y: 13, width: 13, height: 9 } }
+  - { id: entry_zone, display_name: 门口等候区, kind: entrance, bounds: { x: 10, y: 20, width: 11, height: 4 } }
+anchors:
+  - { id: trainer_desk_seat, display_name: 训练员办公位, position: { x: 5, y: 5 }, facing: down }
+  - { id: desk_face_to_face, display_name: 办公桌对坐位, position: { x: 6, y: 10 }, facing: up }
+  - { id: window_side, display_name: 窗边谈话位, position: { x: 13, y: 5 }, facing: up }
+  - { id: briefing_speaker, display_name: 训练复盘讲解位, position: { x: 19, y: 12 }, facing: up }
+  - { id: sofa_conversation, display_name: 沙发茶几谈话位, position: { x: 23, y: 20 }, facing: up }
+  - { id: door_waiting, display_name: 门口等候位, position: { x: 14, y: 21 }, facing: down }
+spawns:
+  - { id: from_main_school, position: { x: 15, y: 21 }, facing: up }
+  - { id: trainer_office_start, position: { x: 15, y: 18 }, facing: up }
+portals:
+  - { id: to_main_school_interior, position: { x: 15, y: 23 }, target_scene_id: tracen_main_school_interior, target_spawn_id: from_trainer_office }
+activity_paths:
+  - id: office_task_route
+    activity_id: accept_and_review_training
+    loop: false
+    points: [{ x: 15, y: 21 }, { x: 15, y: 15 }, { x: 10, y: 12 }, { x: 6, y: 10 }]
+  - id: office_briefing_route
+    activity_id: training_briefing
+    loop: false
+    points: [{ x: 15, y: 18 }, { x: 19, y: 12 }]
+visual_references:
+  - { catalog_id: trainer_office_morning, usage: 大窗、蜂蜜色拼花地板、正式办公桌、资料柜和复盘白板 }
+  - { catalog_id: trainer_office_day_alt, usage: 蓝灰窗景、室内暖光与低饱和蓝椅 }
+  - { catalog_id: trainer_office_night, usage: 同一碰撞布局下的未来夜景色板 }
+  - { catalog_id: trainer_office_alt, usage: 沙发、茶几、电脑桌和私密长对话尺度 }
+missing_tile_families: []

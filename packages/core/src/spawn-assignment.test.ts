@@ -78,4 +78,23 @@ describe("assignStageSpawns", () => {
       character_two: "nearby",
     });
   });
+
+  it("forms repeated arrival overrides near one entry instead of consuming a remote entry", () => {
+    const expandedScene = scenePackSchema.parse({
+      ...scene,
+      spawns: [
+        ...scene.spawns,
+        { id: "arrival_formation", position: { x: 1, y: 2 } },
+        { id: "remote_portal_entry", position: { x: 7, y: 7 } },
+      ],
+    });
+
+    expect(assignStageSpawns(actors, expandedScene, {
+      trainer: "portal_entry",
+      character: "portal_entry",
+    })).toEqual({
+      trainer: "portal_entry",
+      character: "arrival_formation",
+    });
+  });
 });

@@ -4,7 +4,7 @@
 
 Stage 是三层系统中的演出与交互舞台，不承担长期记忆或高级决策。它负责可靠加载角色与地图、执行玩家/剧本/Agent 的统一命令，并把结果作为事件、快照和可等待任务反馈给上层。
 
-浏览器中的 `StageRuntime` 是单机阶段的唯一权威。Phaser 只把 Runtime 快照画出来；Vue 负责组合、角色选择和观察面板；Agent 返回声明式动作，浏览器校验并转换成 `StageCommand` 后才能改变世界。
+浏览器是世界权威：`WorldPresence` 保存每名 Actor 所在 Scene、最后位置与跟随关系，当前可见 Scene 的 `StageRuntime` 则独占场内连续移动、碰撞和任务状态。Phaser 只把 Runtime 快照画出来；Agent 返回声明式动作，浏览器校验后才能改变世界。
 
 ## 技术栈
 
@@ -25,7 +25,7 @@ MapWeaver ────► ScenePack ─────┼─► StageDefinition ─
 registries ────────────────────┘                       │
 PerformanceScript ─► role/cue compiler ───────────────┤
                                                        ▼
-StageRuntime.inspect ─► live_stage ─► Agent /stage/turn
+WorldPresence ─► 当前 Scene cast ─► StageRuntime.inspect ─► live_stage ─► Agent /stage/turn
         ▲                                  │
         │                                  ▼
         └── StageCommand ◄── AgentStageAction + dialogue
@@ -40,7 +40,7 @@ Script / Player ─────────────────────�
 - `contracts` 不依赖业务包；
 - `core` 只依赖 `contracts`，不得 import Phaser、Vue 或 FastAPI；
 - `renderer-phaser` 读取 Runtime 快照，不保存第二份世界状态；
-- `agent-client` 只负责 Agent HTTP 协议与 `AgentStageAction → StageCommand`；
+- `agent-client` 负责 Agent HTTP 协议与场内 `AgentStageAction → StageCommand`；跨场景 action 由 composition root 交给 `WorldPresence`；
 - `apps/web` 是 composition root；
 - `sceneweaver` 只在构建期运行。
 
@@ -79,6 +79,8 @@ Runtime 在 tile 语义层做 A*，在世界像素层连续插值。动态 Actor
 
 Actor 首次进入 Portal tile 时产生一次 `portal.entered`。Web 根据目标 scene/spawn 重新装配舞台；当前跟随绑定会在这次换图中恢复。
 
+Portal 换图遵循旅行队伍规则：玩家总是跨图；只有直接或链式跟随旅行队伍成员的 Actor 一起跨图；未跟随者留在原 Scene，并保存最后 tile/facing。随行者共享同一个目标入口意图，装配器在入口附近生成不占 Portal tile 的安全编队位置。返回旧 Scene 时，留守者从保存位置恢复，而不是重新使用舞台默认出生点。
+
 动态 cast 不会把第二名以后角色随意丢到地图另一端：Runtime 装配先保留地图显式 spawn 与 Portal 目标，再围绕重复的首选 spawn 生成确定性的临时编队站位；`assignStageSpawns` 按与首选 spawn 的曼哈顿距离分配。临时站位只存在于运行时，不反写 MapWeaver 内容。
 
 场内路线与跨图路线是两层职责：
@@ -103,16 +105,22 @@ GridNavigation: actor tile ─A*─► 当前 Scene 的 portal/anchor tile
 
 Phaser Controller 执行 cue，同时保留跟随相机边界、小地图、Portal 标记和主视野框。当前网页既可手动验证这些模式，也可从 `PerformanceScript` 的 camera cue 执行；Agent Stage Director 尚未返回 CameraCue，后续应在 `/stage/turn` 响应中增加独立 `camera_cues` 字段，而不是伪装成角色动作。
 
+### 环境不是地图副本
+
+`StageEnvironment` 独立描述 `day/evening/night`、`clear/rain/snow`、强度和过渡时间。Phaser 使用主相机遮罩与轻量粒子表现它，小地图、气泡和网页 UI 不参与变暗。切换环境不重建 Scene，不改变 navigation、Anchor、Portal 或角色坐标；进入另一张地图时沿用当前 preset。
+
+当前环境由网页手动控制。等实时动作执行与离线演出格式稳定后，再分别给 Agent 响应和 `PerformanceScript` 增加环境 cue，避免把环境伪装成 Actor Command。
+
 ## 两种导演输入，共用同一个舞台
 
 - **实时 Agent 模式**：`umamusume-agent` 根据训练员输入、角色回复与 `live_stage` 返回一个或多个结构化动作；网页把整组 cast 绑定到同一会话并依次等待动作终态。
 - **确定性短剧模式**：`PerformanceScript` 的 scene 依次切换，beat 依次执行，同一 beat 的 cues 并行；`wait_for: all` 会等待移动、对白和 wait cue 完成后才进入下一 beat。结束或失败后控制权会归还给 player/agent。
 
-两者都只通过 `StageCommand`、`CameraCue`、`StageTask` 和 `StageEvent` 接触 Runtime。Agent 不操作 Phaser；剧本也不保存第二份坐标状态。
+两者都通过 `StageCommand`、`CameraCue`、`StageTask` 和 `StageEvent` 接触当前 Runtime；跨 Scene 的 `actor.travel_to_scene` 由 Web 先更新 `WorldPresence`，再重建可见 Runtime。Agent 不操作 Phaser；剧本也不保存第二份运行时坐标状态。
 
 ### 当前跨地图边界
 
-当前 `StageRuntime` 仍是单 Scene 实例：玩家走入 Portal 后，网页会重建目标 Scene。跨地图路线已经可以规划，但尚未自动连续执行，也尚未持久保存分散在不同 Scene 的多名 Actor。要支持“导演在不同地图角色之间切镜头”，下一步应增加浏览器端 `WorldRuntime`：持有 `actor_id → scene_id/position`，按当前 CameraCue 只挂载一个 Scene renderer，并在后台推进其他 Scene 的任务。这个扩展不要求新增 Stage 后端，也不改变 Agent 是决策端、浏览器是世界权威的边界。
+当前 `StageRuntime` 仍是单 Scene 实例：玩家走入 Portal 后，网页会重建目标 Scene。`WorldPresence` 已能持有 `actor_id → scene_id/tile/follow`，所以角色可分散留在不同地图；当前只推进可见 Scene，页面刷新后则从默认舞台重新开始。跨地图路线虽然可以规划，但尚未自动连续执行，后台 Scene 也不会随时间推进。要支持“导演在不同地图角色之间切镜头”和后台行动，下一步是在现有 Presence 之上增加 World scheduler，而不是复制场内坐标权威。
 
 ## Agent HTTP 边界
 
@@ -130,6 +138,6 @@ GitHub Pages 生产环境直接调用 HF Space。浏览器内 API key 只是轻�
 
 1. 为 `umamusume-anime` 增加 `PerformanceScript → structured script/timeline` 适配器，先复用对白、字幕、音频、场景背景和角色立绘提示；
 2. 把网页内的示例执行逻辑抽成独立 ShowRunner，增加暂停、跳过、取消、逐 beat 调试与执行报告；
-3. 增加浏览器端 `WorldRuntime`，让多名 Actor 可处于不同 Scene，并连续执行 `WorldRoutePlan`；
+3. 在 `WorldPresence` 之上增加 World scheduler，让后台 Actor 连续执行 `WorldRoutePlan`，并支持跨 Scene 镜头切换；
 4. 为 Agent `/stage/turn` 增加独立 `camera_cues`，并允许把一次实时会话录制为可编辑的 `PerformanceScript`；
 5. 增加表情、入场/退场、交互、道具与角色编队命令；只有出现多客户端或持久世界需求后，再评估把 Runtime 权威迁到服务端。

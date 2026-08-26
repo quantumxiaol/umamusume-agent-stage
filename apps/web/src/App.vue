@@ -14,6 +14,7 @@ import {
   characterRegistrySchema,
   performanceScriptSchema,
   scenePackSchema,
+  stageEnvironmentSchema,
   stageDefinitionSchema,
   stageRegistrySchema,
   type CharacterAgentMapping,
@@ -27,6 +28,7 @@ import {
   type ScenePack,
   type StageActorState,
   type StageDefinition,
+  type StageEnvironment,
   type StageEvent,
   type StageRegistry,
   type StageRegistryEntry,
@@ -36,7 +38,9 @@ import {
   assignStageSpawns,
   compilePerformanceCue,
   ensureSceneSpawnCapacity,
+  placeScenePresences,
   StageRuntime,
+  WorldPresence,
   type CommandResult,
   type StageCastOutfit,
 } from "@uma-stage/core";
@@ -95,6 +99,14 @@ interface FollowBinding {
   distanceTiles: number;
 }
 
+interface StageInitializationOptions {
+  definitionPath?: string;
+  spawnOverrides?: Record<string, string>;
+  followBindings?: FollowBinding[];
+  resetWorld?: boolean;
+  skipPresenceSync?: boolean;
+}
+
 const environment = import.meta.env as unknown as Record<string, string | undefined>;
 const defaultAgentUrl =
   environment.UMAMUSUME_AGENT_URL?.trim() ||
@@ -131,6 +143,7 @@ const agentSession = ref<AgentSession | null>(null);
 const agentInput = ref("");
 const conversation = ref<ConversationLine[]>([]);
 const performanceRunning = ref(false);
+const stageEnvironment = ref<StageEnvironment>(stageEnvironmentSchema.parse({}));
 
 const resolvedCast = computed<ResolvedCastMember[]>(() =>
   selectedCast.value.flatMap((selection) => {
@@ -167,6 +180,7 @@ let conversationSequence = 0;
 let portalTransitionPending = false;
 let portalTransitionTimer: number | null = null;
 let runPortalTransition: (() => void) | null = null;
+const worldPresence = new WorldPresence();
 const PORTAL_TRANSITION_FALLBACK_MS = 750;
 const PORTAL_TRANSITION_AFTER_COMMAND_MS = 50;
 
@@ -179,11 +193,10 @@ async function initializeApplication(): Promise<void> {
   await prepareAgentSession();
 }
 
-async function initialize(
-  definitionPath?: string,
-  spawnOverrides: Record<string, string> = {},
-  followBindings: FollowBinding[] = [],
-): Promise<void> {
+async function initialize(options: StageInitializationOptions = {}): Promise<void> {
+  if (!options.skipPresenceSync && runtime) {
+    worldPresence.syncScene(runtime.scene, runtime.snapshot());
+  }
   const currentGeneration = ++generation;
   dispose(false);
   portalTransitionPending = false;
@@ -204,30 +217,55 @@ async function initialize(
     }
 
     const requestedStagePath =
-      definitionPath || activeStagePath.value || stageRegistry.default_definition_path;
+      options.definitionPath || activeStagePath.value || stageRegistry.default_definition_path;
     const sourceStage = await loadStage(contentUrl(requestedStagePath));
-    const stage = applyStageCast(
+    const castStage = applyStageCast(
       sourceStage,
       cast.map((member) => ({ mapping: member.mapping, outfit: member.outfit })),
     );
     const registryByBundle = new Map(
       registry.characters.map((entry) => [entry.bundle_id, entry]),
     );
-    const [sourceScene, renderer, ...packs] = await Promise.all([
-      loadScene(contentUrl(stage.scene_path)),
+    const [sourceScene, renderer] = await Promise.all([
+      loadScene(contentUrl(castStage.scene_path)),
       import("@uma-stage/renderer-phaser"),
-      ...stage.actors.map((actorDefinition) => {
+    ]);
+    const castActorIds = castStage.actors.map((actorDefinition) => actorDefinition.instance_id);
+    if (options.resetWorld) worldPresence.resetActors(castActorIds, sourceScene.scene_id);
+    else worldPresence.reconcileActors(castActorIds, sourceScene.scene_id);
+    const scenePresences = worldPresence.actorsInScene(sourceScene.scene_id);
+    const presentActorIds = new Set(scenePresences.map((presence) => presence.actor_id));
+    const stage: StageDefinition = {
+      ...castStage,
+      actors: castStage.actors.filter((actorDefinition) =>
+        presentActorIds.has(actorDefinition.instance_id),
+      ),
+    };
+    if (stage.actors.length === 0) {
+      throw new Error(`场景 ${sourceScene.scene_id} 中没有可装载角色`);
+    }
+    const packs = await Promise.all(
+      stage.actors.map((actorDefinition) => {
         const entry = registryByBundle.get(actorDefinition.bundle_id);
         if (!entry) {
           throw new Error(`舞台引用了未注册角色：${actorDefinition.bundle_id}`);
         }
         return loadActor(contentUrl(entry.actor_path));
       }),
-    ]);
-    const scene = ensureSceneSpawnCapacity(
+    );
+    const placement = placeScenePresences(
       sourceScene,
+      scenePresences,
+      options.spawnOverrides,
+    );
+    const spawnOverrides = placement.spawnOverrides;
+    const scene = ensureSceneSpawnCapacity(
+      placement.scene,
       stage.actors.length,
-      stage.actors.map((actorDefinition) => actorDefinition.spawn_id),
+      stage.actors.map(
+        (actorDefinition) =>
+          spawnOverrides[actorDefinition.instance_id] ?? actorDefinition.spawn_id,
+      ),
     );
     if (currentGeneration !== generation) return;
 
@@ -253,6 +291,10 @@ async function initialize(
         bundleBaseUrl: contentDirectoryUrl(registryEntry.actor_path),
       };
     });
+    const followBindings = uniqueFollowBindings([
+      ...worldPresence.followBindingsInScene(scene.scene_id),
+      ...(options.followBindings ?? []),
+    ]);
     for (const binding of followBindings) {
       if (!stage.actors.some((actorDefinition) => actorDefinition.instance_id === binding.actorId)) continue;
       if (!stage.actors.some((actorDefinition) => actorDefinition.instance_id === binding.targetActorId)) continue;
@@ -278,6 +320,9 @@ async function initialize(
     activeStagePath.value = requestedStagePath;
     currentSceneId.value = scene.scene_id;
     currentPlayerActorId.value = playerActorId ?? "";
+    if (!stage.actors.some((actorDefinition) => actorDefinition.instance_id === activeActorId.value)) {
+      activeActorId.value = stage.actors.find((actorDefinition) => !actorDefinition.player)?.instance_id ?? "";
+    }
     sceneAnchors.value = scene.anchors.map((anchor) => ({
       id: anchor.id,
       displayName: anchor.display_name,
@@ -303,13 +348,15 @@ async function initialize(
       parent,
       runtime: nextRuntime,
       scene,
-      sceneBaseUrl: contentDirectoryUrl(stage.scene_path),
+      sceneBaseUrl: contentDirectoryUrl(castStage.scene_path),
       ...(playerActorId === undefined ? {} : { playerActorId }),
       actors: rendererActors,
+      environment: stageEnvironment.value,
     });
     snapshotTimer = window.setInterval(() => {
       if (runtime) store.setSnapshot(runtime.snapshot());
     }, 100);
+    worldPresence.syncScene(scene, nextRuntime.snapshot());
     store.ready();
   } catch (error) {
     if (currentGeneration === generation) store.fail(error);
@@ -387,11 +434,22 @@ function handlePortalEvent(
   runPortalTransition = () => {
     portalTransitionTimer = null;
     runPortalTransition = null;
-    void initialize(
-      target.definition_path,
-      { [playerActorId]: targetSpawnId },
-      captureFollowBindings(runtime),
+    const activeRuntime = runtime;
+    if (!activeRuntime) return;
+    worldPresence.syncScene(activeRuntime.scene, activeRuntime.snapshot());
+    const partyActorIds = worldPresence.transferFollowingParty(
+      playerActorId,
+      activeRuntime.scene.scene_id,
+      targetSceneId,
+      targetSpawnId,
     );
+    void initialize({
+      definitionPath: target.definition_path,
+      spawnOverrides: Object.fromEntries(
+        partyActorIds.map((actorId) => [actorId, targetSpawnId]),
+      ),
+      skipPresenceSync: true,
+    });
   };
   portalTransitionTimer = window.setTimeout(
     runPortalTransition,
@@ -422,7 +480,7 @@ async function changeCast(castIndex?: number): Promise<void> {
   }
   agentSession.value = null;
   conversation.value = [];
-  await initialize(activeStagePath.value);
+  await initialize({ definitionPath: activeStagePath.value });
   if (store.phase === "ready") await prepareAgentSession();
 }
 
@@ -459,7 +517,11 @@ async function runPerformanceDemo(): Promise<void> {
           return actorId && placement.spawn_id ? [[actorId, placement.spawn_id]] : [];
         }),
       );
-      await initialize(stage.definition_path, spawnOverrides);
+      await initialize({
+        definitionPath: stage.definition_path,
+        spawnOverrides,
+        resetWorld: true,
+      });
       if (store.phase !== "ready" || !runtime) {
         throw new Error(store.error || `无法装载剧本舞台：${stage.display_name}`);
       }
@@ -591,7 +653,7 @@ function delay(durationMs: number): Promise<void> {
 }
 
 async function changeCastOutfit(): Promise<void> {
-  await initialize(activeStagePath.value);
+  await initialize({ definitionPath: activeStagePath.value });
 }
 
 async function addCastMember(): Promise<void> {
@@ -741,6 +803,24 @@ function showCameraOverview(): void {
   game?.setCameraCue({ type: "camera.overview" });
 }
 
+function applyStageEnvironment(): void {
+  stageEnvironment.value = stageEnvironmentSchema.parse(stageEnvironment.value);
+  game?.setEnvironment(stageEnvironment.value);
+}
+
+function changeStageFromSelect(event: Event): void {
+  const definitionPath = (event.target as HTMLSelectElement).value;
+  if (!definitionPath || definitionPath === activeStagePath.value) return;
+  void initialize({ definitionPath, resetWorld: true });
+}
+
+function resetCurrentScene(): void {
+  void initialize({
+    ...(activeStagePath.value ? { definitionPath: activeStagePath.value } : {}),
+    resetWorld: true,
+  });
+}
+
 async function connectAgent(): Promise<boolean> {
   agentStatus.value = "connecting";
   agentStatusMessage.value = "正在从 .env 配置连接 Agent…";
@@ -841,6 +921,17 @@ async function sendAgentMessage(): Promise<void> {
   }
   const session = agentSession.value;
   if (!session || !agentClient) return;
+  const presentStageActorIds = new Set(
+    activeRuntime.snapshot().actors.map((state) => state.actor_id),
+  );
+  const presentSessionActors = session.actors.filter((actorBinding) =>
+    presentStageActorIds.has(actorBinding.stageActorId),
+  );
+  if (presentSessionActors.length === 0) {
+    agentStatus.value = "connected";
+    agentStatusMessage.value = "当前地图没有可对话的出演角色";
+    return;
+  }
 
   agentInput.value = "";
   pushConversation("trainer", "训练员", message);
@@ -857,8 +948,8 @@ async function sendAgentMessage(): Promise<void> {
       sessionId: session.sessionId,
       userUuid: session.userUuid,
       message,
-      targetActorIds: session.actors.map((actorBinding) => actorBinding.agentActorId),
-      actorBindings: session.actors.map((actorBinding) => ({
+      targetActorIds: presentSessionActors.map((actorBinding) => actorBinding.agentActorId),
+      actorBindings: presentSessionActors.map((actorBinding) => ({
         agent_actor_id: actorBinding.agentActorId,
         stage_actor_id: actorBinding.stageActorId,
       })),
@@ -881,7 +972,7 @@ async function sendAgentMessage(): Promise<void> {
         pushConversation("narrator", "环境", event.content);
       }
     }
-    const actions = reconcileStageTurnActions(result, session.actors.map((actorBinding) => ({
+    const actions = reconcileStageTurnActions(result, presentSessionActors.map((actorBinding) => ({
       agent_actor_id: actorBinding.agentActorId,
       stage_actor_id: actorBinding.stageActorId,
     })));
@@ -889,14 +980,19 @@ async function sendAgentMessage(): Promise<void> {
       throw new Error("Agent 返回期间舞台已切换，请重新发送本轮消息");
     }
     const boundStageActorIds = new Set(
-      session.actors.map((actorBinding) => actorBinding.stageActorId),
+      presentSessionActors.map((actorBinding) => actorBinding.stageActorId),
     );
+    const worldActions: Array<Extract<AgentStageAction, { type: "actor.travel_to_scene" }>> = [];
     for (const action of actions) {
       if (!boundStageActorIds.has(action.actor_id)) {
         throw new Error(`Agent 返回了未绑定角色动作：${action.actor_id}`);
       }
       pushConversation("command", "StageCommand", formatAgentAction(action));
       revealReplyForAgentAction(pendingReplies, action);
+      if (action.type === "actor.travel_to_scene") {
+        worldActions.push(action);
+        continue;
+      }
       const state = activeRuntime
         .snapshot()
         .actors.find((candidate) => candidate.actor_id === action.actor_id);
@@ -913,12 +1009,46 @@ async function sendAgentMessage(): Promise<void> {
       }
     }
     revealPendingAgentReplies(pendingReplies);
+    for (const action of worldActions) await executeDirectorTravel(action);
     agentStatus.value = "connected";
     agentStatusMessage.value = `第 ${result.turn_index} 轮完成 · ${actions.length} 条舞台动作`;
   } catch (error) {
     agentStatus.value = "error";
     agentStatusMessage.value = errorMessage(error);
   }
+}
+
+async function executeDirectorTravel(
+  action: Extract<AgentStageAction, { type: "actor.travel_to_scene" }>,
+): Promise<void> {
+  const activeRuntime = runtime;
+  if (!activeRuntime) throw new Error("舞台 Runtime 尚未就绪");
+  const target = stageChoices.value.find(
+    (entry) => entry.scene_id === action.target_scene_id,
+  );
+  if (!target) throw new Error(`Director 引用了未知场景：${action.target_scene_id}`);
+  if (!activeRuntime.snapshot().actors.some((state) => state.actor_id === action.actor_id)) {
+    throw new Error(`角色不在当前场景：${action.actor_id}`);
+  }
+  worldPresence.syncScene(activeRuntime.scene, activeRuntime.snapshot());
+  worldPresence.transferActor(
+    action.actor_id,
+    action.target_scene_id,
+    action.target_spawn_id ?? null,
+  );
+  const playerTravels = action.actor_id === currentPlayerActorId.value;
+  await initialize({
+    definitionPath: playerTravels ? target.definition_path : activeStagePath.value,
+    skipPresenceSync: true,
+  });
+  if (store.phase !== "ready") {
+    throw new Error(store.error || `无法完成跨场景移动：${target.display_name}`);
+  }
+  store.setMessage(
+    playerTravels
+      ? `训练员已前往${target.display_name}`
+      : `${action.actor_id}已单独前往${target.display_name}`,
+  );
 }
 
 function revealReplyForAgentAction(
@@ -1016,6 +1146,9 @@ function formatAgentAction(action: AgentStageAction): string {
     return `follow → ${action.target_actor_id} / ${action.distance_tiles} tile`;
   }
   if (action.type === "actor.stop_follow") return "stop_follow";
+  if (action.type === "actor.travel_to_scene") {
+    return `travel_to_scene → ${action.target_scene_id}${action.target_spawn_id ? ` / ${action.target_spawn_id}` : ""}`;
+  }
   if (action.type === "actor.face") return `face → ${action.facing}`;
   if (action.type === "dialogue.say") return `say → ${action.text}`;
   return "stop";
@@ -1033,17 +1166,8 @@ function actor(actorId: string): StageActorState | undefined {
   return store.snapshot?.actors.find((candidate) => candidate.actor_id === actorId);
 }
 
-function captureFollowBindings(activeRuntime: StageRuntime | null): FollowBinding[] {
-  if (!activeRuntime) return [];
-  return activeRuntime.snapshot().actors.flatMap((state) =>
-    state.following_actor_id && state.follow_distance_tiles
-      ? [{
-          actorId: state.actor_id,
-          targetActorId: state.following_actor_id,
-          distanceTiles: state.follow_distance_tiles,
-        }]
-      : [],
-  );
+function uniqueFollowBindings(bindings: FollowBinding[]): FollowBinding[] {
+  return [...new Map(bindings.map((binding) => [binding.actorId, binding])).values()];
 }
 
 function nextCommandId(prefix: string): string {
@@ -1226,7 +1350,7 @@ function formatEvent(event: (typeof store.events)[number]): string {
           <div class="camera-actions" aria-label="镜头控制">
             <span>CAMERA</span>
             <button :disabled="store.phase !== 'ready' || !currentPlayerActorId || performanceRunning" type="button" @click="followCamera(currentPlayerActorId)">跟随训练员</button>
-            <button :disabled="store.phase !== 'ready' || performanceRunning" type="button" @click="followCamera(activeActorId)">跟随角色</button>
+            <button :disabled="store.phase !== 'ready' || !activeActorId || performanceRunning" type="button" @click="followCamera(activeActorId)">跟随角色</button>
             <button :disabled="store.phase !== 'ready' || performanceRunning" type="button" @click="showCameraOverview">场景总览</button>
             <button v-for="zone in sceneZones.slice(0, 2)" :key="`camera-zone-${zone.id}`" :disabled="store.phase !== 'ready' || performanceRunning" type="button" @click="focusCameraOnZone(zone.id)">
               定镜 · {{ zone.displayName }}
@@ -1237,26 +1361,54 @@ function formatEvent(event: (typeof store.events)[number]): string {
           </div>
           <div class="actor-actions" aria-label="角色跟随控制">
             <span>ACTOR</span>
-            <button :disabled="store.phase !== 'ready' || !currentPlayerActorId || activeActorFollowsPlayer || performanceRunning" type="button" @click="startActorFollow">
+            <button :disabled="store.phase !== 'ready' || !currentPlayerActorId || !activeActorId || activeActorFollowsPlayer || performanceRunning" type="button" @click="startActorFollow">
               跟随训练员
             </button>
             <button :disabled="store.phase !== 'ready' || !activeActorFollowsPlayer || performanceRunning" type="button" @click="stopActorFollow">
               停止跟随
             </button>
           </div>
-          <button v-if="currentSceneId === 'tracen_student_plaza'" :disabled="store.phase !== 'ready' || performanceRunning" type="button" @click="runMeeting">
+          <div class="environment-actions" aria-label="环境控制">
+            <span>ENV</span>
+            <label>
+              <span>时间</span>
+              <select v-model="stageEnvironment.time_of_day" :disabled="store.phase !== 'ready' || performanceRunning" aria-label="时间" @change="applyStageEnvironment">
+                <option value="day">白天</option>
+                <option value="evening">黄昏</option>
+                <option value="night">夜晚</option>
+              </select>
+            </label>
+            <label>
+              <span>天气</span>
+              <select v-model="stageEnvironment.weather" :disabled="store.phase !== 'ready' || performanceRunning" aria-label="天气" @change="applyStageEnvironment">
+                <option value="clear">晴朗</option>
+                <option value="rain">雨</option>
+                <option value="snow">雪</option>
+              </select>
+            </label>
+            <label v-if="stageEnvironment.weather !== 'clear'" class="environment-intensity">
+              <span>强度</span>
+              <input v-model.number="stageEnvironment.intensity" type="range" min="0.15" max="1" step="0.05" aria-label="天气强度" :disabled="store.phase !== 'ready' || performanceRunning" @change="applyStageEnvironment">
+            </label>
+          </div>
+          <button v-if="currentSceneId === 'tracen_student_plaza'" :disabled="store.phase !== 'ready' || !activeActorId || performanceRunning" type="button" @click="runMeeting">
             <span>▶</span> 运行会面演出
           </button>
-          <button v-for="anchor in sceneAnchors.slice(0, 3)" :key="anchor.id" :disabled="store.phase !== 'ready' || performanceRunning" type="button" @click="sendActorTo(anchor.id, anchor.displayName)">
+          <button v-for="anchor in sceneAnchors.slice(0, 3)" :key="anchor.id" :disabled="store.phase !== 'ready' || !activeActorId || performanceRunning" type="button" @click="sendActorTo(anchor.id, anchor.displayName)">
             {{ anchor.displayName }}
           </button>
-          <button v-for="path in activityPaths" :key="path.id" :disabled="store.phase !== 'ready' || performanceRunning" type="button" @click="runActivityPath(path.id, path.activityId)">
+          <button v-for="path in activityPaths" :key="path.id" :disabled="store.phase !== 'ready' || !activeActorId || performanceRunning" type="button" @click="runActivityPath(path.id, path.activityId)">
             执行 {{ path.activityId }}
           </button>
-          <button :disabled="performanceRunning" type="button" @click="() => initialize()">重置场景</button>
-          <button v-for="choice in stageChoices" :key="choice.stage_id" :class="{ 'stage-choice-active': choice.definition_path === activeStagePath }" :disabled="store.phase !== 'ready' || choice.definition_path === activeStagePath || performanceRunning" type="button" @click="initialize(choice.definition_path)">
-            {{ choice.display_name }}
-          </button>
+          <button :disabled="performanceRunning" type="button" @click="resetCurrentScene">重置场景</button>
+          <div class="scene-actions" aria-label="地图切换">
+            <span>MAP</span>
+            <select :value="activeStagePath" :disabled="store.phase !== 'ready' || performanceRunning" aria-label="地图" @change="changeStageFromSelect">
+              <option v-for="choice in stageChoices" :key="choice.stage_id" :value="choice.definition_path">
+                {{ choice.display_name }}
+              </option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -1292,7 +1444,7 @@ function formatEvent(event: (typeof store.events)[number]): string {
         <section class="panel actors-panel">
           <div class="panel-heading">
             <span class="eyebrow">LIVE ACTORS</span>
-            <span class="count">{{ actorViews.length }} / {{ actorViews.length }}</span>
+            <span class="count">{{ actorViews.length }} / {{ resolvedCast.length + (currentPlayerActorId ? 1 : 0) }}</span>
           </div>
           <article v-for="view in actorViews" :key="view.instanceId" class="actor-row" :class="{ active: !view.player && view.instanceId === activeActorId }">
             <div class="actor-index" :class="view.player ? 'trainer-index' : 'vega-index'">{{ view.initials }}</div>

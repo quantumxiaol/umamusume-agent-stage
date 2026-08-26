@@ -29,8 +29,8 @@ export function assignStageSpawns(
       .map((spawn) => spawn.id);
     const candidateIds = uniqueStrings([
       ...(override === undefined ? [] : [override]),
-      actor.spawn_id,
       ...nearestSpawnIds,
+      actor.spawn_id,
     ]);
     const selected = candidateIds.find((spawnId) => {
       const spawn = spawnById.get(spawnId);

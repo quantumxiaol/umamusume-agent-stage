@@ -1,0 +1,194 @@
+schema_version: map_scene_plan.v1
+scene_id: tracen_forest_trail
+display_name: 特雷森周边森林步道
+description: 从山麓神社延伸到林间溪流与日照空地的自然步道，包含老树群、木桥、安静休息点和未来校外路线分岔。
+size_tiles: { width: 60, height: 44 }
+source_tile_size: 16
+runtime_tile_size: 32
+surfaces:
+  - { tile: ground.forest.grass.shadow, bounds: { x: 0, y: 0, width: 60, height: 44 } }
+  - { tile: ground.forest.grass.sunlit, bounds: { x: 3, y: 5, width: 20, height: 13 } }
+  - { tile: ground.forest.clearing, bounds: { x: 6, y: 7, width: 14, height: 9 } }
+  - { tile: ground.forest.grass.sunlit, bounds: { x: 44, y: 11, width: 13, height: 13 } }
+  - { tile: ground.forest.grass.sunlit, bounds: { x: 37, y: 29, width: 18, height: 12 } }
+  - { tile: ground.forest.clearing, bounds: { x: 40, y: 32, width: 12, height: 7 } }
+  - { tile: ground.forest.moss, bounds: { x: 24, y: 0, width: 5, height: 44 } }
+  - { tile: ground.forest.moss, bounds: { x: 35, y: 0, width: 5, height: 44 } }
+  - { tile: ground.forest.bank, bounds: { x: 27, y: 0, width: 2, height: 44 } }
+  - { tile: ground.forest.bank, bounds: { x: 35, y: 0, width: 2, height: 44 } }
+  - { tile: ground.forest.stream.deep, bounds: { x: 29, y: 0, width: 6, height: 44 } }
+  - { tile: ground.forest.stream.current, bounds: { x: 31, y: 0, width: 2, height: 44 } }
+  - { tile: ground.forest.stream.foam, bounds: { x: 33, y: 4, width: 1, height: 10 } }
+  - { tile: ground.forest.stream.foam, bounds: { x: 29, y: 28, width: 1, height: 10 } }
+  - { tile: ground.forest.earth, bounds: { x: 47, y: 18, width: 13, height: 9 } }
+  - { tile: ground.forest.path, bounds: { x: 47, y: 19, width: 13, height: 7 } }
+  - { tile: ground.forest.path, bounds: { x: 38, y: 18, width: 10, height: 7 } }
+  - { tile: ground.forest.bridge.deck, bounds: { x: 27, y: 20, width: 10, height: 5 } }
+  - { tile: ground.forest.path.light, bounds: { x: 20, y: 21, width: 9, height: 7 } }
+  - { tile: ground.forest.path, bounds: { x: 12, y: 24, width: 10, height: 7 } }
+  - { tile: ground.forest.path.light, bounds: { x: 0, y: 22, width: 13, height: 7 } }
+  - { tile: ground.forest.path.light, bounds: { x: 12, y: 14, width: 6, height: 12 } }
+  - { tile: ground.forest.path.light, bounds: { x: 10, y: 12, width: 8, height: 5 } }
+  - { tile: ground.forest.path, bounds: { x: 40, y: 23, width: 6, height: 13 } }
+  - { tile: ground.forest.path.light, bounds: { x: 40, y: 34, width: 6, height: 10 } }
+tile_props:
+  - { tile: prop.forest.bridge_rail, x: 27, y: 20, blocking: true }
+  - { tile: prop.forest.bridge_rail, x: 28, y: 20, blocking: true }
+  - { tile: prop.forest.bridge_rail, x: 29, y: 20, blocking: true }
+  - { tile: prop.forest.bridge_rail, x: 30, y: 20, blocking: true }
+  - { tile: prop.forest.bridge_rail, x: 31, y: 20, blocking: true }
+  - { tile: prop.forest.bridge_rail, x: 32, y: 20, blocking: true }
+  - { tile: prop.forest.bridge_rail, x: 33, y: 20, blocking: true }
+  - { tile: prop.forest.bridge_rail, x: 34, y: 20, blocking: true }
+  - { tile: prop.forest.bridge_rail, x: 35, y: 20, blocking: true }
+  - { tile: prop.forest.bridge_rail, x: 36, y: 20, blocking: true }
+  - { tile: prop.forest.bridge_rail, x: 27, y: 24, blocking: true }
+  - { tile: prop.forest.bridge_rail, x: 28, y: 24, blocking: true }
+  - { tile: prop.forest.bridge_rail, x: 29, y: 24, blocking: true }
+  - { tile: prop.forest.bridge_rail, x: 30, y: 24, blocking: true }
+  - { tile: prop.forest.bridge_rail, x: 31, y: 24, blocking: true }
+  - { tile: prop.forest.bridge_rail, x: 32, y: 24, blocking: true }
+  - { tile: prop.forest.bridge_rail, x: 33, y: 24, blocking: true }
+  - { tile: prop.forest.bridge_rail, x: 34, y: 24, blocking: true }
+  - { tile: prop.forest.bridge_rail, x: 35, y: 24, blocking: true }
+  - { tile: prop.forest.bridge_rail, x: 36, y: 24, blocking: true }
+  - { tile: prop.forest.bush.dark, x: 1, y: 18, blocking: true }
+  - { tile: prop.forest.bush.light, x: 7, y: 19, blocking: true }
+  - { tile: prop.forest.fern, x: 10, y: 20, blocking: true }
+  - { tile: prop.forest.moss_rock, x: 22, y: 18, blocking: true }
+  - { tile: prop.forest.fallen_log, x: 19, y: 31, blocking: true }
+  - { tile: prop.forest.stump, x: 8, y: 32, blocking: true }
+  - { tile: prop.forest.trail_sign, x: 48, y: 27, blocking: true }
+  - { tile: prop.forest.trail_sign, x: 39, y: 31, blocking: true }
+  - { tile: prop.forest.wood_bench, x: 48, y: 35, blocking: true }
+  - { tile: prop.forest.picnic_table, x: 44, y: 36, blocking: true }
+  - { tile: prop.forest.moss_rock, x: 38, y: 27, blocking: true }
+  - { tile: prop.forest.bush.dark, x: 55, y: 28, blocking: true }
+  - { tile: prop.forest.bush.light, x: 53, y: 16, blocking: true }
+  - { tile: prop.forest.fern, x: 46, y: 15, blocking: true }
+  - { tile: detail.forest.wildflower, x: 8, y: 10, blocking: false }
+  - { tile: detail.forest.wildflower, x: 18, y: 13, blocking: false }
+  - { tile: detail.forest.sunbeam, x: 11, y: 8, blocking: false }
+  - { tile: detail.forest.sunbeam, x: 16, y: 11, blocking: false }
+  - { tile: detail.forest.sunbeam, x: 46, y: 33, blocking: false }
+  - { tile: detail.forest.fallen_leaves, x: 5, y: 25, blocking: false }
+  - { tile: detail.forest.fallen_leaves, x: 15, y: 28, blocking: false }
+  - { tile: detail.forest.fallen_leaves, x: 23, y: 24, blocking: false }
+  - { tile: detail.forest.fallen_leaves, x: 42, y: 27, blocking: false }
+  - { tile: detail.forest.fallen_leaves, x: 52, y: 23, blocking: false }
+  - { tile: detail.forest.stepping_stone, x: 31, y: 8, blocking: false }
+  - { tile: detail.forest.stepping_stone, x: 32, y: 12, blocking: false }
+  - { tile: detail.forest.stepping_stone, x: 30, y: 34, blocking: false }
+tile_stamps:
+  - { id: old_tree_nw_1, stamp: prop.forest.old_tree, x: 0, y: 1 }
+  - { id: old_tree_nw_2, stamp: prop.forest.old_tree, x: 5, y: 2 }
+  - { id: old_tree_n_1, stamp: prop.forest.old_tree, x: 11, y: 0 }
+  - { id: old_tree_n_2, stamp: prop.forest.old_tree, x: 18, y: 3 }
+  - { id: old_tree_n_3, stamp: prop.forest.old_tree, x: 24, y: 0 }
+  - { id: old_tree_n_4, stamp: prop.forest.old_tree, x: 37, y: 1 }
+  - { id: old_tree_ne_1, stamp: prop.forest.old_tree, x: 44, y: 3 }
+  - { id: old_tree_ne_2, stamp: prop.forest.old_tree, x: 51, y: 0 }
+  - { id: old_tree_ne_3, stamp: prop.forest.old_tree, x: 57, y: 4 }
+  - { id: old_tree_w_1, stamp: prop.forest.old_tree, x: 2, y: 14 }
+  - { id: old_tree_stream_1, stamp: prop.forest.old_tree, x: 22, y: 13 }
+  - { id: old_tree_stream_2, stamp: prop.forest.old_tree, x: 38, y: 11 }
+  - { id: old_tree_e_1, stamp: prop.forest.old_tree, x: 52, y: 13 }
+  - { id: old_tree_glade_1, stamp: prop.forest.old_tree, x: 4, y: 8 }
+  - { id: old_tree_glade_2, stamp: prop.forest.old_tree, x: 20, y: 7 }
+  - { id: old_tree_upper_e_1, stamp: prop.forest.old_tree, x: 41, y: 7 }
+  - { id: old_tree_upper_e_2, stamp: prop.forest.old_tree, x: 55, y: 9 }
+  - { id: old_tree_lower_w_1, stamp: prop.forest.old_tree, x: 4, y: 29 }
+  - { id: old_tree_lower_w_2, stamp: prop.forest.old_tree, x: 11, y: 31 }
+  - { id: old_tree_lower_w_3, stamp: prop.forest.old_tree, x: 18, y: 35 }
+  - { id: old_tree_lower_stream, stamp: prop.forest.old_tree, x: 24, y: 32 }
+  - { id: old_tree_lower_e_1, stamp: prop.forest.old_tree, x: 38, y: 26 }
+  - { id: old_tree_lower_e_2, stamp: prop.forest.old_tree, x: 56, y: 29 }
+  - { id: old_tree_sw_1, stamp: prop.forest.old_tree, x: 1, y: 34 }
+  - { id: old_tree_sw_2, stamp: prop.forest.old_tree, x: 7, y: 38 }
+  - { id: old_tree_s_1, stamp: prop.forest.old_tree, x: 14, y: 34 }
+  - { id: old_tree_s_2, stamp: prop.forest.old_tree, x: 22, y: 39 }
+  - { id: old_tree_s_3, stamp: prop.forest.old_tree, x: 37, y: 39 }
+  - { id: old_tree_se_1, stamp: prop.forest.old_tree, x: 50, y: 40 }
+  - { id: old_tree_se_2, stamp: prop.forest.old_tree, x: 56, y: 35 }
+landmarks:
+  - { id: old_growth_grove, display_name: 老树林地, kind: old_growth_forest, render_mode: tile_stamp, bounds: { x: 0, y: 0, width: 60, height: 19 } }
+  - { id: sunlit_glade, display_name: 林间日照空地, kind: forest_glade, render_mode: tile_stamp, bounds: { x: 3, y: 5, width: 20, height: 13 } }
+  - { id: forest_stream, display_name: 林间溪流, kind: stream, render_mode: tile_stamp, bounds: { x: 27, y: 0, width: 10, height: 44 } }
+  - { id: timber_bridge, display_name: 溪流木桥, kind: bridge, render_mode: tile_stamp, bounds: { x: 27, y: 20, width: 10, height: 5 } }
+  - { id: rest_clearing, display_name: 林间休息空地, kind: rest_area, render_mode: tile_stamp, bounds: { x: 37, y: 29, width: 18, height: 12 } }
+  - { id: shrine_side_trail, display_name: 神社侧径, kind: forest_entrance, render_mode: tile_stamp, bounds: { x: 47, y: 18, width: 13, height: 9 } }
+collision:
+  - { x: 27, y: 0, width: 10, height: 20 }
+  - { x: 27, y: 25, width: 10, height: 19 }
+  - { x: 0, y: 4, width: 2, height: 1 }
+  - { x: 5, y: 5, width: 2, height: 1 }
+  - { x: 11, y: 3, width: 2, height: 1 }
+  - { x: 18, y: 6, width: 2, height: 1 }
+  - { x: 24, y: 3, width: 2, height: 1 }
+  - { x: 37, y: 4, width: 2, height: 1 }
+  - { x: 44, y: 6, width: 2, height: 1 }
+  - { x: 51, y: 3, width: 2, height: 1 }
+  - { x: 57, y: 7, width: 2, height: 1 }
+  - { x: 2, y: 17, width: 2, height: 1 }
+  - { x: 22, y: 16, width: 2, height: 1 }
+  - { x: 38, y: 14, width: 2, height: 1 }
+  - { x: 52, y: 16, width: 2, height: 1 }
+  - { x: 4, y: 11, width: 2, height: 1 }
+  - { x: 20, y: 10, width: 2, height: 1 }
+  - { x: 41, y: 10, width: 2, height: 1 }
+  - { x: 55, y: 12, width: 2, height: 1 }
+  - { x: 4, y: 32, width: 2, height: 1 }
+  - { x: 11, y: 34, width: 2, height: 1 }
+  - { x: 18, y: 38, width: 2, height: 1 }
+  - { x: 24, y: 35, width: 2, height: 1 }
+  - { x: 38, y: 29, width: 2, height: 1 }
+  - { x: 56, y: 32, width: 2, height: 1 }
+  - { x: 1, y: 37, width: 2, height: 1 }
+  - { x: 7, y: 41, width: 2, height: 1 }
+  - { x: 14, y: 37, width: 2, height: 1 }
+  - { x: 22, y: 42, width: 2, height: 1 }
+  - { x: 37, y: 42, width: 2, height: 1 }
+  - { x: 50, y: 43, width: 2, height: 1 }
+  - { x: 56, y: 38, width: 2, height: 1 }
+zones:
+  - { id: shrine_approach, display_name: 神社侧径入口, kind: entrance, bounds: { x: 47, y: 17, width: 13, height: 11 } }
+  - { id: old_growth_zone, display_name: 老树林地, kind: old_growth, bounds: { x: 0, y: 0, width: 60, height: 20 } }
+  - { id: sunlit_glade_zone, display_name: 日照空地, kind: glade, bounds: { x: 3, y: 5, width: 20, height: 13 } }
+  - { id: stream_zone, display_name: 林间溪谷, kind: stream, bounds: { x: 24, y: 0, width: 16, height: 44 } }
+  - { id: main_trail_zone, display_name: 森林主步道, kind: trail, bounds: { x: 0, y: 18, width: 60, height: 14 } }
+  - { id: rest_clearing_zone, display_name: 林间休息区, kind: rest_area, bounds: { x: 37, y: 29, width: 18, height: 12 } }
+anchors:
+  - { id: shrine_route, display_name: 神社方向侧径, position: { x: 57, y: 22 }, facing: right }
+  - { id: bridge_center, display_name: 溪流木桥中央, position: { x: 32, y: 22 }, facing: left }
+  - { id: stream_listening, display_name: 溪边倾听位, position: { x: 25, y: 18 }, facing: right }
+  - { id: sunlit_glade_talk, display_name: 日照空地谈话位, position: { x: 13, y: 10 }, facing: down }
+  - { id: fallen_log_story, display_name: 倒木旁剧情位, position: { x: 18, y: 32 }, facing: right }
+  - { id: rest_bench_talk, display_name: 林间长椅谈话位, position: { x: 47, y: 35 }, facing: right }
+  - { id: trail_junction, display_name: 林间岔路集合位, position: { x: 42, y: 30 }, facing: down }
+  - { id: future_observatory_route, display_name: 观景台扩展方向, position: { x: 42, y: 42 }, facing: down }
+  - { id: beach_route, display_name: 海边方向, position: { x: 2, y: 25 }, facing: left }
+spawns:
+  - { id: from_shrine, position: { x: 57, y: 22 }, facing: left }
+  - { id: from_beach, position: { x: 2, y: 25 }, facing: right }
+  - { id: forest_start, position: { x: 50, y: 22 }, facing: left }
+portals:
+  - { id: to_shrine, position: { x: 59, y: 22 }, target_scene_id: tracen_shrine, target_spawn_id: from_forest_trail }
+  - { id: to_beach, position: { x: 0, y: 25 }, target_scene_id: tracen_beach, target_spawn_id: from_forest }
+activity_paths:
+  - id: shrine_to_west_trail
+    activity_id: forest_walk
+    loop: false
+    points: [{ x: 57, y: 22 }, { x: 46, y: 22 }, { x: 39, y: 22 }, { x: 32, y: 22 }, { x: 24, y: 24 }, { x: 16, y: 27 }, { x: 6, y: 25 }, { x: 1, y: 25 }]
+  - id: glade_reflection_walk
+    activity_id: forest_reflection
+    loop: false
+    points: [{ x: 16, y: 27 }, { x: 15, y: 20 }, { x: 15, y: 15 }, { x: 13, y: 10 }]
+  - id: forest_jog_loop
+    activity_id: light_forest_jog
+    loop: true
+    points: [{ x: 42, y: 30 }, { x: 42, y: 23 }, { x: 32, y: 22 }, { x: 23, y: 24 }, { x: 16, y: 27 }, { x: 23, y: 24 }, { x: 32, y: 22 }, { x: 42, y: 23 }, { x: 42, y: 30 }]
+visual_references:
+  - { catalog_id: forest_path_day, usage: 深浅林冠、粗树干、斑驳日光和暖土色蜿蜒步道 }
+  - { catalog_id: forest_stream_day, usage: 青绿色溪水、白色急流、苔石与溪谷明暗层次 }
+  - { catalog_id: forest_path_autumn, usage: 落叶、低矮植被和静谧情绪场景的路径组织 }
+missing_tile_families: []

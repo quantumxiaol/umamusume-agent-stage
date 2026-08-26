@@ -48,8 +48,8 @@ tile_props:
   - { tile: prop.shrub.berries, x: 14, y: 10, blocking: true }
   - { tile: prop.shrub.berries, x: 49, y: 10, blocking: true }
   - { tile: prop.shrub.green, x: 59, y: 10, blocking: true }
-  - { tile: prop.school.planter, x: 7, y: 10, blocking: true }
-  - { tile: prop.school.planter, x: 56, y: 10, blocking: true }
+  - { tile: prop.school.planter, x: 7, y: 10, blocking: false }
+  - { tile: prop.school.planter, x: 56, y: 10, blocking: false }
 tile_stamps:
   - { id: miho_dorm_tiles, stamp: building.dorm.miho, x: 3, y: 3 }
   - { id: laundry_building_tiles, stamp: building.dorm.laundry, x: 28, y: 4 }
@@ -78,9 +78,13 @@ spawns:
   - { id: from_academy_gate, position: { x: 61, y: 15 }, facing: left }
   - { id: from_student_plaza, position: { x: 61, y: 28 }, facing: left }
   - { id: dormitory_start, position: { x: 32, y: 20 }, facing: down }
+  - { id: from_miho_interior, position: { x: 8, y: 11 }, facing: down }
+  - { id: from_ritto_interior, position: { x: 55, y: 11 }, facing: down }
 portals:
   - { id: to_academy_gate, position: { x: 63, y: 15 }, target_scene_id: tracen_academy_gate, target_spawn_id: from_dormitory }
   - { id: to_student_plaza, position: { x: 63, y: 28 }, target_scene_id: tracen_student_plaza, target_spawn_id: from_dormitory_life }
+  - { id: to_dorm_interiors_miho, position: { x: 8, y: 10 }, target_scene_id: tracen_dorm_interiors, target_spawn_id: from_miho_entrance }
+  - { id: to_dorm_interiors_ritto, position: { x: 55, y: 10 }, target_scene_id: tracen_dorm_interiors, target_spawn_id: from_ritto_entrance }
 activity_paths:
   - id: dormitory_morning_route
     activity_id: morning_departure
@@ -95,5 +99,4 @@ visual_references:
   - { catalog_id: dorm_room_day, usage: 蓝绿粉生活色和明亮木色 }
   - { catalog_id: common_room_day, usage: 公共公告板、绿色休息设施与生活氛围 }
   - { catalog_id: coin_laundry_autumn_day, usage: 浅米色洗衣房、蓝绿色机器和洗衣篮 }
-missing_tile_families:
-  - miho_ritto_room_and_common_room_interiors
+missing_tile_families: []

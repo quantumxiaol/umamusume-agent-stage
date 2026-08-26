@@ -1,0 +1,126 @@
+schema_version: map_scene_plan.v1
+scene_id: tracen_shrine
+display_name: 特雷森周边山麓神社
+description: 位于商业街外缘林地中的神社，包含鸟居参道、境内、主殿、手水舍、神木、绘马与御神签区域。
+size_tiles: { width: 56, height: 42 }
+source_tile_size: 16
+runtime_tile_size: 32
+surfaces:
+  - { tile: ground.grass.base, bounds: { x: 0, y: 0, width: 56, height: 42 } }
+  - { tile: ground.shrine.earth, bounds: { x: 1, y: 14, width: 54, height: 25 } }
+  - { tile: ground.shrine.gravel, bounds: { x: 8, y: 12, width: 40, height: 22 } }
+  - { tile: ground.shrine.courtyard, bounds: { x: 15, y: 13, width: 26, height: 14 } }
+  - { tile: ground.shrine.stone_path, bounds: { x: 24, y: 12, width: 8, height: 30 } }
+  - { tile: ground.shrine.mossy_stone, bounds: { x: 0, y: 18, width: 8, height: 5 } }
+  - { tile: ground.shrine.water, bounds: { x: 5, y: 17, width: 4, height: 3 } }
+  - { tile: structure.shrine.wall.wood, bounds: { x: 13, y: 1, width: 30, height: 11 } }
+  - { tile: structure.shrine.wall.plaster, bounds: { x: 15, y: 4, width: 26, height: 6 } }
+  - { tile: structure.shrine.roof.left, bounds: { x: 13, y: 1, width: 1, height: 3 } }
+  - { tile: structure.shrine.roof.middle, bounds: { x: 14, y: 1, width: 28, height: 3 } }
+  - { tile: structure.shrine.roof.right, bounds: { x: 42, y: 1, width: 1, height: 3 } }
+  - { tile: structure.shrine.wall.wood, bounds: { x: 23, y: 4, width: 10, height: 6 } }
+  - { tile: structure.shrine.door, bounds: { x: 27, y: 9, width: 2, height: 2 } }
+  - { tile: structure.shrine.veranda, bounds: { x: 17, y: 11, width: 22, height: 1 } }
+  - { tile: structure.shrine.steps, bounds: { x: 24, y: 12, width: 8, height: 3 } }
+  - { tile: structure.shrine.wall.wood, bounds: { x: 44, y: 8, width: 9, height: 9 } }
+  - { tile: structure.shrine.roof.left, bounds: { x: 44, y: 8, width: 1, height: 2 } }
+  - { tile: structure.shrine.roof.middle, bounds: { x: 45, y: 8, width: 7, height: 2 } }
+  - { tile: structure.shrine.roof.right, bounds: { x: 52, y: 8, width: 1, height: 2 } }
+  - { tile: structure.shrine.wall.plaster, bounds: { x: 45, y: 10, width: 7, height: 6 } }
+  - { tile: structure.shrine.door, bounds: { x: 48, y: 15, width: 1, height: 2 } }
+tile_props:
+  - { tile: prop.shrine.sacred_tree, x: 7, y: 7, blocking: true }
+  - { tile: prop.shrine.shimenawa, x: 7, y: 10, blocking: true }
+  - { tile: prop.shrine.maple, x: 48, y: 3, blocking: true }
+  - { tile: prop.shrine.bamboo, x: 2, y: 5, blocking: true }
+  - { tile: prop.shrine.bamboo, x: 5, y: 3, blocking: true }
+  - { tile: prop.shrine.bamboo, x: 51, y: 4, blocking: true }
+  - { tile: prop.shrine.bamboo, x: 54, y: 6, blocking: true }
+  - { tile: prop.tree.dark_green, x: 1, y: 10, blocking: true }
+  - { tile: prop.tree.green, x: 4, y: 12, blocking: true }
+  - { tile: prop.tree.dark_green, x: 51, y: 20, blocking: true }
+  - { tile: prop.tree.green, x: 53, y: 25, blocking: true }
+  - { tile: prop.tree.dark_green, x: 3, y: 28, blocking: true }
+  - { tile: prop.tree.green, x: 50, y: 33, blocking: true }
+  - { tile: prop.shrine.stone_lantern, x: 18, y: 14, blocking: true }
+  - { tile: prop.shrine.stone_lantern, x: 37, y: 14, blocking: true }
+  - { tile: prop.shrine.komainu.left, x: 22, y: 13, blocking: true }
+  - { tile: prop.shrine.komainu.right, x: 33, y: 13, blocking: true }
+  - { tile: prop.shrine.offering_box, x: 28, y: 10, blocking: true }
+  - { tile: prop.shrine.bell_rope, x: 28, y: 7, blocking: true }
+  - { tile: prop.shrine.temizuya, x: 6, y: 16, blocking: true }
+  - { tile: prop.shrine.ladle, x: 9, y: 19, blocking: true }
+  - { tile: prop.shrine.ema_rack, x: 11, y: 20, blocking: true }
+  - { tile: prop.shrine.omikuji_rack, x: 43, y: 21, blocking: true }
+  - { tile: prop.shrine.stone_marker, x: 35, y: 31, blocking: true }
+  - { tile: prop.shrine.bench, x: 45, y: 28, blocking: true }
+  - { tile: prop.shrine.lamp, x: 20, y: 28, blocking: true }
+  - { tile: prop.shrine.lamp, x: 35, y: 28, blocking: true }
+  - { tile: prop.shrine.festival_lantern, x: 15, y: 26, blocking: true }
+  - { tile: prop.shrine.festival_lantern, x: 40, y: 26, blocking: true }
+  - { tile: prop.shrine.prayer_banner, x: 12, y: 28, blocking: true }
+  - { tile: prop.shrine.prayer_banner, x: 43, y: 28, blocking: true }
+  - { tile: prop.shrine.moss_rock, x: 3, y: 21, blocking: true }
+  - { tile: prop.shrine.moss_rock, x: 51, y: 17, blocking: true }
+  - { tile: detail.shrine.fallen_leaves, x: 16, y: 18, blocking: false }
+  - { tile: detail.shrine.fallen_leaves, x: 39, y: 19, blocking: false }
+  - { tile: detail.shrine.fallen_leaves, x: 19, y: 31, blocking: false }
+  - { tile: detail.shrine.fallen_leaves, x: 39, y: 32, blocking: false }
+tile_stamps:
+  - { id: main_torii, stamp: structure.shrine.torii, x: 27, y: 33 }
+landmarks:
+  - { id: worship_hall, display_name: 神社主殿, kind: shrine_hall, render_mode: tile_stamp, bounds: { x: 13, y: 1, width: 30, height: 14 } }
+  - { id: sacred_tree, display_name: 御神木, kind: sacred_tree, render_mode: tile_stamp, bounds: { x: 4, y: 5, width: 8, height: 9 } }
+  - { id: temizuya, display_name: 手水舍, kind: purification, render_mode: tile_stamp, bounds: { x: 4, y: 15, width: 7, height: 6 } }
+  - { id: prayer_courtyard, display_name: 参拜境内, kind: courtyard, render_mode: tile_stamp, bounds: { x: 15, y: 13, width: 26, height: 14 } }
+  - { id: amulet_office, display_name: 授与所, kind: shrine_shop, render_mode: tile_stamp, bounds: { x: 44, y: 8, width: 9, height: 9 } }
+  - { id: torii_approach, display_name: 鸟居参道, kind: approach, render_mode: tile_stamp, bounds: { x: 24, y: 27, width: 8, height: 15 } }
+collision:
+  - { x: 13, y: 1, width: 30, height: 11 }
+  - { x: 44, y: 8, width: 9, height: 8 }
+  - { x: 27, y: 34, width: 1, height: 1 }
+  - { x: 29, y: 34, width: 1, height: 1 }
+zones:
+  - { id: main_hall_zone, display_name: 主殿与拜殿, kind: worship, bounds: { x: 13, y: 1, width: 30, height: 14 } }
+  - { id: sacred_grove, display_name: 神木林地, kind: sacred_grove, bounds: { x: 0, y: 0, width: 13, height: 15 } }
+  - { id: purification_zone, display_name: 手水与净手区, kind: purification, bounds: { x: 0, y: 14, width: 14, height: 10 } }
+  - { id: prayer_courtyard, display_name: 境内参拜区, kind: courtyard, bounds: { x: 14, y: 12, width: 28, height: 16 } }
+  - { id: shrine_service_zone, display_name: 授与与祈愿区, kind: service, bounds: { x: 42, y: 8, width: 14, height: 22 } }
+  - { id: approach_zone, display_name: 鸟居参道, kind: approach, bounds: { x: 20, y: 28, width: 16, height: 14 } }
+anchors:
+  - { id: main_prayer, display_name: 主殿参拜位, position: { x: 28, y: 15 }, facing: up }
+  - { id: komainu_meeting, display_name: 狛犬间集合位, position: { x: 28, y: 17 }, facing: up }
+  - { id: sacred_tree_prayer, display_name: 神木祈愿位, position: { x: 9, y: 12 }, facing: up }
+  - { id: temizu_purification, display_name: 手水净手位, position: { x: 10, y: 18 }, facing: left }
+  - { id: ema_writing, display_name: 绘马书写位, position: { x: 13, y: 21 }, facing: left }
+  - { id: omikuji_talk, display_name: 御神签交谈位, position: { x: 41, y: 21 }, facing: right }
+  - { id: amulet_counter, display_name: 授与所窗口, position: { x: 48, y: 18 }, facing: up }
+  - { id: festival_clearing, display_name: 节庆集合空地, position: { x: 17, y: 28 }, facing: right }
+  - { id: torii_meeting, display_name: 鸟居前集合位, position: { x: 28, y: 36 }, facing: up }
+  - { id: forest_trail, display_name: 森林侧径入口, position: { x: 2, y: 20 }, facing: left }
+spawns:
+  - { id: from_commercial_street, position: { x: 28, y: 39 }, facing: up }
+  - { id: shrine_start, position: { x: 28, y: 36 }, facing: up }
+  - { id: from_forest_trail, position: { x: 2, y: 20 }, facing: right }
+portals:
+  - { id: to_commercial_street, position: { x: 28, y: 41 }, target_scene_id: tracen_commercial_street, target_spawn_id: from_shrine }
+  - { id: to_forest_trail, position: { x: 0, y: 20 }, target_scene_id: tracen_forest_trail, target_spawn_id: from_shrine }
+activity_paths:
+  - id: approach_to_prayer
+    activity_id: shrine_visit
+    loop: false
+    points: [{ x: 28, y: 39 }, { x: 28, y: 35 }, { x: 28, y: 29 }, { x: 28, y: 20 }, { x: 28, y: 15 }]
+  - id: ritual_courtyard_loop
+    activity_id: shrine_daily_round
+    loop: true
+    points: [{ x: 10, y: 18 }, { x: 13, y: 21 }, { x: 28, y: 24 }, { x: 41, y: 21 }, { x: 48, y: 18 }, { x: 41, y: 24 }, { x: 28, y: 26 }, { x: 17, y: 24 }, { x: 10, y: 18 }]
+  - id: quiet_grove_walk
+    activity_id: shrine_reflection_walk
+    loop: false
+    points: [{ x: 28, y: 29 }, { x: 20, y: 29 }, { x: 14, y: 25 }, { x: 9, y: 23 }, { x: 2, y: 20 }]
+visual_references:
+  - { catalog_id: shrine_day, usage: 灰瓦深木主殿、宽石板参道、石灯笼、神木和清亮浓绿林地 }
+  - { catalog_id: old_shrine_day, usage: 风化瓦面、苔石、落叶和安静的旧神社层次 }
+  - { catalog_id: old_shrine_festival_day, usage: 朱红祈愿旗、白纸灯笼和参拜节庆陈设 }
+  - { catalog_id: forest_path_day, usage: 参道外围高低层绿色、土路和未来森林侧径 }
+missing_tile_families: []

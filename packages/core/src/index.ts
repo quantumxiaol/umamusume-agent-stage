@@ -6,3 +6,4 @@ export * from "./spawn-assignment";
 export * from "./stage-cast";
 export * from "./task";
 export * from "./world-navigation";
+export * from "./world-presence";

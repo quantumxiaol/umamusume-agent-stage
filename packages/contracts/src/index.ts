@@ -8,6 +8,7 @@ export * from "./performance-script";
 export * from "./scene-pack";
 export * from "./stage-command";
 export * from "./stage-definition";
+export * from "./stage-environment";
 export * from "./stage-registry";
 export * from "./stage-state";
 export * from "./world-pack";

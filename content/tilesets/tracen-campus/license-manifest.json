@@ -74,6 +74,86 @@
       "license": "project-authored",
       "source_kind": "reference-guided deterministic pixel art",
       "reference_only": true
+    },
+    {
+      "id": "tracen-trainer-office",
+      "title": "Tracen trainer office room and furniture pixel tiles",
+      "author": "chibi_weaver project",
+      "license": "project-authored",
+      "source_kind": "reference-guided deterministic pixel art",
+      "reference_only": true
+    },
+    {
+      "id": "tracen-academic-rooms",
+      "title": "Tracen classroom, library, student council, and infirmary pixel tiles",
+      "author": "chibi_weaver project",
+      "license": "project-authored",
+      "source_kind": "reference-guided deterministic pixel art",
+      "reference_only": true
+    },
+    {
+      "id": "tracen-dorm-interiors",
+      "title": "Tracen dorm bedroom and common-room pixel tiles",
+      "author": "chibi_weaver project",
+      "license": "project-authored",
+      "source_kind": "reference-guided deterministic pixel art",
+      "reference_only": true
+    },
+    {
+      "id": "tracen-racecourse-complex",
+      "title": "Tracen racecourse stands, paddock, hall, and ready-room pixel tiles",
+      "author": "chibi_weaver project",
+      "license": "project-authored",
+      "source_kind": "reference-guided deterministic pixel art",
+      "reference_only": true
+    },
+    {
+      "id": "tracen-winner-stage",
+      "title": "Tracen winner stage, backstage, and interview pixel tiles",
+      "author": "chibi_weaver project",
+      "license": "project-authored",
+      "source_kind": "reference-guided deterministic pixel art",
+      "reference_only": true
+    },
+    {
+      "id": "tracen-commercial-street",
+      "title": "Tracen modern shopping street and station-front pixel tiles",
+      "author": "chibi_weaver project",
+      "license": "project-authored",
+      "source_kind": "reference-guided deterministic pixel art",
+      "reference_only": true
+    },
+    {
+      "id": "tracen-shrine",
+      "title": "Tracen shrine grounds, worship hall, and ritual-prop pixel tiles",
+      "author": "chibi_weaver project",
+      "license": "project-authored",
+      "source_kind": "reference-guided deterministic pixel art",
+      "reference_only": true
+    },
+    {
+      "id": "tracen-forest-trail",
+      "title": "Tracen forest trail, stream, and old-growth pixel tiles",
+      "author": "chibi_weaver project",
+      "license": "project-authored",
+      "source_kind": "reference-guided deterministic pixel art",
+      "reference_only": true
+    },
+    {
+      "id": "tracen-beach",
+      "title": "Tracen beach, surf, beach-shop, and seaside-prop pixel tiles",
+      "author": "chibi_weaver project",
+      "license": "project-authored",
+      "source_kind": "reference-guided deterministic pixel art",
+      "reference_only": true
+    },
+    {
+      "id": "tracen-observatory",
+      "title": "Tracen coastal observatory, cliff, telescope, and park-prop pixel tiles",
+      "author": "chibi_weaver project",
+      "license": "project-authored",
+      "source_kind": "reference-guided deterministic pixel art",
+      "reference_only": true
     }
   ]
 }

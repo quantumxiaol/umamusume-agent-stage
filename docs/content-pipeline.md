@@ -53,7 +53,7 @@ pnpm sync:chibi-roster -- ../chibi_weaver/output --dry-run
 地图以相邻 `chibi_weaver/map-lab` 的 MapWeaver 输出为唯一编辑源。不要在 Stage 和 ChibiWeaver 两边分别维护地图；在 ChibiWeaver 完成生成和 demo 验收后执行：
 
 ```bash
-pnpm sync:mapweaver -- ../chibi_weaver/map-lab
+pnpm sync:mapweaver ../chibi_weaver/map-lab
 ```
 
 同步器会复制共享 tileset，转换 `map_scene.v1 → scene_pack.v1`，同步世界拓扑，并按每张可游玩地图生成训练员 + 当前 Agent 角色的 StageDefinition。每个 Stage 场景目录包含：

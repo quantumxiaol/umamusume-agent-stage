@@ -380,18 +380,47 @@ kbd {
 }
 
 .camera-actions,
-.actor-actions {
+.actor-actions,
+.environment-actions,
+.scene-actions {
   display: contents;
 }
 
 .camera-actions > span,
-.actor-actions > span {
+.actor-actions > span,
+.environment-actions > span,
+.scene-actions > span {
   align-self: center;
   color: #7eb196;
   font-family: ui-monospace, monospace;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.1em;
+}
+
+.environment-actions label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #829a8f;
+  font-family: ui-monospace, monospace;
+  font-size: 10px;
+}
+
+.environment-actions select,
+.scene-actions select {
+  min-width: 92px;
+  padding: 7px 30px 7px 9px;
+  font-size: 11px;
+}
+
+.scene-actions select {
+  min-width: 170px;
+}
+
+.environment-intensity input {
+  width: 86px;
+  accent-color: #75bf98;
 }
 
 .primary-action {

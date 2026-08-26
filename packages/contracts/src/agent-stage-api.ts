@@ -81,6 +81,12 @@ export const agentStageActionSchema = z.discriminatedUnion("type", [
     actor_id: z.string().min(1),
   }),
   z.object({
+    type: z.literal("actor.travel_to_scene"),
+    actor_id: z.string().min(1),
+    target_scene_id: z.string().min(1),
+    target_spawn_id: z.string().min(1).optional(),
+  }),
+  z.object({
     type: z.literal("actor.stop"),
     actor_id: z.string().min(1),
   }),

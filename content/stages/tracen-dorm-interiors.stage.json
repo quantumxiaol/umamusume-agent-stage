@@ -1,0 +1,22 @@
+{
+  "schema_version": "stage_definition.v1",
+  "stage_id": "dorm_interiors_stage",
+  "display_name": "宿舍内部",
+  "scene_path": "scenes/tracen-dorm-interiors/scene.json",
+  "actors": [
+    {
+      "instance_id": "trainer",
+      "bundle_id": "trainer",
+      "spawn_id": "from_ritto_entrance",
+      "control_owner": "player",
+      "player": true
+    },
+    {
+      "instance_id": "uma_admire_vega",
+      "bundle_id": "admire-vega-uniform",
+      "spawn_id": "from_miho_entrance",
+      "control_owner": "agent",
+      "player": false
+    }
+  ]
+}

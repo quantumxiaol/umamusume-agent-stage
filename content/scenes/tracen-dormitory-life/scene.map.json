@@ -14,7 +14,7 @@
     "tile_width": 32,
     "tile_height": 32,
     "columns": 8,
-    "tile_count": 168
+    "tile_count": 272
   },
   "layers": [
     {
@@ -12092,10 +12092,6 @@
       "y": 10
     },
     {
-      "x": 7,
-      "y": 10
-    },
-    {
       "x": 14,
       "y": 10
     },
@@ -12109,10 +12105,6 @@
     },
     {
       "x": 49,
-      "y": 10
-    },
-    {
-      "x": 56,
       "y": 10
     },
     {
@@ -12383,6 +12375,22 @@
         "y": 20
       },
       "facing": "down"
+    },
+    {
+      "id": "from_miho_interior",
+      "position": {
+        "x": 8,
+        "y": 11
+      },
+      "facing": "down"
+    },
+    {
+      "id": "from_ritto_interior",
+      "position": {
+        "x": 55,
+        "y": 11
+      },
+      "facing": "down"
     }
   ],
   "portals": [
@@ -12403,6 +12411,24 @@
       },
       "target_scene_id": "tracen_student_plaza",
       "target_spawn_id": "from_dormitory_life"
+    },
+    {
+      "id": "to_dorm_interiors_miho",
+      "position": {
+        "x": 8,
+        "y": 10
+      },
+      "target_scene_id": "tracen_dorm_interiors",
+      "target_spawn_id": "from_miho_entrance"
+    },
+    {
+      "id": "to_dorm_interiors_ritto",
+      "position": {
+        "x": 55,
+        "y": 10
+      },
+      "target_scene_id": "tracen_dorm_interiors",
+      "target_spawn_id": "from_ritto_entrance"
     }
   ],
   "activity_paths": [
@@ -12471,7 +12497,5 @@
       "usage": "浅米色洗衣房、蓝绿色机器和洗衣篮"
     }
   ],
-  "missing_tile_families": [
-    "miho_ritto_room_and_common_room_interiors"
-  ]
+  "missing_tile_families": []
 }
