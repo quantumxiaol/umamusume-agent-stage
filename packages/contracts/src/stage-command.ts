@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import {
+  actorRelativeSideSchema,
   commandPolicySchema,
   controlOwnerSchema,
   directionSchema,
@@ -24,6 +25,7 @@ export const stageCommandSchema = z.discriminatedUnion("type", [
         type: z.literal("actor"),
         id: z.string().min(1),
         distance_tiles: z.number().int().min(1).max(4).default(1),
+        preferred_side: actorRelativeSideSchema.optional(),
       }),
     ]),
   }),
@@ -36,6 +38,7 @@ export const stageCommandSchema = z.discriminatedUnion("type", [
     type: z.literal("actor.follow"),
     target_actor_id: z.string().min(1),
     distance_tiles: z.number().int().min(1).max(4).default(2),
+    preferred_side: actorRelativeSideSchema.optional(),
   }),
   baseCommandSchema.extend({
     type: z.literal("actor.stop_follow"),
@@ -43,6 +46,10 @@ export const stageCommandSchema = z.discriminatedUnion("type", [
   baseCommandSchema.extend({
     type: z.literal("actor.face"),
     facing: directionSchema,
+  }),
+  baseCommandSchema.extend({
+    type: z.literal("actor.face_actor"),
+    target_actor_id: z.string().min(1),
   }),
   baseCommandSchema.extend({
     type: z.literal("actor.stop"),

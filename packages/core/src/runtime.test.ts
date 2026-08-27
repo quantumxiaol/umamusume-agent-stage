@@ -119,6 +119,48 @@ describe("StageRuntime", () => {
     expect(actorA.facing).toBe("right");
   });
 
+  it("prefers an above-stage meeting position so the approaching actor faces down", async () => {
+    const runtime = runtimeWithActors();
+    const task = runtime.execute({
+      id: "approach-b-from-above",
+      type: "actor.move_to",
+      actor_id: "a",
+      source: "script",
+      policy: "replace",
+      target: {
+        type: "actor",
+        id: "b",
+        distance_tiles: 1,
+        preferred_side: "above",
+      },
+    });
+    runUntilSettled(runtime);
+
+    await expect(task.completion).resolves.toMatchObject({ status: "completed" });
+    const actors = runtime.snapshot().actors;
+    const actorA = actors.find((actor) => actor.actor_id === "a")!;
+    const actorB = actors.find((actor) => actor.actor_id === "b")!;
+    const tileA = runtime.navigation.worldToTile(actorA.position);
+    const tileB = runtime.navigation.worldToTile(actorB.position);
+    expect(tileA).toEqual({ x: tileB.x, y: tileB.y - 1 });
+    expect(actorA.facing).toBe("down");
+  });
+
+  it("faces a live actor by semantic target", async () => {
+    const runtime = runtimeWithActors();
+    const task = runtime.execute({
+      id: "face-b",
+      type: "actor.face_actor",
+      actor_id: "a",
+      target_actor_id: "b",
+      source: "script",
+      policy: "replace",
+    });
+
+    await expect(task.completion).resolves.toMatchObject({ status: "completed" });
+    expect(runtime.snapshot().actors.find((actor) => actor.actor_id === "a")?.facing).toBe("right");
+  });
+
   it("keeps following a moving actor until following is stopped", async () => {
     const runtime = runtimeWithActors();
     const follow = runtime.execute({

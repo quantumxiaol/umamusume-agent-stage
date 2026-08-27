@@ -43,6 +43,14 @@ describe("performanceScriptSchema", () => {
     expect(parsed.scenes[0]?.beats[0]).toMatchObject({
       wait_for: "all",
       hold_ms: 0,
+      cues: [
+        {
+          target: {
+            preferred_side: "above",
+          },
+        },
+        {},
+      ],
     });
   });
 

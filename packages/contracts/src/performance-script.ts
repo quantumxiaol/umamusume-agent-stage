@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { commandPolicySchema, directionSchema } from "./common";
+import { actorRelativeSideSchema, commandPolicySchema, directionSchema } from "./common";
 
 const performanceIdSchema = z.string().regex(/^[a-z0-9][a-z0-9_-]*$/);
 const relativeAssetPathSchema = z
@@ -26,6 +26,7 @@ export const performanceCueSchema = z.discriminatedUnion("type", [
         type: z.literal("actor"),
         role_id: performanceIdSchema,
         distance_tiles: z.number().int().min(1).max(4).default(1),
+        preferred_side: actorRelativeSideSchema.default("above"),
       }),
     ]),
     policy: commandPolicySchema.default("replace"),
@@ -40,11 +41,16 @@ export const performanceCueSchema = z.discriminatedUnion("type", [
     type: z.literal("actor.follow"),
     target_role_id: performanceIdSchema,
     distance_tiles: z.number().int().min(1).max(4).default(2),
+    preferred_side: actorRelativeSideSchema.default("above"),
   }),
   actorCueBaseSchema.extend({ type: z.literal("actor.stop_follow") }),
   actorCueBaseSchema.extend({
     type: z.literal("actor.face"),
     facing: directionSchema,
+  }),
+  actorCueBaseSchema.extend({
+    type: z.literal("actor.face_actor"),
+    target_role_id: performanceIdSchema,
   }),
   actorCueBaseSchema.extend({ type: z.literal("actor.stop") }),
   actorCueBaseSchema.extend({
@@ -228,7 +234,9 @@ function cueRoleIds(cue: PerformanceCue): string[] {
   if (cue.type === "actor.move_to") {
     return [cue.role_id, ...(cue.target.type === "actor" ? [cue.target.role_id] : [])];
   }
-  if (cue.type === "actor.follow") return [cue.role_id, cue.target_role_id];
+  if (cue.type === "actor.follow" || cue.type === "actor.face_actor") {
+    return [cue.role_id, cue.target_role_id];
+  }
   if (
     cue.type === "actor.follow_activity_path" ||
     cue.type === "actor.stop_follow" ||

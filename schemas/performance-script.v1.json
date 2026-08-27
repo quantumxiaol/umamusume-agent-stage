@@ -192,12 +192,24 @@
                                     "type": "integer",
                                     "minimum": 1,
                                     "maximum": 4
+                                  },
+                                  "preferred_side": {
+                                    "default": "above",
+                                    "type": "string",
+                                    "enum": [
+                                      "nearest",
+                                      "above",
+                                      "below",
+                                      "left",
+                                      "right"
+                                    ]
                                   }
                                 },
                                 "required": [
                                   "type",
                                   "role_id",
-                                  "distance_tiles"
+                                  "distance_tiles",
+                                  "preferred_side"
                                 ],
                                 "additionalProperties": false
                               }
@@ -291,6 +303,17 @@
                             "type": "integer",
                             "minimum": 1,
                             "maximum": 4
+                          },
+                          "preferred_side": {
+                            "default": "above",
+                            "type": "string",
+                            "enum": [
+                              "nearest",
+                              "above",
+                              "below",
+                              "left",
+                              "right"
+                            ]
                           }
                         },
                         "required": [
@@ -298,7 +321,8 @@
                           "role_id",
                           "type",
                           "target_role_id",
-                          "distance_tiles"
+                          "distance_tiles",
+                          "preferred_side"
                         ],
                         "additionalProperties": false
                       },
@@ -355,6 +379,34 @@
                           "role_id",
                           "type",
                           "facing"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "cue_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          },
+                          "role_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "actor.face_actor"
+                          },
+                          "target_role_id": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          }
+                        },
+                        "required": [
+                          "cue_id",
+                          "role_id",
+                          "type",
+                          "target_role_id"
                         ],
                         "additionalProperties": false
                       },

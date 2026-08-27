@@ -23,7 +23,33 @@ describe("compilePerformanceCue", () => {
         actor_id: "uma_admire_vega",
         source: "script",
         policy: "replace",
-        target: { type: "actor", id: "trainer", distance_tiles: 2 },
+        target: {
+          type: "actor",
+          id: "trainer",
+          distance_tiles: 2,
+          preferred_side: "above",
+        },
+      },
+    });
+  });
+
+  it("resolves semantic face targets into Stage actor IDs", () => {
+    const cue = performanceCueSchema.parse({
+      cue_id: "face_trainer",
+      type: "actor.face_actor",
+      role_id: "vega",
+      target_role_id: "trainer",
+    });
+
+    expect(compilePerformanceCue(cue, bindings)).toEqual({
+      kind: "command",
+      command: {
+        id: "face_trainer",
+        type: "actor.face_actor",
+        actor_id: "uma_admire_vega",
+        target_actor_id: "trainer",
+        source: "script",
+        policy: "replace",
       },
     });
   });

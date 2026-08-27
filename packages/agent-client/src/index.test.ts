@@ -84,7 +84,12 @@ describe("stageActionToCommand", () => {
       actor_id: "uma_admire_vega",
       source: "agent",
       policy: "replace",
-      target: { type: "actor", id: "trainer", distance_tiles: 1 },
+      target: {
+        type: "actor",
+        id: "trainer",
+        distance_tiles: 1,
+        preferred_side: "above",
+      },
     });
   });
 
@@ -105,6 +110,7 @@ describe("stageActionToCommand", () => {
       actor_id: "uma_admire_vega",
       target_actor_id: "trainer",
       distance_tiles: 2,
+      preferred_side: "above",
       source: "agent",
       policy: "replace",
     });
@@ -117,6 +123,26 @@ describe("stageActionToCommand", () => {
       id: "agent-4",
       type: "actor.stop_follow",
       actor_id: "uma_admire_vega",
+      source: "agent",
+      policy: "replace",
+    });
+  });
+
+  it("maps semantic actor-facing without calculating a direction in the client", () => {
+    expect(
+      stageActionToCommand(
+        {
+          type: "actor.face_actor",
+          actor_id: "uma_admire_vega",
+          target_actor_id: "trainer",
+        },
+        "agent-face",
+      ),
+    ).toEqual({
+      id: "agent-face",
+      type: "actor.face_actor",
+      actor_id: "uma_admire_vega",
+      target_actor_id: "trainer",
       source: "agent",
       policy: "replace",
     });
@@ -194,6 +220,7 @@ describe("reconcileStageTurnActions", () => {
               actor_id: "uma_admire_vega",
               target_actor_id: "trainer",
               distance_tiles: 1,
+              preferred_side: "above",
             },
           ],
         },
@@ -205,6 +232,7 @@ describe("reconcileStageTurnActions", () => {
         actor_id: "uma_admire_vega",
         target_actor_id: "trainer",
         distance_tiles: 1,
+        preferred_side: "above",
       },
       {
         type: "dialogue.say",

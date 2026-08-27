@@ -107,6 +107,16 @@
                   "type": "integer",
                   "minimum": 1,
                   "maximum": 4
+                },
+                "preferred_side": {
+                  "type": "string",
+                  "enum": [
+                    "nearest",
+                    "above",
+                    "below",
+                    "left",
+                    "right"
+                  ]
                 }
               },
               "required": [
@@ -226,6 +236,16 @@
           "type": "integer",
           "minimum": 1,
           "maximum": 4
+        },
+        "preferred_side": {
+          "type": "string",
+          "enum": [
+            "nearest",
+            "above",
+            "below",
+            "left",
+            "right"
+          ]
         }
       },
       "required": [
@@ -332,6 +352,54 @@
         "policy",
         "type",
         "facing"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "actor_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "string",
+          "enum": [
+            "player",
+            "agent",
+            "script",
+            "system"
+          ]
+        },
+        "policy": {
+          "default": "reject",
+          "type": "string",
+          "enum": [
+            "reject",
+            "queue",
+            "replace"
+          ]
+        },
+        "type": {
+          "type": "string",
+          "const": "actor.face_actor"
+        },
+        "target_actor_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "actor_id",
+        "source",
+        "policy",
+        "type",
+        "target_actor_id"
       ],
       "additionalProperties": false
     },

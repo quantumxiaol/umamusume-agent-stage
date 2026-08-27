@@ -3,6 +3,15 @@ import { z } from "zod";
 export const directionSchema = z.enum(["down", "left", "right", "up"]);
 export type Direction = z.infer<typeof directionSchema>;
 
+export const actorRelativeSideSchema = z.enum([
+  "nearest",
+  "above",
+  "below",
+  "left",
+  "right",
+]);
+export type ActorRelativeSide = z.infer<typeof actorRelativeSideSchema>;
+
 export const tilePositionSchema = z.object({
   x: z.number().int().nonnegative(),
   y: z.number().int().nonnegative(),

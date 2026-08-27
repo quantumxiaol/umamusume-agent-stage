@@ -93,6 +93,7 @@ export function compilePerformanceCue(
                 type: "actor",
                 id: requireActorId(cue.target.role_id, actorIdByRole),
                 distance_tiles: cue.target.distance_tiles,
+                preferred_side: cue.target.preferred_side,
               },
       },
     };
@@ -117,6 +118,7 @@ export function compilePerformanceCue(
         type: cue.type,
         target_actor_id: requireActorId(cue.target_role_id, actorIdByRole),
         distance_tiles: cue.distance_tiles,
+        preferred_side: cue.preferred_side,
       },
     };
   }
@@ -124,6 +126,16 @@ export function compilePerformanceCue(
     return {
       kind: "command",
       command: { ...base, type: cue.type, facing: cue.facing },
+    };
+  }
+  if (cue.type === "actor.face_actor") {
+    return {
+      kind: "command",
+      command: {
+        ...base,
+        type: cue.type,
+        target_actor_id: requireActorId(cue.target_role_id, actorIdByRole),
+      },
     };
   }
   if (cue.type === "dialogue.say") {

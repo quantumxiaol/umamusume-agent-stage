@@ -5,6 +5,7 @@ import {
   stageCommandSchema,
   type AgentLiveStage,
   type AgentStageAction,
+  type AgentStageActionInput,
   type AgentStageActorBinding,
   type AgentStageEvent,
   type AgentStageTurnResponse,
@@ -158,7 +159,7 @@ export class AgentApiClient {
 }
 
 export function stageActionToCommand(
-  action: Exclude<AgentStageAction, { type: "actor.travel_to_scene" }>,
+  action: Exclude<AgentStageActionInput, { type: "actor.travel_to_scene" }>,
   commandId: string,
 ): StageCommand {
   const base = {
@@ -181,6 +182,13 @@ export function stageActionToCommand(
   if (action.type === "actor.face") {
     return stageCommandSchema.parse({ ...base, type: action.type, facing: action.facing });
   }
+  if (action.type === "actor.face_actor") {
+    return stageCommandSchema.parse({
+      ...base,
+      type: action.type,
+      target_actor_id: action.target_actor_id,
+    });
+  }
   if (action.type === "actor.approach") {
     return stageCommandSchema.parse({
       ...base,
@@ -189,6 +197,7 @@ export function stageActionToCommand(
         type: "actor",
         id: action.target_actor_id,
         distance_tiles: action.distance_tiles,
+        preferred_side: action.preferred_side ?? "above",
       },
     });
   }
@@ -198,6 +207,7 @@ export function stageActionToCommand(
       type: action.type,
       target_actor_id: action.target_actor_id,
       distance_tiles: action.distance_tiles,
+      preferred_side: action.preferred_side ?? "above",
     });
   }
   if (action.type === "actor.stop_follow") {

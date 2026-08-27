@@ -1,5 +1,6 @@
 import {
   stageCommandSchema,
+  type ActorRelativeSide,
   type CharacterPack,
   type ControlOwner,
   type Direction,
@@ -82,6 +83,7 @@ interface ActiveMove extends QueuedMove {
 interface ActiveFollow {
   targetActorId: string;
   distanceTiles: number;
+  preferredSide: ActorRelativeSide;
   path: WorldPosition[];
   repathElapsedMs: number;
   targetTileKey: string | null;
@@ -173,6 +175,35 @@ export class StageRuntime {
     }
     if (command.type === "actor.follow") return this.startFollowing(actor, command, task);
     if (command.type === "dialogue.say") return this.startSpeech(actor, command, task);
+
+    if (command.type === "actor.face_actor") {
+      const targetActor = this.#actors.get(command.target_actor_id);
+      if (!targetActor) {
+        this.failTask(
+          task,
+          command,
+          "ACTOR_NOT_FOUND",
+          `Face target not found: ${command.target_actor_id}`,
+        );
+        return task;
+      }
+      const from = this.navigation.worldToTile(actor.state.position);
+      const target = this.navigation.worldToTile(targetActor.state.position);
+      const facing = facingToward(from, target);
+      if (!facing) {
+        this.failTask(task, command, "INVALID_TARGET", "Actors occupy the same tile");
+        return task;
+      }
+      task.start();
+      this.emit("command.started", {
+        actor_id: command.actor_id,
+        command_id: command.id,
+        data: { command_type: command.type },
+      });
+      this.setFacing(actor, facing);
+      this.completeTask(task, command);
+      return task;
+    }
 
     task.start();
     this.emit("command.started", {
@@ -333,6 +364,7 @@ export class StageRuntime {
     actor.activeFollow = {
       targetActorId: command.target_actor_id,
       distanceTiles: command.distance_tiles,
+      preferredSide: command.preferred_side ?? "nearest",
       path: [],
       repathElapsedMs: 0,
       targetTileKey: null,
@@ -515,6 +547,7 @@ export class StageRuntime {
       return this.resolveActorTarget(
         command.target.id,
         command.target.distance_tiles,
+        command.target.preferred_side ?? "nearest",
         from,
         actorId,
       );
@@ -528,6 +561,7 @@ export class StageRuntime {
   private resolveActorTarget(
     targetActorId: string,
     distanceTiles: number,
+    preferredSide: ActorRelativeSide,
     from: TilePosition,
     actorId: string,
   ): { position: TilePosition; facing?: Direction } | null {
@@ -536,7 +570,10 @@ export class StageRuntime {
     if (!targetActor) return null;
     const targetTile = this.navigation.worldToTile(targetActor.state.position);
     const maxDistance = Math.max(1, Math.min(4, distanceTiles));
-    if (manhattan(from, targetTile) <= maxDistance) {
+    if (
+      manhattan(from, targetTile) <= maxDistance &&
+      matchesPreferredSide(from, targetTile, preferredSide)
+    ) {
       const facing = facingToward(from, targetTile);
       return { position: from, ...(facing ? { facing } : {}) };
     }
@@ -551,9 +588,13 @@ export class StageRuntime {
         if (path.length === 0 && !sameTile(from, candidate)) continue;
         candidates.push({ position: candidate, pathLength: path.length });
       }
-      if (candidates.length > 0) break;
     }
-    candidates.sort((left, right) => left.pathLength - right.pathLength);
+    candidates.sort((left, right) =>
+      preferredSideRank(left.position, targetTile, preferredSide) -
+        preferredSideRank(right.position, targetTile, preferredSide) ||
+      manhattan(left.position, targetTile) - manhattan(right.position, targetTile) ||
+      left.pathLength - right.pathLength,
+    );
     const selected = candidates[0]?.position;
     if (!selected) return null;
     const facing = facingToward(selected, targetTile);
@@ -645,7 +686,12 @@ export class StageRuntime {
       follow.repathElapsedMs <= 0 ||
       follow.targetTileKey !== nextTargetKey
     ) {
-      follow.path = this.planFollowPath(actor.state.actor_id, follow.targetActorId, follow.distanceTiles);
+      follow.path = this.planFollowPath(
+        actor.state.actor_id,
+        follow.targetActorId,
+        follow.distanceTiles,
+        follow.preferredSide,
+      );
       follow.repathElapsedMs = 250;
       follow.targetTileKey = nextTargetKey;
     }
@@ -684,6 +730,7 @@ export class StageRuntime {
     actorId: string,
     targetActorId: string,
     distanceTiles: number,
+    preferredSide: ActorRelativeSide,
   ): WorldPosition[] {
     const actor = this.#actors.get(actorId);
     const targetActor = this.#actors.get(targetActorId);
@@ -691,8 +738,8 @@ export class StageRuntime {
     const from = this.navigation.worldToTile(actor.state.position);
     const targetTile = this.navigation.worldToTile(targetActor.state.position);
 
-    for (let radius = distanceTiles; radius >= 1; radius -= 1) {
-      const candidates = tilesAtDistance(targetTile, radius)
+    const candidates = Array.from({ length: distanceTiles }, (_, index) => distanceTiles - index)
+      .flatMap((radius) => tilesAtDistance(targetTile, radius))
         .filter((candidate) => !this.isOccupiedOrReserved(candidate, actorId))
         .map((candidate) => ({
           candidate,
@@ -701,11 +748,13 @@ export class StageRuntime {
           }),
         }))
         .filter(({ candidate, path }) => sameTile(from, candidate) || path.length > 0)
-        .sort((left, right) => left.path.length - right.path.length);
-      const path = candidates[0]?.path;
-      if (path) return path.map((position) => this.navigation.tileToWorld(position));
-    }
-    return [];
+        .sort((left, right) =>
+          preferredSideRank(left.candidate, targetTile, preferredSide) -
+            preferredSideRank(right.candidate, targetTile, preferredSide) ||
+          manhattan(right.candidate, targetTile) - manhattan(left.candidate, targetTile) ||
+          left.path.length - right.path.length,
+        );
+    return (candidates[0]?.path ?? []).map((position) => this.navigation.tileToWorld(position));
   }
 
   private finishMove(actor: ActorRecord): void {
@@ -969,4 +1018,28 @@ function facingToward(from: TilePosition, to: TilePosition): Direction | undefin
   if (dx === 0 && dy === 0) return undefined;
   if (Math.abs(dx) > Math.abs(dy)) return dx > 0 ? "right" : "left";
   return dy > 0 ? "down" : "up";
+}
+
+function matchesPreferredSide(
+  position: TilePosition,
+  target: TilePosition,
+  preferredSide: ActorRelativeSide,
+): boolean {
+  if (preferredSide === "nearest") return true;
+  if (preferredSide === "above") return position.y < target.y;
+  if (preferredSide === "below") return position.y > target.y;
+  if (preferredSide === "left") return position.x < target.x;
+  return position.x > target.x;
+}
+
+function preferredSideRank(
+  position: TilePosition,
+  target: TilePosition,
+  preferredSide: ActorRelativeSide,
+): number {
+  if (preferredSide === "nearest") return 0;
+  if (!matchesPreferredSide(position, target, preferredSide)) return 10_000;
+  return preferredSide === "above" || preferredSide === "below"
+    ? Math.abs(position.x - target.x)
+    : Math.abs(position.y - target.y);
 }

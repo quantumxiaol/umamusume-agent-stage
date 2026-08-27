@@ -1,6 +1,11 @@
 import { z } from "zod";
 
-import { controlOwnerSchema, directionSchema, tilePositionSchema } from "./common";
+import {
+  actorRelativeSideSchema,
+  controlOwnerSchema,
+  directionSchema,
+  tilePositionSchema,
+} from "./common";
 
 export const agentCharacterListSchema = z.object({
   characters: z.array(z.string().min(1)),
@@ -65,16 +70,23 @@ export const agentStageActionSchema = z.discriminatedUnion("type", [
     facing: directionSchema,
   }),
   z.object({
+    type: z.literal("actor.face_actor"),
+    actor_id: z.string().min(1),
+    target_actor_id: z.string().min(1),
+  }),
+  z.object({
     type: z.literal("actor.approach"),
     actor_id: z.string().min(1),
     target_actor_id: z.string().min(1),
     distance_tiles: z.number().int().min(1).max(4).default(1),
+    preferred_side: actorRelativeSideSchema.default("above"),
   }),
   z.object({
     type: z.literal("actor.follow"),
     actor_id: z.string().min(1),
     target_actor_id: z.string().min(1),
     distance_tiles: z.number().int().min(1).max(4).default(2),
+    preferred_side: actorRelativeSideSchema.default("above"),
   }),
   z.object({
     type: z.literal("actor.stop_follow"),
@@ -146,5 +158,6 @@ export const agentStageTurnResponseSchema = z.object({
 export type AgentStageActorBinding = z.infer<typeof agentStageActorBindingSchema>;
 export type AgentLiveStage = z.infer<typeof agentLiveStageSchema>;
 export type AgentStageAction = z.infer<typeof agentStageActionSchema>;
+export type AgentStageActionInput = z.input<typeof agentStageActionSchema>;
 export type AgentStageEvent = z.infer<typeof agentStageEventSchema>;
 export type AgentStageTurnResponse = z.infer<typeof agentStageTurnResponseSchema>;
