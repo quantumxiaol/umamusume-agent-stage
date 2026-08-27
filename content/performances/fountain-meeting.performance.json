@@ -42,20 +42,20 @@
       "placements": [
         {
           "role_id": "trainer",
-          "spawn_id": "trainer_start",
+          "spawn_id": "from_main_gate",
           "facing": "up",
           "anime_slot": "center"
         },
         {
           "role_id": "admire_vega",
-          "spawn_id": "from_main_gate",
-          "facing": "up",
+          "spawn_id": "trainer_start",
+          "facing": "down",
           "anime_slot": "left"
         },
         {
           "role_id": "almond_eye",
-          "spawn_id": "from_main_gate",
-          "facing": "up",
+          "spawn_id": "trainer_start",
+          "facing": "down",
           "anime_slot": "right"
         }
       ],
@@ -109,6 +109,23 @@
           "hold_ms": 250
         },
         {
+          "beat_id": "vega_approaches_trainer",
+          "cues": [
+            {
+              "cue_id": "vega_meets_trainer",
+              "type": "actor.move_to",
+              "role_id": "admire_vega",
+              "target": {
+                "type": "actor",
+                "role_id": "trainer",
+                "distance_tiles": 1,
+                "preferred_side": "above"
+              }
+            }
+          ],
+          "hold_ms": 150
+        },
+        {
           "beat_id": "vega_greeting",
           "cues": [
             {
@@ -139,7 +156,8 @@
               "target": {
                 "type": "actor",
                 "role_id": "trainer",
-                "distance_tiles": 2
+                "distance_tiles": 2,
+                "preferred_side": "above"
               }
             },
             {

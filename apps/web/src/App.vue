@@ -304,6 +304,7 @@ async function initialize(options: StageInitializationOptions = {}): Promise<voi
         actor_id: binding.actorId,
         target_actor_id: binding.targetActorId,
         distance_tiles: binding.distanceTiles,
+        preferred_side: binding.targetActorId === playerActorId ? "above" : "nearest",
         source: "system",
         policy: "replace",
       });
@@ -525,6 +526,7 @@ async function runPerformanceDemo(): Promise<void> {
       if (store.phase !== "ready" || !runtime) {
         throw new Error(store.error || `无法装载剧本舞台：${stage.display_name}`);
       }
+      await applyPerformancePlacements(script, performanceScene);
       await executePerformanceScene(script, performanceScene);
     }
     restoreLiveControl(script);
@@ -536,6 +538,33 @@ async function runPerformanceDemo(): Promise<void> {
     pushConversation("system", "演出", `失败：${errorMessage(error)}`);
   } finally {
     performanceRunning.value = false;
+  }
+}
+
+async function applyPerformancePlacements(
+  script: PerformanceScript,
+  scene: PerformanceScript["scenes"][number],
+): Promise<void> {
+  const activeRuntime = runtime;
+  if (!activeRuntime) throw new Error("舞台 Runtime 尚未就绪");
+  const actorIdsByRole = performanceRoleBindings(script, currentPlayerActorId.value);
+  const tasks = scene.placements.flatMap((placement) => {
+    if (!placement.facing) return [];
+    const actorId = actorIdsByRole[placement.role_id];
+    if (!actorId) throw new Error(`剧本站位没有角色绑定：${placement.role_id}`);
+    return [activeRuntime.execute({
+      id: nextCommandId("placement-face"),
+      type: "actor.face",
+      actor_id: actorId,
+      facing: placement.facing,
+      source: "system",
+      policy: "replace",
+    }).completion];
+  });
+  const results = await Promise.all(tasks);
+  const failed = results.find((result) => result.status !== "completed");
+  if (failed) {
+    throw new Error(`剧本站位朝向失败：${failed.error?.message ?? failed.status}`);
   }
 }
 
@@ -766,6 +795,7 @@ async function startActorFollow(): Promise<void> {
     actor_id: actorId,
     target_actor_id: targetActorId,
     distance_tiles: 2,
+    preferred_side: "above",
     source: "agent",
     policy: "replace",
   }).completion;
@@ -1150,6 +1180,7 @@ function formatAgentAction(action: AgentStageAction): string {
     return `travel_to_scene → ${action.target_scene_id}${action.target_spawn_id ? ` / ${action.target_spawn_id}` : ""}`;
   }
   if (action.type === "actor.face") return `face → ${action.facing}`;
+  if (action.type === "actor.face_actor") return `face_actor → ${action.target_actor_id}`;
   if (action.type === "dialogue.say") return `say → ${action.text}`;
   return "stop";
 }
