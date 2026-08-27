@@ -77,7 +77,9 @@ pnpm sync:mapweaver ../chibi_weaver/map-lab
 
 单角色 Stage 会话仍保留 Director：角色模型先按原有角色设定生成语言动作与对白，Director 再结合训练员输入、角色回复、场景语义和实时 `live_stage` 生成结构化舞台动作。单角色时只省略“选择哪位角色发言”这一步，不跳过动作导演。多人 cast 会一次性提交全部 `target_actor_ids` 和 actor bindings，由 Director 同时负责发言调度和各角色舞台动作规划；前端拒绝执行任何未绑定 actor 的返回动作。
 
-相对角色移动使用 `actor.approach(target_actor_id)`；例如“爱织到我这来”只会走近训练员一次。需要在训练员继续移动后仍追踪时使用 `actor.follow(target_actor_id)`，直到 `actor.stop_follow`、`actor.stop` 或其他移动命令替换它。跟随中的角色会与训练员一起通过 Portal；未跟随者留在原地图并保存位置。Director 也可用 `actor.travel_to_scene(target_scene_id, target_spawn_id?)` 让一个角色单独换图。去喷泉、长椅等固定地点才使用 `actor.move_to(anchor_id)`，Agent 不生成或猜测地图坐标。
+相对角色移动使用 `actor.approach(target_actor_id)`；例如“爱织到我这来”只会走近训练员一次。未指定站位时，Agent 动作适配器优先让马娘停在训练员上方并朝下看向训练员，以保留正面演出；上方不可达时才回退到其他安全格。需要在训练员继续移动后仍追踪时使用 `actor.follow(target_actor_id)`，直到 `actor.stop_follow`、`actor.stop` 或其他移动命令替换它。`actor.face_actor(target_actor_id)` 可在不移动时按双方实时位置调整朝向。跟随中的角色会与训练员一起通过 Portal；未跟随者留在原地图并保存位置。Stage 侧也接受 `actor.travel_to_scene(target_scene_id, target_spawn_id?)` 让一个角色单独换图。去喷泉、长椅等固定地点才使用 `actor.move_to(anchor_id)`，Agent 不生成或猜测地图坐标。
+
+当前本地 umamusume-agent 的 Stage Director 工具白名单包括 `actor.move_to`、`actor.approach`、`actor.follow`、`actor.stop_follow`、`actor.face`、`actor.face_actor`、`actor.stop`，并由服务附加 `dialogue.say`；HF 服务需要发布该 Agent 改动后才会报告新增的 `actor.face_actor` capability。本仓库另有 `actor.travel_to_scene` 的契约/执行能力，Director 主动生成跨场景旅行仍是后续项。旧后端无需修改也能受益于 `approach` 的默认会面站位。
 
 GitHub Pages 没有保密执行环境。`UMAMUSUME_AGENT_API_ACCESS_KEY` 即使通过 GitHub Secret 注入，最终仍会进入浏览器 bundle；它只能作为降低随手扫描/滥用的轻量门槛，真正的保护仍需依赖后端限流、额度和可轮换 key。
 

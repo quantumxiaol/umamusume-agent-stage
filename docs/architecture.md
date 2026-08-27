@@ -62,11 +62,12 @@ Script / Player ─────────────────────�
 
 当前公开命令为：
 
-- `actor.move_to`：移动到命名 Anchor/Slot 或底层 tile；
+- `actor.move_to`：移动到命名 Anchor/Slot、另一个 Actor 周边或底层 tile；Actor 目标可用 `preferred_side` 表达镜头中的相对站位；
 - `actor.follow_activity_path`：按语义路径循环 1–10 次；
-- `actor.follow`：启用持续的 Actor 目标追踪并保持 1–4 tile 距离；
+- `actor.follow`：启用持续的 Actor 目标追踪并保持 1–4 tile 距离，也可声明首选相对站位；
 - `actor.stop_follow`：解除持续跟随；`actor.stop` 也会解除；
-- `actor.face`、`actor.stop`；
+- `actor.face`：设置绝对方向；`actor.face_actor`：按双方实时位置面向目标 Actor；
+- `actor.stop`；
 - `dialogue.say`。
 
 locomotion 与 speech 是独立频道。移动支持 `reject`、`queue`、`replace` 策略。每条命令返回 `StageTask`，最终状态是 `completed`、`failed` 或 `cancelled`；“accepted”不等于“arrived”。`actor.follow` 的任务在跟随模式成功启用时完成，持续状态记录在 Actor 快照中，避免一个永不结束的任务阻塞同一轮 Agent action 队列。
@@ -76,6 +77,8 @@ locomotion 与 speech 是独立频道。移动支持 `reject`、`queue`、`repla
 ### 行走、路径与 Portal
 
 Runtime 在 tile 语义层做 A*，在世界像素层连续插值。动态 Actor 占用和 Anchor Slot 预定可避免角色抢同一落点。ActivityPath 在一个 locomotion task 内依次走过全部检查点，因此可整体等待、替换或取消。
+
+面向训练员的会面动作默认偏好 `preferred_side: above`：马娘尽量站在训练员画面上方并朝下显示正面。该偏好只参与安全落点排序，不改变动画状态机；首选侧被阻挡时会使用其他可达侧并继续面向目标。
 
 Actor 首次进入 Portal tile 时产生一次 `portal.entered`。Web 根据目标 scene/spawn 重新装配舞台；当前跟随绑定会在这次换图中恢复。
 

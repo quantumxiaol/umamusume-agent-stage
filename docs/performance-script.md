@@ -27,17 +27,17 @@ Markdown / Agent / 人工编辑
 ## 执行语义
 
 - `cast` 用稳定 `role_id` 关联 `character_id` 和 `outfit_id`。剧本 cue 只引用 role，不写 `uma_*` actor ID，也不直接引用 CharacterBundle；
-- `scenes` 按数组顺序执行。每个 scene 指向一个已注册 `stage_id`，场景切换时用 `placements.spawn_id` 重建 Runtime；
+- `scenes` 按数组顺序执行。每个 scene 指向一个已注册 `stage_id`，场景切换时用 `placements.spawn_id` 重建 Runtime，并执行可选的 `placements.facing`；
 - `beats` 按数组顺序执行；同一 beat 内所有 cue 同时启动，所以可以让两名角色并行行走，或让对白与移动同时发生；
 - `wait_for: all` 等待该 beat 的移动、对白与 wait cue 全部到达终态；`none` 允许下一个 beat 与当前任务重叠，但离开 scene 前仍会收拢后台任务；
 - `hold_ms` 是 beat 完成后的额外停顿；
-- `actor.move_to` 只使用 Anchor 或另一个 role，不把模型生成的裸坐标写入剧本；
+- `actor.move_to` 只使用 Anchor 或另一个 role，不把模型生成的裸坐标写入剧本；移动到 role 时可用 `preferred_side: above|below|left|right|nearest` 声明镜头站位，默认 `above`；
 - camera cue 与角色命令分离。镜头不会修改世界状态；
 - `spoken_text`、双语字幕、`audio_path` 与 `render_hints` 不影响 Stage 世界权威，只提供给 TTS/anime 适配器。
 
 当前 cue 包括：
 
-- `actor.move_to`、`actor.follow_activity_path`、`actor.follow`、`actor.stop_follow`、`actor.face`、`actor.stop`；
+- `actor.move_to`、`actor.follow_activity_path`、`actor.follow`、`actor.stop_follow`、`actor.face`、`actor.face_actor`、`actor.stop`；
 - `dialogue.say`、`narration.say`、`stage.wait`；
 - `camera.follow_actor`、`camera.focus_actor`、`camera.focus_anchor`、`camera.focus_zone`、`camera.fixed`、`camera.overview`。
 
