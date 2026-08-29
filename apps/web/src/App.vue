@@ -18,6 +18,7 @@ import {
   stageEnvironmentSchema,
   stageDefinitionSchema,
   stageRegistrySchema,
+  type CameraCue,
   type CharacterAgentMapping,
   type CharacterAgentMappingEntry,
   type CharacterPack,
@@ -48,6 +49,7 @@ import {
 } from "@uma-stage/core";
 
 import { useStageStore } from "./stores/stage";
+import { resolveStageShortcut } from "./stage-shortcuts";
 
 type RendererModule = typeof import("@uma-stage/renderer-phaser");
 type StageGame = ReturnType<RendererModule["createStageGame"]>;
@@ -146,6 +148,8 @@ const agentInput = ref("");
 const conversation = ref<ConversationLine[]>([]);
 const performanceRunning = ref(false);
 const stageEnvironment = ref<StageEnvironment>(stageEnvironmentSchema.parse({}));
+const minimapVisible = ref(true);
+const mapOverviewActive = ref(false);
 
 const resolvedCast = computed<ResolvedCastMember[]>(() =>
   selectedCast.value.flatMap((selection) => {
@@ -182,12 +186,19 @@ let conversationSequence = 0;
 let portalTransitionPending = false;
 let portalTransitionTimer: number | null = null;
 let runPortalTransition: (() => void) | null = null;
+let cameraCueBeforeOverview: CameraCue | null = null;
 const worldPresence = new WorldPresence();
 const PORTAL_TRANSITION_FALLBACK_MS = 750;
 const PORTAL_TRANSITION_AFTER_COMMAND_MS = 50;
 
-onMounted(() => void initializeApplication());
-onBeforeUnmount(dispose);
+onMounted(() => {
+  window.addEventListener("keydown", handleStageShortcut);
+  void initializeApplication();
+});
+onBeforeUnmount(() => {
+  window.removeEventListener("keydown", handleStageShortcut);
+  dispose();
+});
 
 async function initializeApplication(): Promise<void> {
   await initialize();
@@ -356,6 +367,9 @@ async function initialize(options: StageInitializationOptions = {}): Promise<voi
       actors: rendererActors,
       environment: stageEnvironment.value,
     });
+    game.setMinimapVisible(minimapVisible.value);
+    mapOverviewActive.value = false;
+    cameraCueBeforeOverview = null;
     snapshotTimer = window.setInterval(() => {
       if (runtime) store.setSnapshot(runtime.snapshot());
     }, 100);
@@ -472,6 +486,8 @@ function dispose(invalidate = true): void {
   game?.destroy();
   game = null;
   runtime = null;
+  mapOverviewActive.value = false;
+  cameraCueBeforeOverview = null;
 }
 
 async function changeCast(castIndex?: number): Promise<void> {
@@ -605,7 +621,7 @@ async function executePerformanceCue(
 ): Promise<void> {
   const compiled = compilePerformanceCue(cue, actorIdsByRole);
   if (compiled.kind === "camera") {
-    game?.setCameraCue(compiled.cue);
+    setStageCameraCue(compiled.cue);
     return;
   }
   if (compiled.kind === "wait") {
@@ -823,7 +839,7 @@ async function stopActorFollow(): Promise<void> {
 }
 
 function followCamera(actorId: string): void {
-  game?.setCameraCue({
+  setStageCameraCue({
     type: "camera.follow_actor",
     actor_id: actorId,
     zoom: 0.8,
@@ -832,7 +848,7 @@ function followCamera(actorId: string): void {
 }
 
 function focusCameraOnAnchor(anchorId: string): void {
-  game?.setCameraCue({
+  setStageCameraCue({
     type: "camera.focus_anchor",
     anchor_id: anchorId,
     zoom: 0.8,
@@ -841,7 +857,7 @@ function focusCameraOnAnchor(anchorId: string): void {
 }
 
 function focusCameraOnZone(zoneId: string): void {
-  game?.setCameraCue({
+  setStageCameraCue({
     type: "camera.focus_zone",
     zone_id: zoneId,
     zoom: 0.8,
@@ -849,8 +865,63 @@ function focusCameraOnZone(zoneId: string): void {
   });
 }
 
-function showCameraOverview(): void {
-  game?.setCameraCue({ type: "camera.overview", transition_ms: 600 });
+function setStageCameraCue(cue: CameraCue): void {
+  game?.setCameraCue(cue);
+  mapOverviewActive.value = cue.type === "camera.overview";
+  if (cue.type !== "camera.overview") cameraCueBeforeOverview = null;
+}
+
+function toggleMapOverview(): void {
+  const activeGame = game;
+  if (!activeGame) return;
+  if (mapOverviewActive.value) {
+    const restoreCue = cameraCueBeforeOverview ?? (
+      currentPlayerActorId.value
+        ? {
+            type: "camera.follow_actor" as const,
+            actor_id: currentPlayerActorId.value,
+            zoom: 0.8,
+            transition_ms: 600,
+          }
+        : null
+    );
+    cameraCueBeforeOverview = null;
+    mapOverviewActive.value = false;
+    if (restoreCue) activeGame.setCameraCue(restoreCue);
+    return;
+  }
+  const currentCue = activeGame.cameraState()?.cue ?? null;
+  cameraCueBeforeOverview = currentCue?.type === "camera.overview" ? null : currentCue;
+  mapOverviewActive.value = true;
+  activeGame.setCameraCue({ type: "camera.overview", transition_ms: 600 });
+}
+
+function toggleMinimap(): void {
+  minimapVisible.value = !minimapVisible.value;
+  game?.setMinimapVisible(minimapVisible.value);
+}
+
+function handleStageShortcut(event: KeyboardEvent): void {
+  const shortcut = resolveStageShortcut({
+    key: event.key,
+    enabled: store.phase === "ready" && !performanceRunning.value,
+    editing: isTextEntryTarget(event.target),
+    defaultPrevented: event.defaultPrevented,
+    repeat: event.repeat,
+    ctrlKey: event.ctrlKey,
+    metaKey: event.metaKey,
+    altKey: event.altKey,
+  });
+  if (shortcut === "toggle-minimap") toggleMinimap();
+  else if (shortcut === "toggle-overview") toggleMapOverview();
+  else return;
+  event.preventDefault();
+}
+
+function isTextEntryTarget(target: EventTarget | null): boolean {
+  return target instanceof HTMLElement && (
+    target.matches("input, textarea, select") || target.isContentEditable
+  );
 }
 
 function applyStageEnvironment(): void {
@@ -1406,7 +1477,12 @@ function formatEvent(event: (typeof store.events)[number]): string {
             <span>CAMERA</span>
             <button :disabled="store.phase !== 'ready' || !currentPlayerActorId || performanceRunning" type="button" @click="followCamera(currentPlayerActorId)">镜头跟随训练员</button>
             <button :disabled="store.phase !== 'ready' || !activeActorId || performanceRunning" type="button" @click="followCamera(activeActorId)">镜头跟随{{ activeCharacterName }}</button>
-            <button :disabled="store.phase !== 'ready' || performanceRunning" type="button" @click="showCameraOverview">场景总览</button>
+            <button :aria-pressed="minimapVisible" aria-keyshortcuts="M" :disabled="store.phase !== 'ready' || performanceRunning" type="button" title="快捷键 M" @click="toggleMinimap">
+              小地图：{{ minimapVisible ? '开' : '关' }}（M）
+            </button>
+            <button :aria-pressed="mapOverviewActive" aria-keyshortcuts="O" :disabled="store.phase !== 'ready' || performanceRunning" type="button" title="快捷键 O" @click="toggleMapOverview">
+              {{ mapOverviewActive ? '退出全图预览' : '全图预览' }}（O）
+            </button>
             <button v-for="zone in sceneZones.slice(0, 2)" :key="`camera-zone-${zone.id}`" :disabled="store.phase !== 'ready' || performanceRunning" type="button" @click="focusCameraOnZone(zone.id)">
               定镜 · {{ zone.displayName }}
             </button>

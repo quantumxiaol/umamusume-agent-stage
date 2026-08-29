@@ -1,103 +1,82 @@
 # umamusume-agent-stage
 
-特雷森学院的浏览器端 2D 演出与交互舞台。浏览器里的 `StageRuntime` 是角色位置、动作、控制权与命令结果的唯一权威；Phaser 只负责表现，上层 Agent 通过稳定的 HTTP/JSON 接口行动。
+特雷森学院的浏览器端 2D 演出与交互舞台。训练员可以在多张地图间移动，角色能够行走、对话、跟随与留守；同一套舞台既可以响应 [`umamusume-agent`](https://github.com/quantumxiaol/umamusume-agent) 的结构化动作，也可以回放 JSON 短剧。
 
-## 当前可用能力
+![爱慕织姬在夜间训练场跑步](pngs/av1.png)
 
-- 用 `CharacterRegistry` 动态加载 ChibiWeaver 角色包；所有出演角色使用严格 base20：stand 4 帧、walk 8 帧、idle 8 帧，共 20 个唯一帧引用；
-- 已同步 29 名角色的制服/决胜服与 1 个训练员，共 59 个严格 base20 CharacterBundle；
-- `CharacterAgentMapping` 将稳定角色身份、Agent 中文角色名、Stage actor ID 与两套服装 bundle 显式关联，构建时检查完整性；
-- 已从 ChibiWeaver MapWeaver 单向同步 19 张可游玩地图与共享 tileset，支持瓦片分层、碰撞、A*、Anchor/Slot、ActivityPath 和 Portal 世界网络；
-- 大地图使用边界约束的 0.8 倍跟随相机与小地图；镜头可跟随训练员/角色、固定在 Anchor/Zone 或切到场景总览；
-- `WorldNavigation` 可根据实际 Portal 图规划跨地图最短路线，并返回每一步出口坐标与目标 spawn；
-- 用 `StageRegistry + StageDefinition` 决定场景、角色实例、控制权和出生点，不在 Vue 中硬编码内容；
-- 网页可动态组成 1–4 名角色的 cast，每名角色独立选择制服/决胜服、接受命令和切换观察镜头；同一首选 spawn 会自动扩展为就近编队站位，地图只有 2 个显式 spawn 时也能容纳训练员与 4 名角色；
-- 玩家可用 WASD / 方向键行走，Agent 可前往 Anchor、接近或持续跟随实时 Actor、停止跟随、转向、沿活动路径行动、说话和停止；
-- 浏览器可直接连接本地或 HF Space 上的 `umamusume-agent /stage/*`，把返回的 tool-call 数据转换成 `StageCommand`；
-- `PerformanceScript v1` 用同一份 JSON 描述 cast、场景、并行 beat、角色行动、对白、字幕/音频提示和镜头；也可直接读取 umamusume-anime 的 `projectId/title/lines` JSON，只增加一个根级 `stage` 字段编排行走、镜头和地图；
+<p align="center">爱慕织姬 · 夜间训练场运行示例</p>
 
-## 启动
+## 能做什么
 
-主网页需要 Node.js 24 与 pnpm 11。依赖版本已固定在 `pnpm-lock.yaml`。
+- 加载 ChibiWeaver base20 角色包，并切换制服/决胜服；
+- 在特雷森学院场景中碰撞行走、A* 寻路、跨 Portal 换图；
+- 让角色接近、跟随、停止跟随、转向、沿训练路线行动并显示对白；
+- 在角色跟随镜头、固定场景镜头和全图预览间切换，支持小地图与昼夜天气；
+- 连接 Agent 进行单人/多人角色扮演，让 Director 根据对话和实时环境返回舞台动作；
+- 回放 `PerformanceScript`，或兼容带有额外 `stage` 字段的 `umamusume-anime` JSON。
+
+详细实现清单和阶段边界见 [`docs/current-capabilities.md`](docs/current-capabilities.md)。
+
+## 快速启动
+
+需要 Node.js 24 与 pnpm 11，依赖版本已固定在 `pnpm-lock.yaml`。
 
 ```bash
 pnpm install
 cp .env.example .env
 ```
 
-本地联调时，把 `.env` 指向正在运行的 `umamusume-agent`：
+本地联调时，在 `.env` 中指向正在运行的 `umamusume-agent`：
 
 ```text
 UMAMUSUME_AGENT_URL=http://127.0.0.1:1111
 UMAMUSUME_AGENT_API_ACCESS_KEY=与 Agent 后端 API_ACCESS_KEY 相同
 ```
 
-修改过 Agent 的 `/stage` 服务代码后先重启 Agent，再启动本项目：
+启动 Stage：
 
 ```bash
 pnpm dev
 ```
 
-打开 `http://127.0.0.1:4173/`。网页会读取仓库根目录的 `.env`，自动连接 Agent，并为当前 cast 创建一个多人 Stage 会话；增删或更换角色时会自动创建对应的新会话。默认 cast 是爱慕织姬与杏目，可扩展到 4 名角色。Agent 不可用时，cast、制服/决胜服、地图移动、寻路、ActivityPath、Portal 和 JSON 短剧回放仍可单独测试。
+打开 `http://127.0.0.1:4173/`。Agent 不可用时，角色与服装切换、地图移动、寻路、Portal、天气、镜头和 JSON 短剧仍可独立测试。
 
-点击“运行兼容 JSON 短剧”会回放 [`content/performances/admire-vega-starlight.anime.json`](content/performances/admire-vega-starlight.anime.json)。其中 `lines` 保留 umamusume-anime 的对白、字幕、音频和立绘字段，唯一新增的根级 `stage` 字段负责地图、时间天气、cast、站位，以及逐行 `before/during/after` 演出。原生并行剧本示例仍保留在 [`content/performances/fountain-meeting.performance.json`](content/performances/fountain-meeting.performance.json)。
+## 操作
 
-完整校验：
+| 操作 | 快捷键或入口 |
+| --- | --- |
+| 移动训练员 | `W A S D` 或方向键 |
+| 显示/隐藏小地图 | `M`，或 CAMERA 区域的“小地图”按钮 |
+| 进入/退出全图预览 | `O`，或 CAMERA 区域的“全图预览”按钮 |
+| 跟随角色/训练员、定镜 | 页面 CAMERA 控件 |
+| 角色跟随/停止跟随训练员 | 页面 ACTOR 控件 |
+| 昼夜和天气 | 页面 ENV 控件 |
+
+输入框、选择框或可编辑区域聚焦时，地图移动和镜头快捷键不会抢占键盘输入。退出全图预览后会恢复进入前的跟随或定镜状态；小地图开关会在跨地图后保留。
+
+## Agent 对话与 JSON 短剧
+
+网页从 `.env` 自动连接 Agent，并为所选 cast 建立 Stage 会话。每轮只把当前地图中的角色、Anchor 和实时状态交给 Director；留在其他地图的角色仍属于会话，但不会隔着地图发言或接收动作。协议和动作语义见 [`docs/agent-integration.md`](docs/agent-integration.md)。
+
+“运行兼容 JSON 短剧”会回放 [`content/performances/admire-vega-starlight.anime.json`](content/performances/admire-vega-starlight.anime.json)。原始对白、字幕、音频与立绘字段保持兼容，额外的 `stage` 字段负责编排地图、角色行动、镜头和环境。格式见 [`docs/performance-script.md`](docs/performance-script.md)。
+
+## 文档
+
+- [`docs/current-capabilities.md`](docs/current-capabilities.md)：当前能力、内容覆盖、项目结构和已知边界；
+- [`docs/architecture.md`](docs/architecture.md)：Runtime 权威、数据流、跨地图 Presence 与技术栈；
+- [`docs/agent-integration.md`](docs/agent-integration.md)：Agent Stage API、角色绑定和动作协议；
+- [`docs/performance-script.md`](docs/performance-script.md)：JSON 短剧与 anime 兼容格式；
+- [`docs/content-pipeline.md`](docs/content-pipeline.md)：角色和地图的制作、同步与校验；
+- [`docs/map-coverage.md`](docs/map-coverage.md)：地图覆盖、环境表现和后续打磨顺序；
+- [`docs/deployment.md`](docs/deployment.md)：GitHub Pages 与 HF Space 部署。
+
+## 校验
 
 ```bash
 pnpm check
 ```
 
-`pnpm check` 覆盖 TypeScript、内容、JSON Schema、单测和生产构建。
-
-重新同步相邻 ChibiWeaver 的完整 roster：
-
-```bash
-pnpm sync:chibi-roster -- ../chibi_weaver/output
-```
-
-重新同步相邻 ChibiWeaver MapWeaver 的地图、世界拓扑和 Stage 定义：
-
-```bash
-pnpm sync:mapweaver ../chibi_weaver/map-lab
-```
-
-地图以 `chibi_weaver/map-lab` 为编辑源，本仓库中的 `scene.map.json`、`scene-plan.yaml`、tileset 和编译后 `scene.json` 是可部署快照，不应在两边分别修改。
-
-## Agent 接入
-
-主链路由 Agent 仓库提供：
-
-- `GET /characters`：返回 Agent 当前可用中文角色名，页面与本仓库映射取交集；
-- `GET /stage/capabilities`：检查 `agent_stage_api.v1`；
-- `POST /stage/sessions`：创建独立的 Stage 导演会话；
-- `POST /stage/turn`：上传浏览器实时 `live_stage`、角色绑定和训练员事件，接收对白与结构化动作。
-
-前端的 `@uma-stage/agent-client` 负责 HTTP 与响应校验；浏览器将场内 `AgentStageAction` 转成严格 `StageCommand` 并按顺序等待完成，跨场景 `actor.travel_to_scene` 则更新浏览器的角色场景状态。Agent 不保存角色坐标，也不直接操作 Phaser。
-
-单角色 Stage 会话仍保留 Director：角色模型先按原有角色设定生成语言动作与对白，Director 再结合训练员输入、角色回复、场景语义和实时 `live_stage` 生成结构化舞台动作。单角色时只省略“选择哪位角色发言”这一步，不跳过动作导演。多人 cast 会一次性提交全部 `target_actor_ids` 和 actor bindings，由 Director 同时负责发言调度和各角色舞台动作规划；前端拒绝执行任何未绑定 actor 的返回动作。
-
-相对角色移动使用 `actor.approach(target_actor_id)`；例如“爱织到我这来”只会走近训练员一次。未指定站位时，Agent 动作适配器优先让马娘停在训练员上方并朝下看向训练员，以保留正面演出；上方不可达时才回退到其他安全格。需要在训练员继续移动后仍追踪时使用 `actor.follow(target_actor_id)`，直到 `actor.stop_follow`、`actor.stop` 或其他移动命令替换它。`actor.face_actor(target_actor_id)` 可在不移动时按双方实时位置调整朝向。跟随中的角色会与训练员一起通过 Portal；未跟随者留在原地图并保存位置。Stage 侧也接受 `actor.travel_to_scene(target_scene_id, target_spawn_id?)` 让一个角色单独换图。去喷泉、长椅等固定地点才使用 `actor.move_to(anchor_id)`，Agent 不生成或猜测地图坐标。
-
-当前本地 umamusume-agent 的 Stage Director 工具白名单包括 `actor.move_to`、`actor.approach`、`actor.follow`、`actor.stop_follow`、`actor.face`、`actor.face_actor`、`actor.stop`，并由服务附加 `dialogue.say`；HF 服务需要发布该 Agent 改动后才会报告新增的 `actor.face_actor` capability。本仓库另有 `actor.travel_to_scene` 的契约/执行能力，Director 主动生成跨场景旅行仍是后续项。旧后端无需修改也能受益于 `approach` 的默认会面站位。
-
-GitHub Pages 没有保密执行环境。`UMAMUSUME_AGENT_API_ACCESS_KEY` 即使通过 GitHub Secret 注入，最终仍会进入浏览器 bundle；它只能作为降低随手扫描/滥用的轻量门槛，真正的保护仍需依赖后端限流、额度和可轮换 key。
-
-## Workspace
-
-```text
-apps/web/                 Vue 3 外壳、舞台选择与观察面板
-packages/agent-client/    umamusume-agent /stage HTTP 客户端与动作转换
-packages/contracts/       Character/Scene/Stage/Command/CameraCue/Environment 的唯一契约
-packages/core/            权威 StageRuntime、cast/剧本编译、场内 A* 与跨 Scene 路线规划
-packages/renderer-phaser/ Phaser 4 瓦片渲染、相机、小地图、天气与输入适配器
-packages/sceneweaver/     ScenePack 编译与内容交叉校验
-content/                  角色、场景、舞台和世界内容包
-schemas/                  从 Zod 生成的 JSON Schema
-docs/                     架构、内容管线与迁移说明
-```
-
-设计边界见 [`docs/architecture.md`](docs/architecture.md)，共享短剧格式与 anime 兼容字段见 [`docs/performance-script.md`](docs/performance-script.md)，地图覆盖与建图顺序见 [`docs/map-coverage.md`](docs/map-coverage.md)，角色与地图制作见 [`docs/content-pipeline.md`](docs/content-pipeline.md)。
+该命令覆盖内容编译、JSON Schema、TypeScript、单元测试和生产构建。
 
 ## 版权声明
 

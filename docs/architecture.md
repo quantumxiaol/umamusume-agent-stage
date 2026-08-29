@@ -106,7 +106,7 @@ GridNavigation: actor tile ─A*─► 当前 Scene 的 portal/anchor tile
 - `camera.fixed`：固定世界像素中心；
 - `camera.overview`：整图总览。
 
-Phaser Controller 执行 cue，同时保留跟随相机边界、小地图、Portal 标记和主视野框。当前网页既可手动验证这些模式，也可从 `PerformanceScript` 的 camera cue 执行；Agent Stage Director 尚未返回 CameraCue，后续应在 `/stage/turn` 响应中增加独立 `camera_cues` 字段，而不是伪装成角色动作。
+Phaser Controller 执行 cue，同时保留跟随相机边界、小地图、Portal 标记和主视野框。当前网页既可手动验证这些模式，也可从 `PerformanceScript` 的 camera cue 执行；`M` 切换小地图，`O` 在整图预览与进入前的镜头之间切换。Agent Stage Director 尚未返回 CameraCue，后续应在 `/stage/turn` 响应中增加独立 `camera_cues` 字段，而不是伪装成角色动作。
 
 ### 环境不是地图副本
 
@@ -116,7 +116,7 @@ Phaser Controller 执行 cue，同时保留跟随相机边界、小地图、Port
 
 ## 两种导演输入，共用同一个舞台
 
-- **实时 Agent 模式**：`umamusume-agent` 根据训练员输入、角色回复与 `live_stage` 返回一个或多个结构化动作；网页把整组 cast 绑定到同一会话并依次等待动作终态。
+- **实时 Agent 模式**：`umamusume-agent` 根据训练员输入、角色回复与 `live_stage` 返回一个或多个结构化动作；网页保留整组 cast 的会话，但每轮只绑定当前 Scene 的角色并依次等待动作终态。
 - **确定性短剧模式**：`PerformanceScript` 的 scene 依次切换，beat 依次执行，同一 beat 的 cues 并行；`wait_for: all` 会等待移动、对白和 wait cue 完成后才进入下一 beat。结束或失败后控制权会归还给 player/agent。
 
 两者都通过 `StageCommand`、`CameraCue`、`StageTask` 和 `StageEvent` 接触当前 Runtime；跨 Scene 的 `actor.travel_to_scene` 由 Web 先更新 `WorldPresence`，再重建可见 Runtime。Agent 不操作 Phaser；剧本也不保存第二份运行时坐标状态。

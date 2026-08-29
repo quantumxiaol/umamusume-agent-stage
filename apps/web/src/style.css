@@ -429,6 +429,12 @@ kbd {
   background: #6b4a3c;
 }
 
+.action-dock button[aria-pressed="true"] {
+  border-color: #79c9a2;
+  color: #eafff4;
+  background: #24483a;
+}
+
 .primary-action:hover:not(:disabled) {
   border-color: #c99a70;
   background: #805845;

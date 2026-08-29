@@ -1,0 +1,74 @@
+# 当前能力与阶段边界
+
+这份文档记录仓库当前实现快照和后续开发边界。面向使用者的介绍与启动方式保留在根目录 [`README.md`](../README.md)，实现原则见 [`architecture.md`](architecture.md)。
+
+## 内容覆盖
+
+### 角色
+
+- `CharacterRegistry` 动态加载 ChibiWeaver 角色包；
+- 当前同步 29 名角色的制服/决胜服与 1 个训练员，共 59 个严格 base20 CharacterBundle；
+- base20 要求 stand 4 帧、walk 8 帧、idle 8 帧，共 20 个唯一帧引用；
+- `CharacterAgentMapping` 显式关联稳定角色 ID、Agent 中文名、Stage actor ID 和两套服装；
+- 页面可组成 1–4 名角色的 cast，每名角色独立选择服装和观察镜头。
+
+### 地图与世界
+
+- 当前同步 19 张可游玩地图及共享 tileset；
+- ScenePack 支持瓦片层、碰撞、A*、Anchor/Slot、ActivityPath、Spawn 和 Portal；
+- `WorldNavigation` 按 Portal 图规划跨地图路线；
+- `WorldPresence` 保存每名 Actor 所在 Scene、最后位置与跟随关系；
+- 玩家跨图时只有跟随队伍一起到达，留守角色保留在原地图，回去后从保存位置恢复；
+- 同一入口的随行角色会排列在玩家附近的安全格，不长期占用 Portal tile。
+
+地图覆盖与美术打磨顺序见 [`map-coverage.md`](map-coverage.md)，地图同步方式见 [`content-pipeline.md`](content-pipeline.md)。
+
+## 实时舞台
+
+- `StageRuntime` 是角色位置、碰撞、控制权、命令和任务结果的唯一权威；
+- 玩家可用 WASD/方向键移动；
+- Agent/剧本可执行 `move_to`、`follow_activity_path`、`approach`、`follow`、`stop_follow`、`face`、`face_actor`、`stop` 和 `dialogue.say`；
+- 动态 Actor 占用、Anchor Slot 预定和编队出生避免多人堆叠；
+- 镜头支持跟随 Actor、聚焦 Actor/Anchor/Zone、固定世界坐标和整图预览；
+- `M` 切换小地图，`O` 切换整图预览；整图预览退出后恢复先前镜头；
+- 环境支持 day/evening/night 与 clear/rain/snow，不复制碰撞地图。
+
+## Agent 与短剧
+
+- 浏览器直接连接本地或 HF Space 的 `umamusume-agent /stage/*`；
+- Agent 返回结构化 `AgentStageAction`，前端校验并转换为 `StageCommand`；
+- 单角色仍经过 Stage Director；多人由 Director 选择当前地图中的发言者和动作；
+- 会话可包含分散在多张地图的角色，每轮只绑定当前 Scene 中的角色；
+- `PerformanceScript v1` 描述 cast、scene、并行 beat、动作、对白、音频提示和镜头；
+- anime 兼容入口保留 `projectId/title/lines`，只增加根级 `stage` 字段。
+
+## 项目结构
+
+```text
+apps/web/                 Vue 3 外壳、舞台选择与观察面板
+packages/agent-client/    umamusume-agent /stage HTTP 客户端与动作转换
+packages/contracts/       Character/Scene/Stage/Command/CameraCue 契约
+packages/core/            StageRuntime、剧本编译、A* 与世界 Presence
+packages/renderer-phaser/ Phaser 瓦片渲染、动画、相机、小地图与天气
+packages/sceneweaver/     ScenePack 编译和内容交叉校验
+content/                  角色、场景、舞台、世界与短剧内容包
+schemas/                  从 Zod 生成的 JSON Schema
+docs/                     架构、协议、部署与内容管线
+```
+
+## 当前边界
+
+- 当前浏览器会话是世界权威，刷新页面后从默认舞台重新开始；
+- 后台 Scene 保存位置但不持续推进时间和行动；
+- 跨地图路径可以规划，但尚未由 World scheduler 自动逐图执行；
+- Agent Stage Director 暂未返回独立 CameraCue；
+- JSON 短剧已保留音频路径，浏览器音频播放、TTS 调度和视频导出仍需继续接入；
+- 地图数量已经覆盖主要地点，下一阶段优先处理 Anchor Slot、Portal 落点、遮挡层和美术一致性。
+
+## 完整校验
+
+```bash
+pnpm check
+```
+
+校验覆盖内容构建、生成 Schema、TypeScript、Vitest 和 Vite 生产构建。依赖版本固定在 `pnpm-lock.yaml`。

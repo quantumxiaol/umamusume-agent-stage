@@ -44,6 +44,8 @@ export interface StageGameController {
   destroy(removeCanvas?: boolean): void;
   setCameraCue(cue: CameraCue): void;
   cameraState(): StageCameraState | null;
+  setMinimapVisible(visible: boolean): void;
+  minimapVisible(): boolean;
   setEnvironment(environment: StageEnvironment): void;
   environmentState(): StageEnvironment;
 }
@@ -87,6 +89,7 @@ class RuntimeScene extends Phaser.Scene {
   #cameraCue: CameraCue;
   #minimap: Phaser.Cameras.Scene2D.Camera | null = null;
   #minimapViewport: Phaser.GameObjects.Graphics | null = null;
+  #minimapVisible = true;
   #environment: StageEnvironment;
   #environmentOverlay: Phaser.GameObjects.Rectangle | null = null;
   #weatherOverlay: Phaser.GameObjects.Graphics | null = null;
@@ -229,6 +232,15 @@ class RuntimeScene extends Phaser.Scene {
       center: { x: this.cameras.main.midPoint.x, y: this.cameras.main.midPoint.y },
       zoom: this.cameras.main.zoom,
     };
+  }
+
+  setMinimapVisible(visible: boolean): void {
+    this.#minimapVisible = visible;
+    this.#minimap?.setVisible(visible);
+  }
+
+  minimapVisible(): boolean {
+    return this.#minimapVisible;
   }
 
   setEnvironment(environment: StageEnvironment): void {
@@ -558,7 +570,8 @@ class RuntimeScene extends Phaser.Scene {
       .setRoundPixels(true)
       .setBounds(0, 0, mapWidth, mapHeight)
       .setZoom(Math.min(bounds.width / mapWidth, bounds.height / mapHeight))
-      .centerOn(mapWidth / 2, mapHeight / 2);
+      .centerOn(mapWidth / 2, mapHeight / 2)
+      .setVisible(this.#minimapVisible);
     this.#minimap = minimap;
 
     const viewport = this.add.graphics().setDepth(100000);
@@ -573,7 +586,7 @@ class RuntimeScene extends Phaser.Scene {
 
   private updateMinimapViewport(): void {
     const graphics = this.#minimapViewport;
-    if (!graphics) return;
+    if (!graphics || !this.#minimapVisible) return;
     const view = this.cameras.main.worldView;
     graphics.clear().lineStyle(3 / Math.max(this.#minimap?.zoom ?? 1, 0.01), 0xff5d66, 1);
     graphics.strokeRect(view.x, view.y, view.width, view.height);
@@ -703,6 +716,8 @@ export function createStageGame(options: StageRendererOptions): StageGameControl
     destroy: (removeCanvas = true) => game.destroy(removeCanvas),
     setCameraCue: (cue) => runtimeScene.setCameraCue(cue),
     cameraState: () => runtimeScene.cameraState(),
+    setMinimapVisible: (visible) => runtimeScene.setMinimapVisible(visible),
+    minimapVisible: () => runtimeScene.minimapVisible(),
     setEnvironment: (environment) => runtimeScene.setEnvironment(environment),
     environmentState: () => runtimeScene.environmentState(),
   };
