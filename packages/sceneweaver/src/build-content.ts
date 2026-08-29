@@ -2,6 +2,7 @@ import { readFile, readdir, writeFile } from "node:fs/promises";
 import { basename, dirname, isAbsolute, relative, resolve } from "node:path";
 
 import {
+  animeStageScriptSchema,
   base20CharacterPackSchema,
   characterAgentMappingSchema,
   characterPackSchema,
@@ -12,6 +13,7 @@ import {
   stageRegistrySchema,
   worldPackSchema,
 } from "@uma-stage/contracts";
+import { compileAnimeStageScript } from "@uma-stage/core";
 
 import {
   compileTiledScene,
@@ -212,16 +214,19 @@ for (const scene of scenesById.values()) {
 
 const performanceDirectory = resolve(contentRoot, "performances");
 const performanceFiles = (await readdir(performanceDirectory, { withFileTypes: true })).filter(
-  (entry) => entry.isFile() && entry.name.endsWith(".performance.json"),
+  (entry) =>
+    entry.isFile() &&
+    (entry.name.endsWith(".performance.json") || entry.name.endsWith(".anime.json")),
 );
 const mappedCharacterIds = new Set(
   agentMapping.characters.map((mapping) => mapping.character_id),
 );
 for (const entry of performanceFiles) {
   const performancePath = resolve(performanceDirectory, entry.name);
-  const performance = performanceScriptSchema.parse(
-    JSON.parse(await readFile(performancePath, "utf8")) as unknown,
-  );
+  const rawPerformance = JSON.parse(await readFile(performancePath, "utf8")) as unknown;
+  const performance = entry.name.endsWith(".anime.json")
+    ? compileAnimeStageScript(animeStageScriptSchema.parse(rawPerformance))
+    : performanceScriptSchema.parse(rawPerformance);
   for (const member of performance.cast) {
     if (member.character_id === "trainer") {
       if (member.outfit_id !== "default") {

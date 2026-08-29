@@ -17,12 +17,19 @@
           "type": "number",
           "exclusiveMinimum": 0,
           "maximum": 4
+        },
+        "transition_ms": {
+          "default": 450,
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
         }
       },
       "required": [
         "type",
         "actor_id",
-        "zoom"
+        "zoom",
+        "transition_ms"
       ],
       "additionalProperties": false
     },
@@ -42,12 +49,19 @@
           "type": "number",
           "exclusiveMinimum": 0,
           "maximum": 4
+        },
+        "transition_ms": {
+          "default": 450,
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
         }
       },
       "required": [
         "type",
         "actor_id",
-        "zoom"
+        "zoom",
+        "transition_ms"
       ],
       "additionalProperties": false
     },
@@ -67,12 +81,19 @@
           "type": "number",
           "exclusiveMinimum": 0,
           "maximum": 4
+        },
+        "transition_ms": {
+          "default": 450,
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
         }
       },
       "required": [
         "type",
         "anchor_id",
-        "zoom"
+        "zoom",
+        "transition_ms"
       ],
       "additionalProperties": false
     },
@@ -92,12 +113,19 @@
           "type": "number",
           "exclusiveMinimum": 0,
           "maximum": 4
+        },
+        "transition_ms": {
+          "default": 450,
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
         }
       },
       "required": [
         "type",
         "zone_id",
-        "zoom"
+        "zoom",
+        "transition_ms"
       ],
       "additionalProperties": false
     },
@@ -129,12 +157,19 @@
           "type": "number",
           "exclusiveMinimum": 0,
           "maximum": 4
+        },
+        "transition_ms": {
+          "default": 450,
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
         }
       },
       "required": [
         "type",
         "center",
-        "zoom"
+        "zoom",
+        "transition_ms"
       ],
       "additionalProperties": false
     },
@@ -144,10 +179,17 @@
         "type": {
           "type": "string",
           "const": "camera.overview"
+        },
+        "transition_ms": {
+          "default": 450,
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
         }
       },
       "required": [
-        "type"
+        "type",
+        "transition_ms"
       ],
       "additionalProperties": false
     }

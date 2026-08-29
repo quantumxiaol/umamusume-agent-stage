@@ -87,7 +87,6 @@ class RuntimeScene extends Phaser.Scene {
   #cameraCue: CameraCue;
   #minimap: Phaser.Cameras.Scene2D.Camera | null = null;
   #minimapViewport: Phaser.GameObjects.Graphics | null = null;
-  #minimapFrame: Phaser.GameObjects.Graphics | null = null;
   #environment: StageEnvironment;
   #environmentOverlay: Phaser.GameObjects.Rectangle | null = null;
   #weatherOverlay: Phaser.GameObjects.Graphics | null = null;
@@ -109,6 +108,7 @@ class RuntimeScene extends Phaser.Scene {
       type: "camera.follow_actor",
       actor_id: options.playerActorId ?? options.actors[0]?.actorId ?? "stage",
       zoom: 0.8,
+      transition_ms: 0,
     };
   }
 
@@ -565,13 +565,9 @@ class RuntimeScene extends Phaser.Scene {
     this.cameras.main.ignore(viewport);
     this.#minimapViewport = viewport;
 
-    const frame = this.add.graphics().setScrollFactor(0).setDepth(100001);
-    minimap.ignore(frame);
-    this.#minimapFrame = frame;
     for (const display of this.#displays.values()) {
       minimap.ignore([display.label, display.bubble]);
     }
-    this.drawMinimapFrame();
     this.updateMinimapViewport();
   }
 
@@ -581,16 +577,6 @@ class RuntimeScene extends Phaser.Scene {
     const view = this.cameras.main.worldView;
     graphics.clear().lineStyle(3 / Math.max(this.#minimap?.zoom ?? 1, 0.01), 0xff5d66, 1);
     graphics.strokeRect(view.x, view.y, view.width, view.height);
-  }
-
-  private drawMinimapFrame(): void {
-    const frame = this.#minimapFrame;
-    if (!frame) return;
-    const bounds = this.minimapBounds();
-    frame
-      .clear()
-      .lineStyle(1, 0xdce9df, 0.9)
-      .strokeRect(bounds.x - 5, bounds.y - 5, bounds.width + 10, bounds.height + 10);
   }
 
   private minimapBounds(): { x: number; y: number; width: number; height: number } {
@@ -610,7 +596,6 @@ class RuntimeScene extends Phaser.Scene {
         .setSize(bounds.width, bounds.height)
         .setZoom(Math.min(bounds.width / mapWidth, bounds.height / mapHeight))
         .centerOn(mapWidth / 2, mapHeight / 2);
-      this.drawMinimapFrame();
     }
     this.applyCameraCue();
     this.applyEnvironmentVisual();
@@ -625,38 +610,75 @@ class RuntimeScene extends Phaser.Scene {
     camera.stopFollow();
 
     if (cue.type === "camera.overview") {
-      camera.setZoom(Math.min(this.scale.width / mapWidth, this.scale.height / mapHeight));
-      camera.centerOn(mapWidth / 2, mapHeight / 2);
+      this.transitionCamera(
+        mapWidth / 2,
+        mapHeight / 2,
+        Math.min(this.scale.width / mapWidth, this.scale.height / mapHeight),
+        cue.transition_ms,
+      );
       return;
     }
 
-    camera.setZoom(cue.zoom);
     if (cue.type === "camera.follow_actor" || cue.type === "camera.focus_actor") {
       const actor = this.#displays.get(cue.actor_id);
       if (!actor) return;
       if (cue.type === "camera.follow_actor") {
+        this.transitionCameraZoom(cue.zoom, cue.transition_ms);
         camera.startFollow(actor.sprite, true, 0.12, 0.12);
       } else {
-        camera.centerOn(actor.sprite.x, actor.sprite.y);
+        this.transitionCamera(actor.sprite.x, actor.sprite.y, cue.zoom, cue.transition_ms);
       }
       return;
     }
     if (cue.type === "camera.focus_anchor") {
       const anchor = this.#options.scene.anchors.find((candidate) => candidate.id === cue.anchor_id);
-      if (anchor) camera.centerOn((anchor.position.x + 0.5) * tileSize, (anchor.position.y + 0.5) * tileSize);
+      if (anchor) {
+        this.transitionCamera(
+          (anchor.position.x + 0.5) * tileSize,
+          (anchor.position.y + 0.5) * tileSize,
+          cue.zoom,
+          cue.transition_ms,
+        );
+      }
       return;
     }
     if (cue.type === "camera.focus_zone") {
       const zone = this.#options.scene.zones.find((candidate) => candidate.id === cue.zone_id);
       if (zone) {
-        camera.centerOn(
+        this.transitionCamera(
           (zone.bounds.x + zone.bounds.width / 2) * tileSize,
           (zone.bounds.y + zone.bounds.height / 2) * tileSize,
+          cue.zoom,
+          cue.transition_ms,
         );
       }
       return;
     }
-    camera.centerOn(cue.center.x, cue.center.y);
+    this.transitionCamera(cue.center.x, cue.center.y, cue.zoom, cue.transition_ms);
+  }
+
+  private transitionCamera(
+    x: number,
+    y: number,
+    zoom: number,
+    durationMs: number,
+  ): void {
+    const camera = this.cameras.main;
+    if (durationMs === 0) {
+      camera.setZoom(zoom).centerOn(x, y);
+      return;
+    }
+    camera.pan(x, y, durationMs, "Sine.easeInOut", true);
+    camera.zoomTo(zoom, durationMs, "Sine.easeInOut", true);
+  }
+
+  private transitionCameraZoom(zoom: number, durationMs: number): void {
+    const camera = this.cameras.main;
+    if (durationMs === 0) {
+      camera.setZoom(zoom);
+      return;
+    }
+    camera.zoomTo(zoom, durationMs, "Sine.easeInOut", true);
   }
 }
 

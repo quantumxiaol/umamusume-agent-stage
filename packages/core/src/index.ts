@@ -1,3 +1,4 @@
+export * from "./anime-stage-adapter";
 export * from "./navigation";
 export * from "./performance-compiler";
 export * from "./runtime";

@@ -87,6 +87,9 @@ importers:
       '@uma-stage/contracts':
         specifier: workspace:*
         version: link:../contracts
+      '@uma-stage/core':
+        specifier: workspace:*
+        version: link:../core
 
 packages:
 

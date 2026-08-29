@@ -1,4 +1,5 @@
 export * from "./agent-stage-api";
+export * from "./anime-stage-script";
 export * from "./camera-cue";
 export * from "./character-pack";
 export * from "./character-agent-mapping";

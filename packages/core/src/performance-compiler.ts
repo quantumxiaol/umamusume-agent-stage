@@ -35,24 +35,42 @@ export function compilePerformanceCue(
     };
   }
   if (cue.type === "camera.overview") {
-    return { kind: "camera", cue: { type: "camera.overview" } };
+    return {
+      kind: "camera",
+      cue: { type: "camera.overview", transition_ms: cue.transition_ms },
+    };
   }
   if (cue.type === "camera.fixed") {
     return {
       kind: "camera",
-      cue: { type: cue.type, center: cue.center, zoom: cue.zoom },
+      cue: {
+        type: cue.type,
+        center: cue.center,
+        zoom: cue.zoom,
+        transition_ms: cue.transition_ms,
+      },
     };
   }
   if (cue.type === "camera.focus_anchor") {
     return {
       kind: "camera",
-      cue: { type: cue.type, anchor_id: cue.anchor_id, zoom: cue.zoom },
+      cue: {
+        type: cue.type,
+        anchor_id: cue.anchor_id,
+        zoom: cue.zoom,
+        transition_ms: cue.transition_ms,
+      },
     };
   }
   if (cue.type === "camera.focus_zone") {
     return {
       kind: "camera",
-      cue: { type: cue.type, zone_id: cue.zone_id, zoom: cue.zoom },
+      cue: {
+        type: cue.type,
+        zone_id: cue.zone_id,
+        zoom: cue.zoom,
+        transition_ms: cue.transition_ms,
+      },
     };
   }
   if (cue.type === "camera.follow_actor" || cue.type === "camera.focus_actor") {
@@ -62,6 +80,7 @@ export function compilePerformanceCue(
         type: cue.type,
         actor_id: requireActorId(cue.role_id, actorIdByRole),
         zoom: cue.zoom,
+        transition_ms: cue.transition_ms,
       },
     };
   }

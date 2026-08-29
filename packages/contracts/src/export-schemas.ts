@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { z } from "zod";
 
 import { agentLiveStageSchema, agentStageActionSchema } from "./agent-stage-api";
+import { animeStageScriptSchema } from "./anime-stage-script";
 import { base20CharacterPackSchema, characterPackSchema } from "./character-pack";
 import { cameraCueSchema } from "./camera-cue";
 import { characterAgentMappingSchema } from "./character-agent-mapping";
@@ -22,6 +23,7 @@ await mkdir(outputDirectory, { recursive: true });
 const schemas = [
   ["agent-live-stage.v1.json", agentLiveStageSchema],
   ["agent-stage-action.v1.json", agentStageActionSchema],
+  ["anime-stage-script.v1.json", animeStageScriptSchema],
   ["character-pack.v1.json", characterPackSchema],
   ["character-pack.base20.v1.json", base20CharacterPackSchema],
   ["camera-cue.v1.json", cameraCueSchema],

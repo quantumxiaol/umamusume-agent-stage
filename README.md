@@ -14,7 +14,7 @@
 - 网页可动态组成 1–4 名角色的 cast，每名角色独立选择制服/决胜服、接受命令和切换观察镜头；同一首选 spawn 会自动扩展为就近编队站位，地图只有 2 个显式 spawn 时也能容纳训练员与 4 名角色；
 - 玩家可用 WASD / 方向键行走，Agent 可前往 Anchor、接近或持续跟随实时 Actor、停止跟随、转向、沿活动路径行动、说话和停止；
 - 浏览器可直接连接本地或 HF Space 上的 `umamusume-agent /stage/*`，把返回的 tool-call 数据转换成 `StageCommand`；
-- `PerformanceScript v1` 用同一份 JSON 描述 cast、场景、并行 beat、角色行动、对白、字幕/音频提示和镜头；网页已可回放示例短剧，构建期会交叉检查角色、舞台、spawn、anchor、zone 与 activity path；
+- `PerformanceScript v1` 用同一份 JSON 描述 cast、场景、并行 beat、角色行动、对白、字幕/音频提示和镜头；也可直接读取 umamusume-anime 的 `projectId/title/lines` JSON，只增加一个根级 `stage` 字段编排行走、镜头和地图；
 
 ## 启动
 
@@ -40,7 +40,7 @@ pnpm dev
 
 打开 `http://127.0.0.1:4173/`。网页会读取仓库根目录的 `.env`，自动连接 Agent，并为当前 cast 创建一个多人 Stage 会话；增删或更换角色时会自动创建对应的新会话。默认 cast 是爱慕织姬与杏目，可扩展到 4 名角色。Agent 不可用时，cast、制服/决胜服、地图移动、寻路、ActivityPath、Portal 和 JSON 短剧回放仍可单独测试。
 
-点击“运行 JSON 短剧”会回放 [`content/performances/fountain-meeting.performance.json`](content/performances/fountain-meeting.performance.json)。该示例验证并行走位、任务等待、镜头 cue、对白和演出结束后的控制权归还。
+点击“运行兼容 JSON 短剧”会回放 [`content/performances/admire-vega-starlight.anime.json`](content/performances/admire-vega-starlight.anime.json)。其中 `lines` 保留 umamusume-anime 的对白、字幕、音频和立绘字段，唯一新增的根级 `stage` 字段负责地图、时间天气、cast、站位，以及逐行 `before/during/after` 演出。原生并行剧本示例仍保留在 [`content/performances/fountain-meeting.performance.json`](content/performances/fountain-meeting.performance.json)。
 
 完整校验：
 
@@ -97,7 +97,7 @@ schemas/                  从 Zod 生成的 JSON Schema
 docs/                     架构、内容管线与迁移说明
 ```
 
-设计边界见 [`docs/architecture.md`](docs/architecture.md)，共享短剧格式与 anime 联动见 [`docs/performance-script.md`](docs/performance-script.md)，地图覆盖与建图顺序见 [`docs/map-coverage.md`](docs/map-coverage.md)，角色与地图制作见 [`docs/content-pipeline.md`](docs/content-pipeline.md)。
+设计边界见 [`docs/architecture.md`](docs/architecture.md)，共享短剧格式与 anime 兼容字段见 [`docs/performance-script.md`](docs/performance-script.md)，地图覆盖与建图顺序见 [`docs/map-coverage.md`](docs/map-coverage.md)，角色与地图制作见 [`docs/content-pipeline.md`](docs/content-pipeline.md)。
 
 ## 版权声明
 

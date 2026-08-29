@@ -67,6 +67,7 @@ describe("compilePerformanceCue", () => {
         type: "camera.focus_actor",
         actor_id: "uma_admire_vega",
         zoom: 0.8,
+        transition_ms: 450,
       },
     });
   });

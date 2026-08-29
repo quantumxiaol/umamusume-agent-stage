@@ -1,0 +1,261 @@
+{
+  "projectId": "AdmireVega_Stage_Demo",
+  "title": "深夜跑道上的织女星 · Stage 片段",
+  "source": "draft/AdmireVega.md",
+  "lines": [
+    {
+      "id": "vo004",
+      "type": "narration",
+      "speakerId": "Voice-over",
+      "speakerLabel": "旁白",
+      "showSpeaker": false,
+      "background": "track_night",
+      "characters": [
+        { "speakerId": "Trainer", "slot": "center_left", "spriteScale": 0.78 },
+        { "speakerId": "admire_vega", "slot": "center_right", "spriteScale": 0.84, "spriteVariant": "ZF" }
+      ],
+      "audio": "draft/admire_vega_audio/vo004.wav",
+      "spokenText": "深夜の走路で、白線だけが月明かりに浮かんでいた。",
+      "subtitleJa": "深夜の走路で、白線だけが月明かりに浮かんでいた。",
+      "subtitleZh": "深夜的跑道上，只有白线浮在月光里。"
+    },
+    {
+      "id": "tr018",
+      "type": "dialogue",
+      "speakerId": "Trainer",
+      "speakerLabel": "训练员",
+      "background": "track_night",
+      "characters": [
+        { "speakerId": "Trainer", "slot": "center_left", "spriteScale": 0.78 },
+        { "speakerId": "admire_vega", "slot": "center_right", "spriteScale": 0.84, "spriteVariant": "ZF" }
+      ],
+      "audio": "draft/admire_vega_audio/tr018.wav",
+      "spokenText": "アドマイヤベガさん、こんな時間に。",
+      "subtitleJa": "アドマイヤベガさん、こんな時間に。",
+      "subtitleZh": "爱慕织姬，这么晚了还在这里。"
+    },
+    {
+      "id": "av014",
+      "type": "dialogue",
+      "speakerId": "admire_vega",
+      "speakerLabel": "爱慕织姬",
+      "background": "track_night",
+      "characters": [
+        { "speakerId": "Trainer", "slot": "center_left", "spriteScale": 0.78 },
+        { "speakerId": "admire_vega", "slot": "center_right", "spriteScale": 0.84, "spriteVariant": "ZF" }
+      ],
+      "audio": "draft/admire_vega_audio/av014.wav",
+      "spokenText": "眠れなかっただけ。",
+      "subtitleJa": "眠れなかっただけ。",
+      "subtitleZh": "只是睡不着而已。"
+    },
+    {
+      "id": "tr015",
+      "type": "dialogue",
+      "speakerId": "Trainer",
+      "speakerLabel": "训练员",
+      "background": "track_night",
+      "characters": [
+        { "speakerId": "Trainer", "slot": "center_left", "spriteScale": 0.78 },
+        { "speakerId": "admire_vega", "slot": "center_right", "spriteScale": 0.84, "spriteVariant": "ZF" }
+      ],
+      "audio": "draft/admire_vega_audio/tr015.wav",
+      "spokenText": "夏の大三角は、あそこだ。",
+      "subtitleJa": "夏の大三角は、あそこだ。",
+      "subtitleZh": "夏季大三角，就在那里。"
+    },
+    {
+      "id": "tr016",
+      "type": "dialogue",
+      "speakerId": "Trainer",
+      "speakerLabel": "训练员",
+      "background": "track_night",
+      "characters": [
+        { "speakerId": "Trainer", "slot": "center_left", "spriteScale": 0.78 },
+        { "speakerId": "admire_vega", "slot": "center_right", "spriteScale": 0.84, "spriteVariant": "ZF" }
+      ],
+      "audio": "draft/admire_vega_audio/tr016.wav",
+      "spokenText": "ベガ、デネブ、アルタイル。",
+      "subtitleJa": "ベガ、デネブ、アルタイル。",
+      "subtitleZh": "织女星、天津四、牛郎星。"
+    },
+    {
+      "id": "av013",
+      "type": "dialogue",
+      "speakerId": "admire_vega",
+      "speakerLabel": "爱慕织姬",
+      "background": "track_night",
+      "characters": [
+        { "speakerId": "Trainer", "slot": "center_left", "spriteScale": 0.78 },
+        { "speakerId": "admire_vega", "slot": "center_right", "spriteScale": 0.84, "spriteVariant": "ZF" }
+      ],
+      "audio": "draft/admire_vega_audio/av013.wav",
+      "spokenText": "あなたも、ベガを見るのね。",
+      "subtitleJa": "あなたも、ベガを見るのね。",
+      "subtitleZh": "你也会看织女星啊。"
+    },
+    {
+      "id": "tr019",
+      "type": "dialogue",
+      "speakerId": "Trainer",
+      "speakerLabel": "训练员",
+      "background": "track_night",
+      "characters": [
+        { "speakerId": "Trainer", "slot": "center_left", "spriteScale": 0.78 },
+        { "speakerId": "admire_vega", "slot": "center_right", "spriteScale": 0.84, "spriteVariant": "ZF" }
+      ],
+      "audio": "draft/admire_vega_audio/tr019.wav",
+      "spokenText": "星を見ると、少し呼吸が戻る。",
+      "subtitleJa": "星を見ると、少し呼吸が戻る。",
+      "subtitleZh": "看着星星时，呼吸会稍微平稳一点。"
+    }
+  ],
+  "stage": {
+    "schema_version": "anime_stage.v1",
+    "performance_id": "admire_vega_starlight_demo",
+    "description": "复用原短剧的深夜跑道对白与音频字段，在综合训练场编排入场、会面、镜头和离场。",
+    "line_gap_ms": 180,
+    "cast": [
+      {
+        "anime_speaker_id": "Trainer",
+        "role_id": "trainer",
+        "character_id": "trainer",
+        "display_name": "训练员",
+        "outfit_id": "default"
+      },
+      {
+        "anime_speaker_id": "admire_vega",
+        "role_id": "admire_vega",
+        "character_id": "admire_vega",
+        "display_name": "爱慕织姬",
+        "outfit_id": "uniform"
+      }
+    ],
+    "scenes": [
+      {
+        "scene_id": "training_ground_night",
+        "stage_id": "training_ground_stage",
+        "backgrounds": ["track_night"],
+        "environment": {
+          "schema_version": "stage_environment.v1",
+          "time_of_day": "night",
+          "weather": "clear",
+          "intensity": 0.55,
+          "transition_ms": 0
+        },
+        "placements": [
+          { "role_id": "trainer", "spawn_id": "from_indoor_training_hall", "facing": "left" },
+          { "role_id": "admire_vega", "spawn_id": "from_indoor_training_hall", "facing": "left" }
+        ]
+      }
+    ],
+    "directions": {
+      "vo004": {
+        "before": [
+          {
+            "cue_id": "vega_enters_night_track",
+            "type": "actor.move_to",
+            "role_id": "admire_vega",
+            "target": { "type": "anchor", "anchor_id": "warmup_meeting" }
+          },
+          {
+            "cue_id": "follow_vega_entrance",
+            "type": "camera.follow_actor",
+            "role_id": "admire_vega",
+            "zoom": 0.8,
+            "transition_ms": 500
+          }
+        ],
+        "during": [
+          {
+            "cue_id": "show_night_training_ground",
+            "type": "camera.overview",
+            "transition_ms": 650
+          }
+        ],
+        "duration_ms": 1800
+      },
+      "tr018": {
+        "before": [
+          {
+            "cue_id": "trainer_approaches_vega",
+            "type": "actor.move_to",
+            "role_id": "trainer",
+            "target": {
+              "type": "actor",
+              "role_id": "admire_vega",
+              "distance_tiles": 2,
+              "preferred_side": "below"
+            }
+          }
+        ],
+        "during": [
+          {
+            "cue_id": "establish_training_ground_two_shot",
+            "type": "camera.focus_zone",
+            "zone_id": "warmup_zone",
+            "zoom": 0.85,
+            "transition_ms": 650
+          }
+        ],
+        "duration_ms": 1400
+      },
+      "av014": {
+        "before": [
+          {
+            "cue_id": "vega_faces_trainer",
+            "type": "actor.face_actor",
+            "role_id": "admire_vega",
+            "target_role_id": "trainer"
+          }
+        ],
+        "duration_ms": 1200
+      },
+      "tr015": {
+        "duration_ms": 1300
+      },
+      "tr016": {
+        "duration_ms": 1200
+      },
+      "av013": {
+        "before": [
+          {
+            "cue_id": "vega_checks_trainer",
+            "type": "actor.face_actor",
+            "role_id": "admire_vega",
+            "target_role_id": "trainer"
+          }
+        ],
+        "during": [
+          {
+            "cue_id": "focus_vega_recognition",
+            "type": "camera.focus_actor",
+            "role_id": "admire_vega",
+            "zoom": 1,
+            "transition_ms": 550
+          }
+        ],
+        "duration_ms": 1300
+      },
+      "tr019": {
+        "after": [
+          {
+            "cue_id": "vega_resumes_training",
+            "type": "actor.follow_activity_path",
+            "role_id": "admire_vega",
+            "activity_path_id": "straight_sprint",
+            "cycles": 1
+          },
+          {
+            "cue_id": "follow_vega_departure",
+            "type": "camera.follow_actor",
+            "role_id": "admire_vega",
+            "zoom": 0.8,
+            "transition_ms": 500
+          }
+        ],
+        "duration_ms": 1500
+      }
+    }
+  }
+}

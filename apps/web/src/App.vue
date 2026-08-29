@@ -9,6 +9,7 @@ import {
 } from "@uma-stage/agent-client";
 import {
   agentLiveStageSchema,
+  animeStageScriptSchema,
   characterAgentMappingSchema,
   characterPackSchema,
   characterRegistrySchema,
@@ -36,6 +37,7 @@ import {
 import {
   applyStageCast,
   assignStageSpawns,
+  compileAnimeStageScript,
   compilePerformanceCue,
   ensureSceneSpawnCapacity,
   placeScenePresences,
@@ -492,7 +494,7 @@ async function runPerformanceDemo(): Promise<void> {
   conversation.value = [];
   try {
     const script = await loadPerformance(
-      contentUrl("performances/fountain-meeting.performance.json"),
+      contentUrl("performances/admire-vega-starlight.anime.json"),
     );
     const characterCast = script.cast.filter((member) => member.character_id !== "trainer");
     if (characterCast.length === 0 || characterCast.length > 4) {
@@ -518,6 +520,9 @@ async function runPerformanceDemo(): Promise<void> {
           return actorId && placement.spawn_id ? [[actorId, placement.spawn_id]] : [];
         }),
       );
+      if (performanceScene.environment) {
+        stageEnvironment.value = stageEnvironmentSchema.parse(performanceScene.environment);
+      }
       await initialize({
         definitionPath: stage.definition_path,
         spawnOverrides,
@@ -818,19 +823,34 @@ async function stopActorFollow(): Promise<void> {
 }
 
 function followCamera(actorId: string): void {
-  game?.setCameraCue({ type: "camera.follow_actor", actor_id: actorId, zoom: 0.8 });
+  game?.setCameraCue({
+    type: "camera.follow_actor",
+    actor_id: actorId,
+    zoom: 0.8,
+    transition_ms: 450,
+  });
 }
 
 function focusCameraOnAnchor(anchorId: string): void {
-  game?.setCameraCue({ type: "camera.focus_anchor", anchor_id: anchorId, zoom: 0.8 });
+  game?.setCameraCue({
+    type: "camera.focus_anchor",
+    anchor_id: anchorId,
+    zoom: 0.8,
+    transition_ms: 450,
+  });
 }
 
 function focusCameraOnZone(zoneId: string): void {
-  game?.setCameraCue({ type: "camera.focus_zone", zone_id: zoneId, zoom: 0.8 });
+  game?.setCameraCue({
+    type: "camera.focus_zone",
+    zone_id: zoneId,
+    zoom: 0.8,
+    transition_ms: 450,
+  });
 }
 
 function showCameraOverview(): void {
-  game?.setCameraCue({ type: "camera.overview" });
+  game?.setCameraCue({ type: "camera.overview", transition_ms: 600 });
 }
 
 function applyStageEnvironment(): void {
@@ -1231,7 +1251,11 @@ async function loadStage(url: string): Promise<StageDefinition> {
 }
 
 async function loadPerformance(url: string): Promise<PerformanceScript> {
-  return performanceScriptSchema.parse(await fetchJson(url));
+  const payload = await fetchJson(url);
+  const animeScript = animeStageScriptSchema.safeParse(payload);
+  return animeScript.success
+    ? compileAnimeStageScript(animeScript.data)
+    : performanceScriptSchema.parse(payload);
 }
 
 function contentUrl(path: string): string {
@@ -1376,12 +1400,12 @@ function formatEvent(event: (typeof store.events)[number]): string {
         </div>
         <div class="action-dock">
           <button class="primary-action" :disabled="store.phase !== 'ready' || performanceRunning" type="button" @click="runPerformanceDemo">
-            <span>▶</span> {{ performanceRunning ? '正在演出 JSON 短剧…' : '运行 JSON 短剧' }}
+            <span>▶</span> {{ performanceRunning ? '正在演出兼容 JSON 短剧…' : '运行兼容 JSON 短剧' }}
           </button>
           <div class="camera-actions" aria-label="镜头控制">
             <span>CAMERA</span>
-            <button :disabled="store.phase !== 'ready' || !currentPlayerActorId || performanceRunning" type="button" @click="followCamera(currentPlayerActorId)">跟随训练员</button>
-            <button :disabled="store.phase !== 'ready' || !activeActorId || performanceRunning" type="button" @click="followCamera(activeActorId)">跟随角色</button>
+            <button :disabled="store.phase !== 'ready' || !currentPlayerActorId || performanceRunning" type="button" @click="followCamera(currentPlayerActorId)">镜头跟随训练员</button>
+            <button :disabled="store.phase !== 'ready' || !activeActorId || performanceRunning" type="button" @click="followCamera(activeActorId)">镜头跟随{{ activeCharacterName }}</button>
             <button :disabled="store.phase !== 'ready' || performanceRunning" type="button" @click="showCameraOverview">场景总览</button>
             <button v-for="zone in sceneZones.slice(0, 2)" :key="`camera-zone-${zone.id}`" :disabled="store.phase !== 'ready' || performanceRunning" type="button" @click="focusCameraOnZone(zone.id)">
               定镜 · {{ zone.displayName }}
@@ -1393,10 +1417,10 @@ function formatEvent(event: (typeof store.events)[number]): string {
           <div class="actor-actions" aria-label="角色跟随控制">
             <span>ACTOR</span>
             <button :disabled="store.phase !== 'ready' || !currentPlayerActorId || !activeActorId || activeActorFollowsPlayer || performanceRunning" type="button" @click="startActorFollow">
-              跟随训练员
+              {{ activeCharacterName }}跟随训练员
             </button>
             <button :disabled="store.phase !== 'ready' || !activeActorFollowsPlayer || performanceRunning" type="button" @click="stopActorFollow">
-              停止跟随
+              {{ activeCharacterName }}停止跟随
             </button>
           </div>
           <div class="environment-actions" aria-label="环境控制">

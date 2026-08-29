@@ -1,8 +1,10 @@
 import { z } from "zod";
 
 import { actorRelativeSideSchema, commandPolicySchema, directionSchema } from "./common";
+import { stageEnvironmentSchema } from "./stage-environment";
 
 const performanceIdSchema = z.string().regex(/^[a-z0-9][a-z0-9_-]*$/);
+const cameraTransitionSchema = z.number().int().min(0).max(10_000).default(450);
 const relativeAssetPathSchema = z
   .string()
   .min(1)
@@ -78,28 +80,36 @@ export const performanceCueSchema = z.discriminatedUnion("type", [
     type: z.literal("camera.follow_actor"),
     role_id: performanceIdSchema,
     zoom: z.number().positive().max(4).default(0.8),
+    transition_ms: cameraTransitionSchema,
   }),
   cueBaseSchema.extend({
     type: z.literal("camera.focus_actor"),
     role_id: performanceIdSchema,
     zoom: z.number().positive().max(4).default(0.8),
+    transition_ms: cameraTransitionSchema,
   }),
   cueBaseSchema.extend({
     type: z.literal("camera.focus_anchor"),
     anchor_id: z.string().min(1),
     zoom: z.number().positive().max(4).default(0.8),
+    transition_ms: cameraTransitionSchema,
   }),
   cueBaseSchema.extend({
     type: z.literal("camera.focus_zone"),
     zone_id: z.string().min(1),
     zoom: z.number().positive().max(4).default(0.8),
+    transition_ms: cameraTransitionSchema,
   }),
   cueBaseSchema.extend({
     type: z.literal("camera.fixed"),
     center: z.object({ x: z.number(), y: z.number() }),
     zoom: z.number().positive().max(4).default(0.8),
+    transition_ms: cameraTransitionSchema,
   }),
-  cueBaseSchema.extend({ type: z.literal("camera.overview") }),
+  cueBaseSchema.extend({
+    type: z.literal("camera.overview"),
+    transition_ms: cameraTransitionSchema,
+  }),
 ]);
 
 export const performanceBeatSchema = z.object({
@@ -149,6 +159,7 @@ export const performanceScriptSchema = z
           render_hints: z
             .object({ anime_background: z.string().min(1).optional() })
             .optional(),
+          environment: stageEnvironmentSchema.optional(),
           beats: z.array(performanceBeatSchema).min(1),
         }),
       )
