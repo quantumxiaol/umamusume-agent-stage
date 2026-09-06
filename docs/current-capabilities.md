@@ -30,12 +30,13 @@
 - Agent/剧本可执行 `move_to`、`follow_activity_path`、`approach`、`follow`、`stop_follow`、`face`、`face_actor`、`stop` 和 `dialogue.say`；
 - 动态 Actor 占用、Anchor Slot 预定和编队出生避免多人堆叠；
 - 镜头支持跟随 Actor、聚焦 Actor/Anchor/Zone、固定世界坐标和整图预览；
-- `M` 切换小地图，`O` 切换整图预览；整图预览退出后恢复先前镜头；
+- `M` 切换小地图，`O` 切换当前地图全图，`G` 打开世界连接与出口路线；整图预览退出后恢复先前镜头；
 - 环境支持 day/evening/night 与 clear/rain/snow，不复制碰撞地图。
 
 ## Agent 与短剧
 
-- 浏览器直接连接本地或 HF Space 的 `umamusume-agent /stage/*`；
+- `playground` 模式不连接后端，保留基础游戏操作、JSON 短剧和现成音频；Pages 工作流固定使用这一模式；
+- `agent` 模式下浏览器直接连接本地或 HF Space 的 `umamusume-agent /stage/*`；本地开发默认保持联调模式；
 - Agent 返回结构化 `AgentStageAction`，前端校验并转换为 `StageCommand`；
 - 单角色仍经过 Stage Director；多人由 Director 选择当前地图中的发言者和动作；
 - 会话可包含分散在多张地图的角色，每轮只绑定当前 Scene 中的角色；

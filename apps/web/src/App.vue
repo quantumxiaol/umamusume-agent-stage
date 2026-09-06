@@ -114,15 +114,8 @@ interface StageInitializationOptions {
   skipPresenceSync?: boolean;
 }
 
-const environment = import.meta.env as unknown as Record<string, string | undefined>;
-const defaultAgentUrl =
-  environment.UMAMUSUME_AGENT_URL?.trim() ||
-  environment.VITE_UMAMUSUME_AGENT_URL?.trim() ||
-  "http://127.0.0.1:1111";
-const configuredAgentKey =
-  environment.UMAMUSUME_AGENT_API_ACCESS_KEY?.trim() ||
-  environment.VITE_UMAMUSUME_AGENT_API_ACCESS_KEY?.trim() ||
-  "";
+const stageConfig = __STAGE_CONFIG__;
+const agentEnabled = stageConfig.mode === "agent";
 
 const stageElement = ref<HTMLElement | null>(null);
 const store = useStageStore();
@@ -181,6 +174,9 @@ const castCharacterNames = computed(
 const activeActorFollowsPlayer = computed(
   () => actor(activeActorId.value)?.following_actor_id === currentPlayerActorId.value,
 );
+const canControlActiveActor = computed(() =>
+  store.phase === "ready" && !performanceRunning.value && Boolean(currentPlayerActorId.value) && Boolean(actor(activeActorId.value)),
+);
 
 let runtime: StageRuntime | null = null;
 let game: StageGame | null = null;
@@ -211,7 +207,7 @@ onBeforeUnmount(() => {
 
 async function initializeApplication(): Promise<void> {
   await initialize();
-  if (store.phase !== "ready") return;
+  if (store.phase !== "ready" || !agentEnabled) return;
   await prepareAgentSession();
 }
 
@@ -511,7 +507,7 @@ async function changeCast(castIndex?: number): Promise<void> {
   agentSession.value = null;
   conversation.value = [];
   await initialize({ definitionPath: activeStagePath.value });
-  if (store.phase === "ready") await prepareAgentSession();
+  if (store.phase === "ready" && agentEnabled) await prepareAgentSession();
 }
 
 async function runPerformanceDemo(): Promise<void> {
@@ -794,7 +790,7 @@ async function runMeeting(): Promise<void> {
   await speech.completion;
   if (activeRuntime === runtime) {
     activeRuntime.setControlOwner(actorId, "agent");
-    store.setMessage("演出完成，控制权已归还 agent");
+    store.setMessage("演出完成，可以继续操作角色");
   }
 }
 
@@ -803,7 +799,7 @@ async function sendActorTo(anchorId: string, label: string): Promise<void> {
   const actorId = activeActorId.value;
   if (!activeRuntime) return;
   activeRuntime.setControlOwner(actorId, "agent");
-  store.setMessage(`agent 指令：${activeCharacterName.value}前往${label}`);
+  store.setMessage(`${activeCharacterName.value}前往${label}`);
   const task = activeRuntime.execute({
     id: nextCommandId("move"),
     type: "actor.move_to",
@@ -821,7 +817,7 @@ async function runActivityPath(pathId: string, activityId: string): Promise<void
   const actorId = activeActorId.value;
   if (!activeRuntime) return;
   activeRuntime.setControlOwner(actorId, "agent");
-  store.setMessage(`agent 指令：${activeCharacterName.value}执行 ${activityId}`);
+  store.setMessage(`${activeCharacterName.value}执行 ${activityId}`);
   const task = activeRuntime.execute({
     id: nextCommandId("activity"),
     type: "actor.follow_activity_path",
@@ -852,6 +848,22 @@ async function startActorFollow(): Promise<void> {
     policy: "replace",
   }).completion;
   if (activeRuntime === runtime) describeResult(result, `${activeCharacterName.value}会持续跟随训练员`);
+}
+
+async function approachTrainer(): Promise<void> {
+  const activeRuntime = runtime;
+  const actorId = activeActorId.value;
+  if (!activeRuntime || !canControlActiveActor.value) return;
+  activeRuntime.setControlOwner(actorId, "agent");
+  const result = await activeRuntime.execute({
+    id: nextCommandId("approach"),
+    type: "actor.move_to",
+    actor_id: actorId,
+    target: { type: "actor", id: currentPlayerActorId.value, distance_tiles: 4, preferred_side: "above" },
+    source: "agent",
+    policy: "replace",
+  }).completion;
+  if (activeRuntime === runtime) describeResult(result, `${activeCharacterName.value}已来到训练员身边`);
 }
 
 async function stopActorFollow(): Promise<void> {
@@ -1002,12 +1014,13 @@ function resetCurrentScene(): void {
 }
 
 async function connectAgent(): Promise<boolean> {
+  if (!agentEnabled) return false;
   agentStatus.value = "connecting";
   agentStatusMessage.value = "正在从 .env 配置连接 Agent…";
   try {
     const client = new AgentApiClient({
-      baseUrl: defaultAgentUrl,
-      apiKey: configuredAgentKey,
+      baseUrl: stageConfig.agentUrl,
+      apiKey: stageConfig.agentApiKey,
     });
     const [characters] = await Promise.all([
       client.listCharacters(),
@@ -1027,11 +1040,13 @@ async function connectAgent(): Promise<boolean> {
 }
 
 async function prepareAgentSession(): Promise<boolean> {
+  if (!agentEnabled) return false;
   if (!(await connectAgent())) return false;
   return createAgentSession();
 }
 
 async function createAgentSession(): Promise<boolean> {
+  if (!agentEnabled) return false;
   const cast = resolveCast();
   if (cast.length === 0) return false;
   if (!agentClient && !(await connectAgent())) return false;
@@ -1092,6 +1107,7 @@ async function createAgentSession(): Promise<boolean> {
 }
 
 async function sendAgentMessage(): Promise<void> {
+  if (!agentEnabled) return;
   const message = agentInput.value.trim();
   const cast = resolveCast();
   const activeRuntime = runtime;
@@ -1289,7 +1305,7 @@ function revealPendingAgentReplies(replies: PendingAgentReply[]): void {
 }
 
 function isAgentCharacterAvailable(mapping: CharacterAgentMappingEntry): boolean {
-  return agentCharacters.value.length === 0 || agentCharacters.value.includes(mapping.agent_character_name);
+  return !agentEnabled || agentCharacters.value.length === 0 || agentCharacters.value.includes(mapping.agent_character_name);
 }
 
 function pushConversation(
@@ -1422,7 +1438,7 @@ function formatEvent(event: (typeof store.events)[number]): string {
   <main class="shell">
     <header class="topbar">
       <div class="brand-block">
-        <span class="eyebrow">UMA STAGE / PLAYABLE TEST</span>
+        <span class="eyebrow">UMA STAGE / {{ agentEnabled ? 'PLAYABLE TEST' : 'CAMPUS PLAYGROUND' }}</span>
         <h1>{{ stageName }}</h1>
       </div>
       <div class="status-block">
@@ -1431,7 +1447,8 @@ function formatEvent(event: (typeof store.events)[number]): string {
           <span>{{ store.message }}</span>
         </div>
         <div class="service-badges">
-          <span class="service-status" :class="agentStatus">AGENT · {{ agentStatus }}</span>
+          <span v-if="agentEnabled" class="service-status" :class="agentStatus">AGENT · {{ agentStatus }}</span>
+          <span v-else class="service-status connected">自由试玩 · 无 AI 请求</span>
         </div>
       </div>
     </header>
@@ -1440,7 +1457,7 @@ function formatEvent(event: (typeof store.events)[number]): string {
       <div class="cast-toolbar-heading">
         <div>
           <span class="eyebrow">CAST · {{ selectedCast.length }} / 4</span>
-          <strong>出演角色与当前测试角色</strong>
+          <strong>{{ agentEnabled ? '出演角色与当前测试角色' : '同行角色与当前操作角色' }}</strong>
         </div>
         <button
           type="button"
@@ -1513,7 +1530,7 @@ function formatEvent(event: (typeof store.events)[number]): string {
         <div class="stage-meta">
           <div>
             <span class="meta-label">PLAYABLE SLICE</span>
-            <strong>角色加载 · 碰撞寻路 · Agent Stage Actions · Portal</strong>
+            <strong>{{ agentEnabled ? '角色加载 · 碰撞寻路 · Agent Stage Actions · Portal' : '校园漫游 · 角色随行 · 跨图探索' }}</strong>
           </div>
           <div class="key-guide" aria-label="移动操作">
             <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>
@@ -1608,16 +1625,34 @@ function formatEvent(event: (typeof store.events)[number]): string {
         @close="closeWorldOverview" @retry="prepareWorldOverview" />
 
       <aside class="inspector">
-        <section class="panel agent-panel">
-          <div class="panel-heading">
-            <span class="eyebrow">TRAINER ↔ ACTOR</span>
-            <span class="agent-dot" :class="agentStatus"></span>
+        <section v-if="!agentEnabled" class="panel playground-panel">
+          <div class="panel-heading"><span class="eyebrow">CAMPUS PLAYGROUND</span><span class="live-mark">试玩</span></div>
+          <h2>和她们逛逛特雷森</h2>
+          <p>这是纯前端试玩模式，不连接 HF、不调用 LLM。选择角色，带她一起探索校园。</p>
+          <div class="playground-controls">
+            <strong>当前操作：{{ activeActorId ? activeCharacterName : '当前地图没有可操作角色' }}</strong>
+            <span v-if="activeActorId">{{ activeActorFollowsPlayer ? '正在跟随训练员' : '未跟随训练员' }}</span>
+            <button type="button" :disabled="!canControlActiveActor" @click="approachTrainer">{{ activeCharacterName }}，过来</button>
+            <button type="button" :disabled="!canControlActiveActor || activeActorFollowsPlayer" @click="startActorFollow">{{ activeCharacterName }}跟随训练员</button>
+            <button type="button" :disabled="!canControlActiveActor || !activeActorFollowsPlayer" @click="stopActorFollow">{{ activeCharacterName }}停止跟随</button>
           </div>
-          <div class="agent-session-summary">
+          <ul class="playground-guide">
+            <li><kbd>W A S D</kbd> / 方向键移动训练员。</li>
+            <li>走到标注目的地的传送点即可换图；只有跟随角色随行，其他角色留守原地图。</li>
+            <li><kbd>M</kbd> 小地图 · <kbd>O</kbd> 当前地图全图 · <kbd>G</kbd> 世界路线。</li>
+            <li>下方可切换镜头、昼夜天气，也可播放预置 JSON 短剧与配音。</li>
+          </ul>
+        </section>
+        <section v-if="agentEnabled || conversation.length > 0" class="panel agent-panel">
+          <div class="panel-heading">
+            <span class="eyebrow">{{ agentEnabled ? 'TRAINER ↔ ACTOR' : '短剧字幕' }}</span>
+            <span v-if="agentEnabled" class="agent-dot" :class="agentStatus"></span>
+          </div>
+          <div v-if="agentEnabled" class="agent-session-summary">
             <strong>训练员 ↔ {{ castCharacterNames || '出演角色' }}</strong>
             <span>多人 Stage Director · 会话由 .env 自动初始化</span>
           </div>
-          <div class="agent-status-row">
+          <div v-if="agentEnabled" class="agent-status-row">
             <p class="agent-message">{{ agentStatusMessage }}</p>
             <button v-if="agentStatus === 'error' || agentStatus === 'disconnected'" type="button" @click="prepareAgentSession">重试</button>
           </div>
@@ -1630,7 +1665,7 @@ function formatEvent(event: (typeof store.events)[number]): string {
               输入一句话，测试多角色发言调度、对白与舞台行为响应。
             </li>
           </ol>
-          <form class="agent-compose" @submit.prevent="sendAgentMessage">
+          <form v-if="agentEnabled" class="agent-compose" @submit.prevent="sendAgentMessage">
             <textarea v-model="agentInput" rows="2" :disabled="agentStatus === 'busy' || performanceRunning" placeholder="例如：我们去喷泉旁聊聊吧。" @keydown.enter.exact.prevent="sendAgentMessage"></textarea>
             <button type="submit" :disabled="!agentInput.trim() || agentStatus === 'busy' || performanceRunning">发送</button>
           </form>

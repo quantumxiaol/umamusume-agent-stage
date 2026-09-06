@@ -42,6 +42,18 @@ pnpm dev
 
 打开 `http://127.0.0.1:4173/`。Agent 不可用时，角色与服装切换、地图移动、寻路、Portal、天气、镜头和 JSON 短剧仍可独立测试。
 
+### 纯前端试玩模式
+
+GitHub Pages 当前配置为发布 **playground** 版本，不连接 HF Space、不创建 Agent 会话、不请求 LLM，也不注入 Agent 地址或访问 key。仍可行走、换图、让角色过来／跟随／停止跟随、查看世界路线、切换天气镜头，以及播放预置短剧与现成配音。右侧显示玩法与角色操作，不显示聊天输入框。
+
+本地临时试玩（不会修改 `.env`）：
+
+```bash
+VITE_STAGE_MODE=playground pnpm dev
+```
+
+`VITE_STAGE_MODE` 支持 `playground` / `agent`。未指定时，`pnpm dev` 保持 Agent 联调，生产构建默认纯前端试玩；显式设置 `VITE_STAGE_MODE=agent` 可启用对话模式。该开关在启动／构建时生效，不是网页中的联网开关。
+
 ## 操作
 
 | 操作 | 快捷键或入口 |
@@ -60,7 +72,7 @@ pnpm dev
 
 ## Agent 对话与 JSON 短剧
 
-网页从 `.env` 自动连接 Agent，并为所选 cast 建立 Stage 会话。每轮只把当前地图中的角色、Anchor 和实时状态交给 Director；留在其他地图的角色仍属于会话，但不会隔着地图发言或接收动作。协议和动作语义见 [`docs/agent-integration.md`](docs/agent-integration.md)。
+在 `agent` 模式，网页从 `.env` 自动连接 Agent，并为所选 cast 建立 Stage 会话。每轮只把当前地图中的角色、Anchor 和实时状态交给 Director；留在其他地图的角色仍属于会话，但不会隔着地图发言或接收动作。协议和动作语义见 [`docs/agent-integration.md`](docs/agent-integration.md)。
 
 “运行兼容 JSON 短剧”会回放 [`content/performances/admire-vega-starlight.anime.json`](content/performances/admire-vega-starlight.anime.json)。原始对白、字幕、音频与立绘字段保持兼容，网页会播放现成 TTS 并按音频实际长度推进字幕；额外的 `stage` 字段负责编排地图、角色行动、镜头和环境。格式见 [`docs/performance-script.md`](docs/performance-script.md)。
 

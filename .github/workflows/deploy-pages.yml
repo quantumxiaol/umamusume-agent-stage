@@ -29,8 +29,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm check
         env:
-          UMAMUSUME_AGENT_URL: https://quantumxiaol-umamusume-agent.hf.space
-          UMAMUSUME_AGENT_API_ACCESS_KEY: ${{ secrets.UMAMUSUME_AGENT_API_ACCESS_KEY }}
+          # Public demo: no HF requests and no Agent credentials in browser assets.
+          VITE_STAGE_MODE: playground
       - uses: actions/upload-pages-artifact@v3
         with:
           path: apps/web/dist
