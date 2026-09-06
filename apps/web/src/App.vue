@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, shallowRef } from "vue";
 
 import {
   AgentApiClient,
@@ -51,6 +51,8 @@ import {
 import { PerformanceAudioPlayer, performanceAudioPaths } from "./performance-audio";
 import { useStageStore } from "./stores/stage";
 import { resolveStageShortcut } from "./stage-shortcuts";
+import WorldOverview from "./WorldOverview.vue";
+import { loadWorldOverview, type WorldOverviewData } from "./world-overview";
 
 type RendererModule = typeof import("@uma-stage/renderer-phaser");
 type StageGame = ReturnType<RendererModule["createStageGame"]>;
@@ -151,6 +153,10 @@ const performanceRunning = ref(false);
 const stageEnvironment = ref<StageEnvironment>(stageEnvironmentSchema.parse({}));
 const minimapVisible = ref(true);
 const mapOverviewActive = ref(false);
+const worldOverviewOpen = ref(false);
+const worldOverviewData = shallowRef<WorldOverviewData | null>(null);
+const worldOverviewLoading = ref(false);
+const worldOverviewError = ref("");
 
 const resolvedCast = computed<ResolvedCastMember[]>(() =>
   selectedCast.value.flatMap((selection) => {
@@ -369,8 +375,10 @@ async function initialize(options: StageInitializationOptions = {}): Promise<voi
       ...(playerActorId === undefined ? {} : { playerActorId }),
       actors: rendererActors,
       environment: stageEnvironment.value,
+      sceneNames: Object.fromEntries(stageRegistry.stages.map((entry) => [entry.scene_id, entry.display_name])),
     });
     game.setMinimapVisible(minimapVisible.value);
+    game.setPlayerInputEnabled(!worldOverviewOpen.value);
     mapOverviewActive.value = false;
     cameraCueBeforeOverview = null;
     snapshotTimer = window.setInterval(() => {
@@ -924,10 +932,37 @@ function toggleMinimap(): void {
   game?.setMinimapVisible(minimapVisible.value);
 }
 
+function openWorldOverview(): void {
+  worldOverviewOpen.value = true;
+  game?.setPlayerInputEnabled(false);
+  void prepareWorldOverview();
+}
+
+function closeWorldOverview(): void {
+  worldOverviewOpen.value = false;
+  game?.setPlayerInputEnabled(true);
+}
+
+async function prepareWorldOverview(): Promise<void> {
+  if (worldOverviewData.value || worldOverviewLoading.value) return;
+  worldOverviewLoading.value = true;
+  worldOverviewError.value = "";
+  try {
+    worldOverviewData.value = await loadWorldOverview(
+      stageChoices.value,
+      (path) => fetchJson(contentUrl(path)),
+    );
+  } catch (error) {
+    worldOverviewError.value = errorMessage(error);
+  } finally {
+    worldOverviewLoading.value = false;
+  }
+}
+
 function handleStageShortcut(event: KeyboardEvent): void {
   const shortcut = resolveStageShortcut({
     key: event.key,
-    enabled: store.phase === "ready" && !performanceRunning.value,
+    enabled: store.phase === "ready" && !performanceRunning.value && !worldOverviewOpen.value,
     editing: isTextEntryTarget(event.target),
     defaultPrevented: event.defaultPrevented,
     repeat: event.repeat,
@@ -937,6 +972,7 @@ function handleStageShortcut(event: KeyboardEvent): void {
   });
   if (shortcut === "toggle-minimap") toggleMinimap();
   else if (shortcut === "toggle-overview") toggleMapOverview();
+  else if (shortcut === "open-world") openWorldOverview();
   else return;
   event.preventDefault();
 }
@@ -1504,7 +1540,7 @@ function formatEvent(event: (typeof store.events)[number]): string {
               小地图：{{ minimapVisible ? '开' : '关' }}（M）
             </button>
             <button :aria-pressed="mapOverviewActive" aria-keyshortcuts="O" :disabled="store.phase !== 'ready' || performanceRunning" type="button" title="快捷键 O" @click="toggleMapOverview">
-              {{ mapOverviewActive ? '退出全图预览' : '全图预览' }}（O）
+              {{ mapOverviewActive ? '退出当前地图预览' : '当前地图全图' }}（O）
             </button>
             <button v-for="zone in sceneZones.slice(0, 2)" :key="`camera-zone-${zone.id}`" :disabled="store.phase !== 'ready' || performanceRunning" type="button" @click="focusCameraOnZone(zone.id)">
               定镜 · {{ zone.displayName }}
@@ -1557,6 +1593,7 @@ function formatEvent(event: (typeof store.events)[number]): string {
           <button :disabled="performanceRunning" type="button" @click="resetCurrentScene">重置场景</button>
           <div class="scene-actions" aria-label="地图切换">
             <span>MAP</span>
+            <button type="button" aria-haspopup="dialog" aria-keyshortcuts="G" :disabled="store.phase !== 'ready' || performanceRunning" @click="openWorldOverview">世界连接总览（G）</button>
             <select :value="activeStagePath" :disabled="store.phase !== 'ready' || performanceRunning" aria-label="地图" @change="changeStageFromSelect">
               <option v-for="choice in stageChoices" :key="choice.stage_id" :value="choice.definition_path">
                 {{ choice.display_name }}
@@ -1565,6 +1602,10 @@ function formatEvent(event: (typeof store.events)[number]): string {
           </div>
         </div>
       </div>
+
+      <WorldOverview v-if="worldOverviewOpen"
+        :data="worldOverviewData" :current-scene-id="currentSceneId" :loading="worldOverviewLoading" :error="worldOverviewError"
+        @close="closeWorldOverview" @retry="prepareWorldOverview" />
 
       <aside class="inspector">
         <section class="panel agent-panel">

@@ -16,6 +16,7 @@ import {
   resolveEnvironmentVisual,
   type EnvironmentVisual,
 } from "./environment";
+import { layoutPortalLabels } from "./portal-labels";
 
 export interface ActorViewConfig {
   actorId: string;
@@ -31,6 +32,7 @@ export interface StageRendererOptions {
   actors: ActorViewConfig[];
   playerActorId?: string;
   environment?: StageEnvironment;
+  sceneNames?: Record<string, string>;
   debug?: boolean;
 }
 
@@ -46,6 +48,7 @@ export interface StageGameController {
   cameraState(): StageCameraState | null;
   setMinimapVisible(visible: boolean): void;
   minimapVisible(): boolean;
+  setPlayerInputEnabled(enabled: boolean): void;
   setEnvironment(environment: StageEnvironment): void;
   environmentState(): StageEnvironment;
 }
@@ -90,6 +93,9 @@ class RuntimeScene extends Phaser.Scene {
   #minimap: Phaser.Cameras.Scene2D.Camera | null = null;
   #minimapViewport: Phaser.GameObjects.Graphics | null = null;
   #minimapVisible = true;
+  #playerInputEnabled = true;
+  readonly #portalLabels = new Map<string, Phaser.GameObjects.Text>();
+  #portalLeaders: Phaser.GameObjects.Graphics | null = null;
   #environment: StageEnvironment;
   #environmentOverlay: Phaser.GameObjects.Rectangle | null = null;
   #weatherOverlay: Phaser.GameObjects.Graphics | null = null;
@@ -140,6 +146,7 @@ class RuntimeScene extends Phaser.Scene {
         "W,A,S,D,UP,LEFT,DOWN,RIGHT",
       ) as Record<string, Phaser.Input.Keyboard.Key> | undefined) ?? null;
     this.game.canvas.tabIndex = 0;
+    this.setPlayerInputEnabled(this.#playerInputEnabled);
     this.input.on("pointerdown", this.focusStageInput, this);
     this.createMinimap();
     this.createEnvironment();
@@ -157,6 +164,7 @@ class RuntimeScene extends Phaser.Scene {
     for (const state of this.#options.runtime.snapshot().actors) this.syncActor(state);
     this.updateMinimapViewport();
     this.updateEnvironment(delta);
+    this.updatePortalLabels();
   }
 
   private drawMap(): void {
@@ -192,7 +200,6 @@ class RuntimeScene extends Phaser.Scene {
         tilemap.createLayer(0, tileset, 0, 0)?.setDepth(-990 + index);
       }
       for (const landmark of scene.landmarks) this.drawLandmark(landmark, tileSize);
-      this.drawPortals();
     } else {
       for (const surface of scene.surfaces) {
         const bounds = pixelBounds(surface.bounds, tileSize);
@@ -209,6 +216,7 @@ class RuntimeScene extends Phaser.Scene {
       }
       for (const prop of scene.props) this.drawProp(prop, tileSize);
     }
+    this.drawPortals();
 
     if (this.#options.debug || scene.layers.length === 0) {
       const grid = this.add.graphics().setDepth(-900);
@@ -241,6 +249,13 @@ class RuntimeScene extends Phaser.Scene {
 
   minimapVisible(): boolean {
     return this.#minimapVisible;
+  }
+
+  setPlayerInputEnabled(enabled: boolean): void {
+    this.#playerInputEnabled = enabled;
+    for (const key of Object.values(this.#movementKeys ?? {})) key.reset();
+    if (this.sys.isActive() && this.input.keyboard) this.input.keyboard.enabled = enabled;
+    if (!enabled && this.#options.playerActorId) this.#options.runtime.setPlayerIntent(this.#options.playerActorId, 0, 0);
   }
 
   setEnvironment(environment: StageEnvironment): void {
@@ -392,6 +407,46 @@ class RuntimeScene extends Phaser.Scene {
       const y = (portal.position.y + 0.5) * scene.map.tile_size;
       graphics.fillStyle(edge ? 0x79d8f4 : 0xffd76b, 0.8).fillCircle(x, y, edge ? 8 : 7);
       graphics.lineStyle(1.5, 0xffffff, 0.7).strokeCircle(x, y, edge ? 8 : 7);
+      const name = this.#options.sceneNames?.[portal.target_scene_id] ?? portal.target_scene_id;
+      const label = this.add.text(x, y, `前往 ${name}`, {
+        fontFamily: "system-ui, sans-serif",
+        fontSize: "13px",
+        color: edge ? "#a4ebff" : "#ffe09a",
+        backgroundColor: "#10241ff2",
+        padding: { x: 9, y: 5 },
+        resolution: 2,
+      }).setOrigin(0).setDepth(60010).setVisible(false);
+      this.#portalLabels.set(portal.id, label);
+    }
+    this.#portalLeaders = this.add.graphics().setDepth(60005);
+  }
+
+  private updatePortalLabels(): void {
+    const camera = this.cameras.main;
+    const view = camera.worldView;
+    const zoom = Math.max(camera.zoom, 0.01);
+    const points = this.#options.scene.portals.map((portal) => {
+      const label = this.#portalLabels.get(portal.id)!;
+      return {
+        id: portal.id,
+        x: ((portal.position.x + 0.5) * this.#options.scene.map.tile_size - view.x) * zoom,
+        y: ((portal.position.y + 0.5) * this.#options.scene.map.tile_size - view.y) * zoom,
+        width: label.width,
+        height: label.height,
+      };
+    });
+    const placements = layoutPortalLabels(points, this.scale, this.#minimapVisible ? [this.minimapBounds()] : []);
+    const leaders = this.#portalLeaders;
+    leaders?.clear().lineStyle(1 / zoom, 0xcbe9da, 0.7);
+    for (const point of points) {
+      const label = this.#portalLabels.get(point.id)!;
+      const rect = placements.get(point.id);
+      label.setVisible(Boolean(rect));
+      if (!rect) continue;
+      label.setScale(1 / zoom).setPosition(view.x + rect.x / zoom, view.y + rect.y / zoom);
+      const endX = Math.max(rect.x, Math.min(point.x, rect.x + rect.width));
+      const endY = Math.max(rect.y, Math.min(point.y, rect.y + rect.height));
+      leaders?.lineBetween(view.x + point.x / zoom, view.y + point.y / zoom, view.x + endX / zoom, view.y + endY / zoom);
     }
   }
 
@@ -546,7 +601,7 @@ class RuntimeScene extends Phaser.Scene {
 
   private readMovementIntent(): { x: number; y: number } {
     const keys = this.#movementKeys;
-    if (!keys || isTextEntryElement(document.activeElement)) return { x: 0, y: 0 };
+    if (!this.#playerInputEnabled || !keys || isTextEntryElement(document.activeElement)) return { x: 0, y: 0 };
     const x = Number(keys.D?.isDown || keys.RIGHT?.isDown) - Number(keys.A?.isDown || keys.LEFT?.isDown);
     const y = Number(keys.S?.isDown || keys.DOWN?.isDown) - Number(keys.W?.isDown || keys.UP?.isDown);
     return { x, y };
@@ -581,6 +636,8 @@ class RuntimeScene extends Phaser.Scene {
     for (const display of this.#displays.values()) {
       minimap.ignore([display.label, display.bubble]);
     }
+    minimap.ignore([...this.#portalLabels.values()]);
+    if (this.#portalLeaders) minimap.ignore(this.#portalLeaders);
     this.updateMinimapViewport();
   }
 
@@ -718,6 +775,7 @@ export function createStageGame(options: StageRendererOptions): StageGameControl
     cameraState: () => runtimeScene.cameraState(),
     setMinimapVisible: (visible) => runtimeScene.setMinimapVisible(visible),
     minimapVisible: () => runtimeScene.minimapVisible(),
+    setPlayerInputEnabled: (enabled) => runtimeScene.setPlayerInputEnabled(enabled),
     setEnvironment: (environment) => runtimeScene.setEnvironment(environment),
     environmentState: () => runtimeScene.environmentState(),
   };

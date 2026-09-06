@@ -1,4 +1,4 @@
-export type StageShortcut = "toggle-minimap" | "toggle-overview";
+export type StageShortcut = "toggle-minimap" | "toggle-overview" | "open-world";
 
 export interface StageShortcutInput {
   key: string;
@@ -24,5 +24,6 @@ export function resolveStageShortcut(input: StageShortcutInput): StageShortcut |
   const key = input.key.toLowerCase();
   if (key === "m") return "toggle-minimap";
   if (key === "o") return "toggle-overview";
+  if (key === "g") return "open-world";
   return null;
 }
