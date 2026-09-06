@@ -108,6 +108,36 @@
       "spokenText": "星を見ると、少し呼吸が戻る。",
       "subtitleJa": "星を見ると、少し呼吸が戻る。",
       "subtitleZh": "看着星星时，呼吸会稍微平稳一点。"
+    },
+    {
+      "id": "tr029",
+      "type": "dialogue",
+      "speakerId": "Trainer",
+      "speakerLabel": "训练员",
+      "background": "track_night",
+      "characters": [
+        { "speakerId": "Trainer", "slot": "center_left", "spriteScale": 0.78 },
+        { "speakerId": "admire_vega", "slot": "center_right", "spriteScale": 0.84, "spriteVariant": "ZF" }
+      ],
+      "audio": "draft/admire_vega_audio/tr029.wav",
+      "spokenText": "ラップは昨日より安定している、左脚の入りだけ慎重に。",
+      "subtitleJa": "ラップは昨日より安定している、左脚の入りだけ慎重に。",
+      "subtitleZh": "圈速比昨天稳定。只要注意左脚入地的节奏。"
+    },
+    {
+      "id": "av026",
+      "type": "dialogue",
+      "speakerId": "admire_vega",
+      "speakerLabel": "爱慕织姬",
+      "background": "track_night",
+      "characters": [
+        { "speakerId": "Trainer", "slot": "center_left", "spriteScale": 0.78 },
+        { "speakerId": "admire_vega", "slot": "center_right", "spriteScale": 0.84, "spriteVariant": "ZF" }
+      ],
+      "audio": "draft/admire_vega_audio/av026.wav",
+      "spokenText": "……そこまで見ているなら、役には立つ。",
+      "subtitleJa": "……そこまで見ているなら、役には立つ。",
+      "subtitleZh": "……既然能看到这种程度，倒也派得上用场。"
     }
   ],
   "stage": {
@@ -184,7 +214,7 @@
             "target": {
               "type": "actor",
               "role_id": "admire_vega",
-              "distance_tiles": 2,
+              "distance_tiles": 4,
               "preferred_side": "below"
             }
           }
@@ -255,6 +285,49 @@
           }
         ],
         "duration_ms": 1500
+      },
+      "tr029": {
+        "before": [
+          {
+            "cue_id": "vega_returns_after_sprint",
+            "type": "actor.move_to",
+            "role_id": "admire_vega",
+            "target": {
+              "type": "actor",
+              "role_id": "trainer",
+              "distance_tiles": 4,
+              "preferred_side": "above"
+            }
+          },
+          {
+            "cue_id": "follow_vega_return",
+            "type": "camera.follow_actor",
+            "role_id": "admire_vega",
+            "zoom": 0.8,
+            "transition_ms": 500
+          }
+        ],
+        "during": [
+          {
+            "cue_id": "return_to_warmup_two_shot",
+            "type": "camera.focus_zone",
+            "zone_id": "warmup_zone",
+            "zoom": 0.85,
+            "transition_ms": 650
+          }
+        ],
+        "duration_ms": 3800
+      },
+      "av026": {
+        "before": [
+          {
+            "cue_id": "vega_faces_trainer_after_sprint",
+            "type": "actor.face_actor",
+            "role_id": "admire_vega",
+            "target_role_id": "trainer"
+          }
+        ],
+        "duration_ms": 3700
       }
     }
   }

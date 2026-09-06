@@ -14,3 +14,7 @@ __pycache__/
 .env
 .env.*
 !.env.example
+
+draft/
+!content/draft/
+!content/draft/**

@@ -40,7 +40,8 @@
 - 单角色仍经过 Stage Director；多人由 Director 选择当前地图中的发言者和动作；
 - 会话可包含分散在多张地图的角色，每轮只绑定当前 Scene 中的角色；
 - `PerformanceScript v1` 描述 cast、scene、并行 beat、动作、对白、音频提示和镜头；
-- anime 兼容入口保留 `projectId/title/lines`，只增加根级 `stage` 字段。
+- anime 兼容入口保留 `projectId/title/lines`，只增加根级 `stage` 字段；
+- 网页演出器会播放 `audio/audio_path` 指向的现成 TTS，并按实际音频长度同步气泡、字幕和行间停顿；
 
 ## 项目结构
 
@@ -62,7 +63,7 @@ docs/                     架构、协议、部署与内容管线
 - 后台 Scene 保存位置但不持续推进时间和行动；
 - 跨地图路径可以规划，但尚未由 World scheduler 自动逐图执行；
 - Agent Stage Director 暂未返回独立 CameraCue；
-- JSON 短剧已保留音频路径，浏览器音频播放、TTS 调度和视频导出仍需继续接入；
+- JSON 短剧已支持浏览器音频回放；实时 TTS 调度和视频导出仍需继续接入；
 - 地图数量已经覆盖主要地点，下一阶段优先处理 Anchor Slot、Portal 落点、遮挡层和美术一致性。
 
 ## 完整校验

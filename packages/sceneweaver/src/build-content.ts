@@ -1,4 +1,4 @@
-import { readFile, readdir, writeFile } from "node:fs/promises";
+import { access, readFile, readdir, writeFile } from "node:fs/promises";
 import { basename, dirname, isAbsolute, relative, resolve } from "node:path";
 
 import {
@@ -268,6 +268,12 @@ for (const entry of performanceFiles) {
     }
     for (const beat of performanceScene.beats) {
       for (const cue of beat.cues) {
+        if (
+          (cue.type === "dialogue.say" || cue.type === "narration.say") &&
+          cue.audio_path
+        ) {
+          await access(resolveContentPath(cue.audio_path));
+        }
         if (
           cue.type === "actor.move_to" &&
           cue.target.type === "anchor" &&

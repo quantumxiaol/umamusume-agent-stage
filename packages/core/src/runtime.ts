@@ -569,9 +569,9 @@ export class StageRuntime {
     const targetActor = this.#actors.get(targetActorId);
     if (!targetActor) return null;
     const targetTile = this.navigation.worldToTile(targetActor.state.position);
-    const maxDistance = Math.max(1, Math.min(4, distanceTiles));
+    const desiredDistance = Math.max(1, Math.min(4, distanceTiles));
     if (
-      manhattan(from, targetTile) <= maxDistance &&
+      manhattan(from, targetTile) === desiredDistance &&
       matchesPreferredSide(from, targetTile, preferredSide)
     ) {
       const facing = facingToward(from, targetTile);
@@ -579,7 +579,7 @@ export class StageRuntime {
     }
 
     const candidates: Array<{ position: TilePosition; pathLength: number }> = [];
-    for (let radius = 1; radius <= maxDistance; radius += 1) {
+    for (let radius = 1; radius <= desiredDistance; radius += 1) {
       for (const candidate of tilesAtDistance(targetTile, radius)) {
         if (this.isOccupiedOrReserved(candidate, actorId)) continue;
         const path = this.navigation.findPath(from, candidate, {
@@ -590,9 +590,12 @@ export class StageRuntime {
       }
     }
     candidates.sort((left, right) =>
+      Number(!matchesPreferredSide(left.position, targetTile, preferredSide)) -
+        Number(!matchesPreferredSide(right.position, targetTile, preferredSide)) ||
+      Math.abs(desiredDistance - manhattan(left.position, targetTile)) -
+        Math.abs(desiredDistance - manhattan(right.position, targetTile)) ||
       preferredSideRank(left.position, targetTile, preferredSide) -
         preferredSideRank(right.position, targetTile, preferredSide) ||
-      manhattan(left.position, targetTile) - manhattan(right.position, targetTile) ||
       left.pathLength - right.pathLength,
     );
     const selected = candidates[0]?.position;

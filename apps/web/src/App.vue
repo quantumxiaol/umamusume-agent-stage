@@ -48,6 +48,7 @@ import {
   type StageCastOutfit,
 } from "@uma-stage/core";
 
+import { PerformanceAudioPlayer, performanceAudioPaths } from "./performance-audio";
 import { useStageStore } from "./stores/stage";
 import { resolveStageShortcut } from "./stage-shortcuts";
 
@@ -187,6 +188,7 @@ let portalTransitionPending = false;
 let portalTransitionTimer: number | null = null;
 let runPortalTransition: (() => void) | null = null;
 let cameraCueBeforeOverview: CameraCue | null = null;
+const performanceAudio = new PerformanceAudioPlayer(contentUrl);
 const worldPresence = new WorldPresence();
 const PORTAL_TRANSITION_FALLBACK_MS = 750;
 const PORTAL_TRANSITION_AFTER_COMMAND_MS = 50;
@@ -197,6 +199,7 @@ onMounted(() => {
 });
 onBeforeUnmount(() => {
   window.removeEventListener("keydown", handleStageShortcut);
+  void performanceAudio.dispose();
   dispose();
 });
 
@@ -509,9 +512,12 @@ async function runPerformanceDemo(): Promise<void> {
   agentSession.value = null;
   conversation.value = [];
   try {
+    // Resume audio while this call still carries the run-button user gesture.
+    await performanceAudio.unlock();
     const script = await loadPerformance(
       contentUrl("performances/admire-vega-starlight.anime.json"),
     );
+    await performanceAudio.preload(performanceAudioPaths(script));
     const characterCast = script.cast.filter((member) => member.character_id !== "trainer");
     if (characterCast.length === 0 || characterCast.length > 4) {
       throw new Error(`当前 Stage 支持 1–4 位角色，剧本声明了 ${characterCast.length} 位`);
@@ -554,6 +560,7 @@ async function runPerformanceDemo(): Promise<void> {
     store.setMessage(`《${script.title}》演出完成`);
     pushConversation("system", "演出", `《${script.title}》演出完成`);
   } catch (error) {
+    performanceAudio.stopAll();
     restoreLiveControl();
     store.setMessage(`剧本演出失败：${errorMessage(error)}`);
     pushConversation("system", "演出", `失败：${errorMessage(error)}`);
@@ -634,7 +641,12 @@ async function executePerformanceCue(
       "环境",
       compiled.subtitleZh ?? compiled.subtitleJa ?? compiled.text,
     );
-    if (compiled.durationMs) await delay(compiled.durationMs);
+    if (compiled.audioPath) {
+      const playback = await performanceAudio.play(compiled.audioPath);
+      await playback.completion;
+    } else if (compiled.durationMs) {
+      await delay(compiled.durationMs);
+    }
     return;
   }
   if (cue.type === "dialogue.say") {
@@ -645,7 +657,18 @@ async function executePerformanceCue(
       cue.subtitle_zh ?? cue.subtitle_ja ?? cue.text,
     );
   }
-  const result = await activeRuntime.execute(compiled.command).completion;
+  const playback =
+    cue.type === "dialogue.say" && cue.audio_path
+      ? await performanceAudio.play(cue.audio_path)
+      : null;
+  const command =
+    playback && compiled.command.type === "dialogue.say"
+      ? { ...compiled.command, duration_ms: playback.durationMs }
+      : compiled.command;
+  const [result] = await Promise.all([
+    activeRuntime.execute(command).completion,
+    playback?.completion ?? Promise.resolve(),
+  ]);
   if (result.status !== "completed") {
     throw new Error(
       `Cue ${cue.cue_id} ${result.status}: ${result.error?.message ?? "未知原因"}`,

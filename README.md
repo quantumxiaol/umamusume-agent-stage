@@ -58,7 +58,7 @@ pnpm dev
 
 网页从 `.env` 自动连接 Agent，并为所选 cast 建立 Stage 会话。每轮只把当前地图中的角色、Anchor 和实时状态交给 Director；留在其他地图的角色仍属于会话，但不会隔着地图发言或接收动作。协议和动作语义见 [`docs/agent-integration.md`](docs/agent-integration.md)。
 
-“运行兼容 JSON 短剧”会回放 [`content/performances/admire-vega-starlight.anime.json`](content/performances/admire-vega-starlight.anime.json)。原始对白、字幕、音频与立绘字段保持兼容，额外的 `stage` 字段负责编排地图、角色行动、镜头和环境。格式见 [`docs/performance-script.md`](docs/performance-script.md)。
+“运行兼容 JSON 短剧”会回放 [`content/performances/admire-vega-starlight.anime.json`](content/performances/admire-vega-starlight.anime.json)。原始对白、字幕、音频与立绘字段保持兼容，网页会播放现成 TTS 并按音频实际长度推进字幕；额外的 `stage` 字段负责编排地图、角色行动、镜头和环境。格式见 [`docs/performance-script.md`](docs/performance-script.md)。
 
 ## 文档
 

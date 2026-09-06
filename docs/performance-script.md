@@ -57,7 +57,8 @@ anime 原有字段保持原样：
 - `cast` 把 anime `speakerId` 映射为 Stage `role_id/character_id/outfit_id`；
 - `scenes[].backgrounds` 复用每行已有的 `background`，映射到 `stage_id`，并可声明出生点、初始朝向和轻量时间天气；
 - `directions` 以原始 `line.id` 为键。`before` 在对白前等待完成，`during` 与对白并行，`after` 在对白完成后执行；
-- `duration_ms` 是浏览器尚未播放该行音频时的显式演出时长；原 `audio` 仍原样进入编译结果，供后续 TTS/音频播放和 anime 渲染使用；
+- `audio` 会从 Stage 内容根加载并在浏览器中预解码；有音频时，其真实时长控制气泡、字幕推进和下一句开始，`duration_ms` 仅作为无音频行的回退时长；
+- `line_gap_ms` 是一行音频完整结束后的额外停顿，不会截断正在播放的台词；
 - 原 anime 的 `director.py`、TTS 与 Remotion 只读取已知字段，会忽略额外的 `stage`，因此同一个 JSON 可在两个项目中使用。
 
 Stage 构建时会把兼容 JSON 编译为 `PerformanceScript`，然后继续使用同一个任务、寻路、镜头和控制权执行器；Runtime 不需要认识 anime 字段。
@@ -69,10 +70,10 @@ Stage 构建时会把兼容 JSON 编译为 `PerformanceScript`，然后继续使
 - `beats` 按数组顺序执行；同一 beat 内所有 cue 同时启动，所以可以让两名角色并行行走，或让对白与移动同时发生；
 - `wait_for: all` 等待该 beat 的移动、对白与 wait cue 全部到达终态；`none` 允许下一个 beat 与当前任务重叠，但离开 scene 前仍会收拢后台任务；
 - `hold_ms` 是 beat 完成后的额外停顿；
-- `actor.move_to` 只使用 Anchor 或另一个 role，不把模型生成的裸坐标写入剧本；移动到 role 时可用 `preferred_side: above|below|left|right|nearest` 声明镜头站位，默认 `above`；
+- `actor.move_to` 只使用 Anchor 或另一个 role，不把模型生成的裸坐标写入剧本；移动到 role 时，`distance_tiles` 是期望的会面间距（受地形限制时退到更近的可达格），并可用 `preferred_side: above|below|left|right|nearest` 声明镜头站位，默认 `above`；
 - camera cue 与角色命令分离。镜头不会修改世界状态；
 - camera cue 的 `transition_ms` 默认是 `450`，会平滑平移并变焦；需要剪辑式硬切时显式写 `0`。连续对白应优先保持稳定双人镜头，只在叙事重点切近景；
-- `spoken_text`、双语字幕、`audio_path` 与 `render_hints` 不影响 Stage 世界权威，只提供给 TTS/anime 适配器。
+- `spoken_text`、双语字幕、`audio_path` 与 `render_hints` 不影响 Stage 世界权威；其中 `audio_path` 还供网页演出器播放现成 TTS。
 
 当前 cue 包括：
 
@@ -108,4 +109,5 @@ Agent 模式继续直接返回 `AgentStageAction`，因为实时会话不需要�
 
 - 网页示例执行器已支持多 scene 重载、并行 cue、任务等待和控制权归还，但尚无暂停、取消和逐 beat UI；
 - scene 切换会按 placements 重新生成 cast，不保存留在旧地图的后台角色；这一点应由后续 `WorldRuntime` 解决；
+- 浏览器会在用户点击“运行兼容 JSON 短剧”后解锁音频，并在演出开始前预载剧本引用的音频；缺失或无法解码的音频会明确终止该次演出；
 - `render_hints` 是可选适配提示，不是核心语义。Stage 或 anime 缺少某项提示时，应通过各自的 asset/location manifest 补全，而不是把仓库绝对路径写进剧本。

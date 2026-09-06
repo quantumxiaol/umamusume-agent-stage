@@ -146,6 +146,33 @@ describe("StageRuntime", () => {
     expect(actorA.facing).toBe("down");
   });
 
+  it("uses the requested actor distance instead of collapsing meetings to one tile", async () => {
+    const runtime = runtimeWithActors();
+    const task = runtime.execute({
+      id: "approach-b-with-stage-spacing",
+      type: "actor.move_to",
+      actor_id: "a",
+      source: "script",
+      policy: "replace",
+      target: {
+        type: "actor",
+        id: "b",
+        distance_tiles: 2,
+        preferred_side: "above",
+      },
+    });
+    runUntilSettled(runtime);
+
+    await expect(task.completion).resolves.toMatchObject({ status: "completed" });
+    const actors = runtime.snapshot().actors;
+    const actorA = actors.find((actor) => actor.actor_id === "a")!;
+    const actorB = actors.find((actor) => actor.actor_id === "b")!;
+    const tileA = runtime.navigation.worldToTile(actorA.position);
+    const tileB = runtime.navigation.worldToTile(actorB.position);
+    expect(tileA).toEqual({ x: tileB.x, y: tileB.y - 2 });
+    expect(actorA.facing).toBe("down");
+  });
+
   it("faces a live actor by semantic target", async () => {
     const runtime = runtimeWithActors();
     const task = runtime.execute({
