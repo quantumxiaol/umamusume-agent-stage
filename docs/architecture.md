@@ -78,6 +78,10 @@ locomotion 与 speech 是独立频道。移动支持 `reject`、`queue`、`repla
 
 Runtime 在 tile 语义层做 A*，在世界像素层连续插值。动态 Actor 占用和 Anchor Slot 预定可避免角色抢同一落点。ActivityPath 在一个 locomotion task 内依次走过全部检查点，因此可整体等待、替换或取消。
 
+每一步会认领下一格直到到达中心，玩家手动移动也遵守认领；移动线段额外检查脚底安全距离，避免跨格边界穿过彼此。每 tick 按 Actor ID 稳定排序，堵塞后每 350ms 尝试保留活动检查点的重新寻路，连续 5 秒无进展返回 `MOVE_BLOCKED`，总执行时长还有按原路线长度估算的 `MOVE_TIMEOUT`。这不是全局最优多智能体寻路：无法解开的窄道会明确失败交由上层决策，不强行穿人或传送。
+
+显式 `slot_id` 不再参与 Anchor 中心的近路竞争。未知槽位返回 `INVALID_SLOT`；指定槽位被占或无路可达返回 `NO_REACHABLE_TARGET`。`actor.arrived` 事件继续报告实际到达 tile。
+
 面向训练员的会面动作默认偏好 `preferred_side: above`：马娘尽量站在训练员画面上方并朝下显示正面。该偏好只参与安全落点排序，不改变动画状态机；首选侧被阻挡时会使用其他可达侧并继续面向目标。
 
 Actor 首次进入 Portal tile 时产生一次 `portal.entered`。Web 根据目标 scene/spawn 重新装配舞台；当前跟随绑定会在这次换图中恢复。
@@ -140,7 +144,7 @@ GitHub Pages 生产环境直接调用 HF Space。浏览器内 API key 只是轻�
 ## 下一阶段
 
 1. 为 `umamusume-anime` 增加 `PerformanceScript → structured script/timeline` 适配器，先复用对白、字幕、音频、场景背景和角色立绘提示；
-2. 把网页内的示例执行逻辑抽成独立 ShowRunner，增加暂停、跳过、取消、逐 beat 调试与执行报告；
+2. `core/ShowRunner` 已提供独立调度、暂停/取消及 scene/beat/cue 错误定位；后续增加跳过、逐 beat 调试、检查点和完整执行报告；
 3. 在 `WorldPresence` 之上增加 World scheduler，让后台 Actor 连续执行 `WorldRoutePlan`，并支持跨 Scene 镜头切换；
 4. 为 Agent `/stage/turn` 增加独立 `camera_cues`，并允许把一次实时会话录制为可编辑的 `PerformanceScript`；
 5. 增加表情、入场/退场、交互、道具与角色编队命令；只有出现多客户端或持久世界需求后，再评估把 Runtime 权威迁到服务端。

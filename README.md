@@ -76,6 +76,8 @@ VITE_STAGE_MODE=playground pnpm dev
 
 “运行兼容 JSON 短剧”会回放 [`content/performances/admire-vega-starlight.anime.json`](content/performances/admire-vega-starlight.anime.json)。原始对白、字幕、音频与立绘字段保持兼容，网页会播放现成 TTS 并按音频实际长度推进字幕；额外的 `stage` 字段负责编排地图、角色行动、镜头和环境。格式见 [`docs/performance-script.md`](docs/performance-script.md)。
 
+演出过程中可以“暂停／继续”或“结束演出”。暂停会同步冻结角色、镜头、音频与段落等待；切到后台标签页时自动暂停，回来后手动继续。结束演出会保留当前已加载的场景位置并恢复自由操作，不回滚整场剧情。
+
 ## 文档
 
 - [`docs/current-capabilities.md`](docs/current-capabilities.md)：当前能力、内容覆盖、项目结构和已知边界；

@@ -62,6 +62,116 @@ function runUntilSettled(runtime: StageRuntime, ticks = 200) {
   for (let index = 0; index < ticks; index += 1) runtime.tick(50);
 }
 
+function openRuntime() {
+  const openScene: ScenePack = {
+    ...scene,
+    navigation: { blocked_tiles: [] }, portals: [],
+    spawns: [
+      { id: "a", position: { x: 1, y: 2 }, facing: "right" },
+      { id: "b", position: { x: 3, y: 0 }, facing: "down" },
+      { id: "blocker", position: { x: 3, y: 2 }, facing: "down" },
+    ],
+  };
+  const runtime = new StageRuntime(openScene);
+  runtime.spawnActor({ actorId: "a", characterPack: pack, spawnId: "a", controlOwner: "script" });
+  return runtime;
+}
+
+describe("movement safety", () => {
+  it("honours an explicit slot even when the anchor centre is closer", async () => {
+    const runtime = openRuntime();
+    const task = runtime.execute({ id: "exact", type: "actor.move_to", actor_id: "a", source: "script", policy: "replace", target: { type: "anchor", id: "meeting", slot_id: "right" } });
+    runUntilSettled(runtime);
+    expect(await task.completion).toMatchObject({ status: "completed" });
+    expect(runtime.inspect().actors[0]?.tile).toEqual({ x: 4, y: 3 });
+  });
+
+  it("rejects unknown and occupied slots instead of falling back", async () => {
+    const runtime = openRuntime();
+    const unknown = runtime.execute({ id: "unknown", type: "actor.move_to", actor_id: "a", source: "script", policy: "replace", target: { type: "anchor", id: "meeting", slot_id: "typo" } });
+    expect(await unknown.completion).toMatchObject({ status: "failed", error: { code: "INVALID_SLOT" } });
+    runtime.spawnActor({ actorId: "b", characterPack: pack, spawnId: "b", controlOwner: "script" });
+    const occupy = runtime.execute({ id: "occupy", type: "actor.move_to", actor_id: "b", source: "script", policy: "replace", target: { type: "anchor", id: "meeting", slot_id: "right" } });
+    runUntilSettled(runtime);
+    expect(await occupy.completion).toMatchObject({ status: "completed" });
+    const blocked = runtime.execute({ id: "blocked-slot", type: "actor.move_to", actor_id: "a", source: "script", policy: "replace", target: { type: "anchor", id: "meeting", slot_id: "right" } });
+    expect(await blocked.completion).toMatchObject({ status: "failed" });
+    expect(runtime.inspect().anchors[0]?.available_slots).not.toContain("right");
+  });
+
+  it("resolves crossing routes without sharing a tile or foot position", async () => {
+    const runtime = openRuntime();
+    runtime.spawnActor({ actorId: "b", characterPack: pack, spawnId: "b", controlOwner: "script" });
+    const tasks = [
+      runtime.execute({ id: "east", type: "actor.move_to", actor_id: "a", source: "script", policy: "replace", target: { type: "tile", position: { x: 5, y: 2 } } }),
+      runtime.execute({ id: "south", type: "actor.move_to", actor_id: "b", source: "script", policy: "replace", target: { type: "tile", position: { x: 3, y: 4 } } }),
+    ];
+    for (let i = 0; i < 400; i++) {
+      runtime.tick(25);
+      const [a, b] = runtime.snapshot().actors;
+      expect(Math.hypot(a!.position.x - b!.position.x, a!.position.y - b!.position.y)).toBeGreaterThanOrEqual(32 * 0.6 - 0.001);
+      expect(runtime.navigation.worldToTile(a!.position)).not.toEqual(runtime.navigation.worldToTile(b!.position));
+    }
+    expect((await Promise.all(tasks.map((task) => task.completion))).map((result) => result.status)).toEqual(["completed", "completed"]);
+  });
+
+  it("replans around an actor introduced after the path was planned", async () => {
+    const runtime = openRuntime();
+    const task = runtime.execute({ id: "detour", type: "actor.move_to", actor_id: "a", source: "script", policy: "replace", target: { type: "tile", position: { x: 6, y: 2 } } });
+    runtime.spawnActor({ actorId: "b", characterPack: pack, spawnId: "blocker", controlOwner: "script" });
+    runUntilSettled(runtime);
+    expect(await task.completion).toMatchObject({ status: "completed" });
+    expect(runtime.inspect().actors[0]?.tile).toEqual({ x: 6, y: 2 });
+  });
+
+  it("lets four actors negotiate intersecting and opposing routes", async () => {
+    const positions = [{ x: 1, y: 2 }, { x: 3, y: 0 }, { x: 5, y: 2 }, { x: 3, y: 4 }];
+    const destinations = [{ x: 6, y: 2 }, { x: 3, y: 3 }, { x: 0, y: 2 }, { x: 3, y: 1 }];
+    const runtime = new StageRuntime({ ...scene, navigation: { blocked_tiles: [] }, portals: [], spawns: positions.map((position, i) => ({ id: String(i), position, facing: "down" })) });
+    for (let i = 0; i < 4; i++) runtime.spawnActor({ actorId: String(i), characterPack: pack, spawnId: String(i), controlOwner: "script" });
+    const tasks = destinations.map((position, i) => runtime.execute({ id: `cross-${i}`, actor_id: String(i), type: "actor.move_to", source: "script", policy: "replace", target: { type: "tile", position } }));
+    for (let tick = 0; tick < 600; tick++) {
+      runtime.tick(25);
+      const actors = runtime.snapshot().actors;
+      for (let i = 0; i < actors.length; i++) for (let j = i + 1; j < actors.length; j++) {
+        const a = actors[i]!.position, b = actors[j]!.position;
+        expect(Math.hypot(a.x - b.x, a.y - b.y)).toBeGreaterThanOrEqual(32 * 0.6 - 0.001);
+      }
+    }
+    expect((await Promise.all(tasks.map((task) => task.completion))).map((result) => result.status)).toEqual(tasks.map(() => "completed"));
+    expect(runtime.inspect().actors.map((actor) => actor.tile)).toEqual(destinations);
+  });
+
+  it("fails a permanently blocked move and releases its reservation for queued work", async () => {
+    const corridor: ScenePack = { ...scene, map: { ...scene.map, width: 8, height: 1 }, portals: [], navigation: { blocked_tiles: [] }, spawns: [
+      { id: "a", position: { x: 0, y: 0 }, facing: "right" },
+      { id: "b", position: { x: 3, y: 0 }, facing: "left" },
+    ] };
+    const runtime = new StageRuntime(corridor);
+    runtime.spawnActor({ actorId: "a", characterPack: pack, spawnId: "a", controlOwner: "script" });
+    const blocked = runtime.execute({ id: "blocked", type: "actor.move_to", actor_id: "a", source: "script", policy: "replace", target: { type: "tile", position: { x: 7, y: 0 } } });
+    const next = runtime.execute({ id: "return", type: "actor.move_to", actor_id: "a", source: "script", policy: "queue", target: { type: "tile", position: { x: 0, y: 0 } } });
+    runtime.spawnActor({ actorId: "b", characterPack: pack, spawnId: "b", controlOwner: "script" });
+    runUntilSettled(runtime);
+    expect(await blocked.completion).toMatchObject({ status: "failed", error: { code: "MOVE_BLOCKED" } });
+    expect(await next.completion).toMatchObject({ status: "completed" });
+  });
+
+  it("preserves activity checkpoints when taking a dynamic detour", async () => {
+    const runtime = openRuntime();
+    const task = runtime.execute({ id: "activity-detour", type: "actor.follow_activity_path", actor_id: "a", source: "script", policy: "replace", activity_path_id: "warmup", cycles: 1 });
+    runtime.spawnActor({ actorId: "b", characterPack: pack, spawnId: "blocker", controlOwner: "player" });
+    runtime.setPlayerIntent("b", 0, -1);
+    for (let i = 0; i < 5; i++) runtime.tick(50);
+    runtime.setPlayerIntent("b", 0, 0);
+    const visited = new Set<string>();
+    for (let i = 0; i < 400; i++) { runtime.tick(25); visited.add(JSON.stringify(runtime.inspect().actors[0]?.tile)); }
+    expect(await task.completion).toMatchObject({ status: "completed" });
+    expect(visited.has(JSON.stringify({ x: 1, y: 1 }))).toBe(true);
+    expect(visited.has(JSON.stringify({ x: 6, y: 1 }))).toBe(true);
+  });
+});
+
 describe("StageRuntime", () => {
   it("moves two actors to distinct reserved anchor slots", async () => {
     const runtime = runtimeWithActors();

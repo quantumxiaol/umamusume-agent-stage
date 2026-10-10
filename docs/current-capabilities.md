@@ -27,8 +27,9 @@
 
 - `StageRuntime` 是角色位置、碰撞、控制权、命令和任务结果的唯一权威；
 - 玩家可用 WASD/方向键移动；
-- Agent/剧本可执行 `move_to`、`follow_activity_path`、`approach`、`follow`、`stop_follow`、`face`、`face_actor`、`stop` 和 `dialogue.say`；
-- 动态 Actor 占用、Anchor Slot 预定和编队出生避免多人堆叠；
+- Runtime/剧本支持移动、训练路线、跟随、停止、朝向和对白；Agent 支持接近等动作，但目前 Agent API 尚未开放训练路线指令；
+- 场内移动具有下一格占用、脚底安全距离、动态绕行和有限失败处理；固定 Actor ID 顺序裁决抢道，无法绕开的堵塞会失败，而不是无限原地踏步；
+- 明确指定 Anchor Slot 时严格到该槽位，不再自动退回 Anchor 中心；未知 Slot 返回 `INVALID_SLOT`，占用/不可达返回 `NO_REACHABLE_TARGET`；
 - 镜头支持跟随 Actor、聚焦 Actor/Anchor/Zone、固定世界坐标和整图预览；
 - `M` 切换小地图，`O` 切换当前地图全图，`G` 打开世界连接与出口路线；整图预览退出后恢复先前镜头；
 - 环境支持 day/evening/night 与 clear/rain/snow，不复制碰撞地图。
@@ -43,6 +44,8 @@
 - `PerformanceScript v1` 描述 cast、scene、并行 beat、动作、对白、音频提示和镜头；
 - anime 兼容入口保留 `projectId/title/lines`，只增加根级 `stage` 字段；
 - 网页演出器会播放 `audio/audio_path` 指向的现成 TTS，并按实际音频长度同步气泡、字幕和行间停顿；
+- 独立 `ShowRunner` 负责串行段落、并行 cue、暂停、取消、错误定位与清理；镜头 cue 等待实际平移/变焦结束；
+- 播放前检查地图内容引用和音频，后台标签页自动暂停；取消或失败后释放音频、移动和控制权。
 
 ## 项目结构
 
@@ -66,6 +69,7 @@ docs/                     架构、协议、部署与内容管线
 - Agent Stage Director 暂未返回独立 CameraCue；
 - JSON 短剧已支持浏览器音频回放；实时 TTS 调度和视频导出仍需继续接入；
 - 地图数量已经覆盖主要地点，下一阶段优先处理 Anchor Slot、Portal 落点、遮挡层和美术一致性。
+- 本轮没有添加地图内 E 键交互、检查点存档、剧情选项或 World scheduler；开发顺序与手工验收见 [`stage-foundation.md`](stage-foundation.md)。
 
 ## 完整校验
 

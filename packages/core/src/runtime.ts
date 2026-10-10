@@ -67,6 +67,8 @@ interface ActorRecord {
   moveQueue: QueuedMove[];
   activeSpeech: ActiveSpeech | null;
   lastPortalId: string | null;
+  /** Claim the next tile until its centre is reached (also blocks manual input). */
+  stepTarget: WorldPosition | null;
 }
 
 interface QueuedMove {
@@ -76,7 +78,12 @@ interface QueuedMove {
 
 interface ActiveMove extends QueuedMove {
   path: WorldPosition[];
+  checkpoints: TilePosition[];
   reservationKey: string;
+  elapsedMs: number;
+  blockedMs: number;
+  repathMs: number;
+  timeoutMs: number;
   finalFacing?: Direction;
 }
 
@@ -142,6 +149,7 @@ export class StageRuntime {
       moveQueue: [],
       activeSpeech: null,
       lastPortalId: null,
+      stepTarget: null,
     });
     this.emit("actor.spawned", { actor_id: options.actorId, data: { spawn_id: options.spawnId } });
   }
@@ -229,7 +237,10 @@ export class StageRuntime {
   tick(deltaMs: number): void {
     const boundedDelta = Math.max(0, Math.min(deltaMs, 100));
     this.#timeMs += boundedDelta;
-    for (const actor of this.#actors.values()) {
+    // Stable priority for contested tiles; never depend on cast insertion order.
+    for (const actor of [...this.#actors.values()].sort((a, b) =>
+      a.state.actor_id.localeCompare(b.state.actor_id),
+    )) {
       if (actor.activeMove) this.tickMove(actor, boundedDelta);
       else if (actor.activeFollow) this.tickFollowing(actor, boundedDelta);
       else this.tickManualMovement(actor, boundedDelta);
@@ -314,7 +325,7 @@ export class StageRuntime {
         description: anchor.description,
         tags: [...anchor.tags],
         available_slots: anchor.slots
-          .filter((slot) => !this.#reservations.has(tileKey(slot.position)))
+          .filter((slot) => !this.isOccupiedOrReserved(slot.position, ""))
           .map((slot) => slot.id),
       })),
       activity_paths: this.scene.activity_paths.map((path) => ({
@@ -395,6 +406,7 @@ export class StageRuntime {
     const follow = actor.activeFollow;
     if (!follow) return false;
     actor.activeFollow = null;
+    actor.stepTarget = null;
     actor.state.following_actor_id = null;
     actor.state.follow_distance_tiles = null;
     if (!actor.activeMove && actor.manualIntent.x === 0 && actor.manualIntent.y === 0) {
@@ -441,6 +453,15 @@ export class StageRuntime {
   }
 
   private startMove(actor: ActorRecord, command: LocomotionCommand, task: RuntimeTask): void {
+    if (command.type === "actor.move_to" && command.target.type === "anchor" && command.target.slot_id) {
+      const { id, slot_id: slotId } = command.target;
+      const anchor = this.scene.anchors.find((candidate) => candidate.id === id);
+      if (!anchor?.slots.some((slot) => slot.id === slotId)) {
+        this.failTask(task, command, "INVALID_SLOT", `Unknown anchor slot: ${id}/${slotId}`);
+        this.startNextQueuedMove(actor);
+        return;
+      }
+    }
     const from = this.navigation.worldToTile(actor.state.position);
     const resolved =
       command.type === "actor.move_to"
@@ -456,11 +477,21 @@ export class StageRuntime {
     this.#reservations.set(reservationKey, actor.state.actor_id);
     task.onCancel((reason) => this.cancelActiveMove(actor, reason));
     task.start();
+    const checkpoints = [...(resolved.checkpoints ?? [target.position])];
+    const fromCentre = this.navigation.tileToWorld(from);
+    if (Math.hypot(fromCentre.x - actor.state.position.x, fromCentre.y - actor.state.position.y) < 0.01) {
+      while (checkpoints[0] && sameTile(checkpoints[0], from)) checkpoints.shift();
+    }
     actor.activeMove = {
       command,
       task,
-      path: path.map((position) => this.navigation.tileToWorld(position)),
+      path: this.worldPath(actor, path),
+      checkpoints,
       reservationKey,
+      elapsedMs: 0,
+      blockedMs: 0,
+      repathMs: 0,
+      timeoutMs: Math.max(10_000, path.length * this.navigation.tileSize / actor.speed * 3000 + 5000),
       ...(target.facing ? { finalFacing: target.facing } : {}),
     };
     actor.state.active_locomotion_task_id = command.id;
@@ -476,14 +507,14 @@ export class StageRuntime {
       command_id: command.id,
       data: { target: target.position },
     });
-    if (path.length === 0) this.finishMove(actor);
+    if (actor.activeMove.path.length === 0) this.finishMove(actor);
   }
 
   private resolvePointMove(
     command: MoveToCommand,
     from: TilePosition,
     actorId: string,
-  ): { path: TilePosition[]; target: { position: TilePosition; facing?: Direction } } | null {
+  ): { path: TilePosition[]; target: { position: TilePosition; facing?: Direction }; checkpoints?: TilePosition[] } | null {
     const target = this.resolveMoveTarget(command, from, actorId);
     if (!target) return null;
     const path = this.navigation.findPath(from, target.position, {
@@ -497,7 +528,7 @@ export class StageRuntime {
     command: FollowActivityPathCommand,
     from: TilePosition,
     actorId: string,
-  ): { path: TilePosition[]; target: { position: TilePosition; facing?: Direction } } | null {
+  ): { path: TilePosition[]; target: { position: TilePosition; facing?: Direction }; checkpoints: TilePosition[] } | null {
     const activity = this.scene.activity_paths.find(
       (candidate) => candidate.id === command.activity_path_id,
     );
@@ -523,6 +554,7 @@ export class StageRuntime {
       : undefined;
     return {
       path,
+      checkpoints,
       target: {
         position: current,
         ...(anchor?.facing ? { facing: anchor.facing } : {}),
@@ -611,7 +643,8 @@ export class StageRuntime {
     actorId: string,
   ): { position: TilePosition; facing?: Direction } | null {
     const slots = slotId ? anchor.slots.filter((slot) => slot.id === slotId) : anchor.slots;
-    const candidates = [...slots, { id: "anchor", position: anchor.position, facing: anchor.facing }]
+    // An explicit slot is an exact blocking instruction, never a suggestion.
+    const candidates = (slotId ? slots : [...slots, { id: "anchor", position: anchor.position, facing: anchor.facing }])
       .map((candidate) => ({
         candidate,
         path: this.navigation.findPath(from, candidate.position, {
@@ -634,28 +667,97 @@ export class StageRuntime {
   private tickMove(actor: ActorRecord, deltaMs: number): void {
     const move = actor.activeMove;
     if (!move) return;
+    move.elapsedMs += deltaMs;
+    if (move.elapsedMs >= move.timeoutMs) {
+      this.failMove(actor, "MOVE_TIMEOUT", "Movement exceeded its execution deadline");
+      return;
+    }
     const target = move.path[0];
     if (!target) {
       this.finishMove(actor);
       return;
     }
+    const progress = this.advanceStep(actor, target, deltaMs);
+    if (progress === "blocked") {
+      move.blockedMs += deltaMs;
+      move.repathMs += deltaMs;
+      if (move.blockedMs >= 5000) {
+        this.failMove(actor, "MOVE_BLOCKED", "Path remained blocked for 5 seconds");
+      } else if (move.repathMs >= 350) {
+        move.repathMs = 0;
+        this.replanMove(actor, move);
+      }
+      return;
+    }
+    move.blockedMs = 0;
+    move.repathMs = 0;
+    if (progress === "arrived") {
+      move.path.shift();
+      const tile = this.navigation.worldToTile(target);
+      while (move.checkpoints[0] && sameTile(move.checkpoints[0], tile)) move.checkpoints.shift();
+      if (move.path.length === 0) this.finishMove(actor);
+    }
+  }
+
+  private replanMove(actor: ActorRecord, move: ActiveMove): void {
+    let from = this.navigation.worldToTile(actor.state.position);
+    const path: TilePosition[] = [];
+    // Preserve every activity checkpoint, not just the final destination.
+    for (const checkpoint of move.checkpoints) {
+      const segment = this.navigation.findPath(from, checkpoint, {
+        isOccupied: (tile) => this.isOccupied(tile, actor.state.actor_id),
+      });
+      if (!sameTile(from, checkpoint) && segment.length === 0) return;
+      path.push(...segment);
+      from = checkpoint;
+    }
+    actor.stepTarget = null;
+    move.path = this.worldPath(actor, path);
+  }
+
+  private worldPath(actor: ActorRecord, tiles: TilePosition[]): WorldPosition[] {
+    const centre = this.navigation.tileToWorld(this.navigation.worldToTile(actor.state.position));
+    const path = tiles.map((tile) => this.navigation.tileToWorld(tile));
+    // Replanning from between centres must not cut diagonally through a corner.
+    if (Math.hypot(centre.x - actor.state.position.x, centre.y - actor.state.position.y) > 0.01) path.unshift(centre);
+    return path;
+  }
+
+  private advanceStep(actor: ActorRecord, target: WorldPosition, deltaMs: number): "blocked" | "moving" | "arrived" {
     const dx = target.x - actor.state.position.x;
     const dy = target.y - actor.state.position.y;
     const distance = Math.hypot(dx, dy);
-    const travel = (actor.speed * deltaMs) / 1000;
-    this.setFacingFromVector(actor, dx, dy);
-    if (distance <= travel || distance < 0.01) {
-      actor.state.position = { ...target };
-      move.path.shift();
-      if (move.path.length === 0) this.finishMove(actor);
-      return;
-    }
-    actor.state.position = {
-      x: actor.state.position.x + (dx / distance) * travel,
-      y: actor.state.position.y + (dy / distance) * travel,
+    const travel = Math.min(distance, actor.speed * deltaMs / 1000);
+    const next = distance < 0.01 ? target : {
+      x: actor.state.position.x + dx / distance * travel,
+      y: actor.state.position.y + dy / distance * travel,
     };
+    if (!this.canOccupyWorld(actor.state.actor_id, target) || !this.canTraverse(actor, next)) {
+      actor.state.locomotion = "stand";
+      return "blocked";
+    }
+    actor.stepTarget = { ...target };
+    this.setFacingFromVector(actor, dx, dy);
+    actor.state.position = { ...next };
     actor.state.locomotion = "walk";
     actor.idleElapsedMs = 0;
+    if (travel >= distance || distance < 0.01) {
+      actor.stepTarget = null;
+      return "arrived";
+    }
+    return "moving";
+  }
+
+  private failMove(actor: ActorRecord, code: string, message: string): void {
+    const move = actor.activeMove;
+    if (!move) return;
+    this.#reservations.delete(move.reservationKey);
+    actor.activeMove = null;
+    actor.stepTarget = null;
+    actor.state.active_locomotion_task_id = null;
+    actor.state.locomotion = "stand";
+    this.failTask(move.task, move.command, code, message);
+    this.startNextQueuedMove(actor);
   }
 
   private tickFollowing(actor: ActorRecord, deltaMs: number): void {
@@ -674,6 +776,7 @@ export class StageRuntime {
 
     if (manhattan(from, targetTile) <= follow.distanceTiles) {
       follow.path = [];
+      actor.stepTarget = null;
       follow.targetTileKey = nextTargetKey;
       const facing = facingToward(from, targetTile);
       if (facing) this.setFacing(actor, facing);
@@ -685,9 +788,9 @@ export class StageRuntime {
     }
 
     if (
-      follow.path.length === 0 ||
+      !actor.stepTarget && (follow.path.length === 0 ||
       follow.repathElapsedMs <= 0 ||
-      follow.targetTileKey !== nextTargetKey
+      follow.targetTileKey !== nextTargetKey)
     ) {
       follow.path = this.planFollowPath(
         actor.state.actor_id,
@@ -704,29 +807,16 @@ export class StageRuntime {
       actor.state.locomotion = "stand";
       return;
     }
-    if (!this.canOccupyWorld(actor.state.actor_id, target)) {
+    const progress = this.advanceStep(actor, target, deltaMs);
+    if (progress === "blocked") {
+      actor.stepTarget = null;
       follow.path = [];
       follow.repathElapsedMs = 0;
       actor.state.locomotion = "stand";
       return;
     }
 
-    const dx = target.x - actor.state.position.x;
-    const dy = target.y - actor.state.position.y;
-    const distance = Math.hypot(dx, dy);
-    const travel = (actor.speed * deltaMs) / 1000;
-    this.setFacingFromVector(actor, dx, dy);
-    if (distance <= travel || distance < 0.01) {
-      actor.state.position = { ...target };
-      follow.path.shift();
-    } else {
-      actor.state.position = {
-        x: actor.state.position.x + (dx / distance) * travel,
-        y: actor.state.position.y + (dy / distance) * travel,
-      };
-    }
-    actor.state.locomotion = "walk";
-    actor.idleElapsedMs = 0;
+    if (progress === "arrived") follow.path.shift();
   }
 
   private planFollowPath(
@@ -757,7 +847,7 @@ export class StageRuntime {
           manhattan(right.candidate, targetTile) - manhattan(left.candidate, targetTile) ||
           left.path.length - right.path.length,
         );
-    return (candidates[0]?.path ?? []).map((position) => this.navigation.tileToWorld(position));
+    return candidates[0] ? this.worldPath(actor, candidates[0].path) : [];
   }
 
   private finishMove(actor: ActorRecord): void {
@@ -766,6 +856,7 @@ export class StageRuntime {
     if (move.finalFacing) this.setFacing(actor, move.finalFacing);
     this.#reservations.delete(move.reservationKey);
     actor.activeMove = null;
+    actor.stepTarget = null;
     actor.state.active_locomotion_task_id = null;
     actor.state.locomotion = "stand";
     actor.idleElapsedMs = 0;
@@ -783,6 +874,7 @@ export class StageRuntime {
     if (!move) return;
     this.#reservations.delete(move.reservationKey);
     actor.activeMove = null;
+    actor.stepTarget = null;
     actor.state.active_locomotion_task_id = null;
     actor.state.locomotion = "stand";
     move.task.finishCancellation(reason);
@@ -816,16 +908,18 @@ export class StageRuntime {
     const dx = intent.x * distance;
     const dy = intent.y * distance;
     const combined = { x: actor.state.position.x + dx, y: actor.state.position.y + dy };
-    if (this.canOccupyWorld(actor.state.actor_id, combined)) {
+    const before = { ...actor.state.position };
+    if (this.canTraverse(actor, combined)) {
       actor.state.position = combined;
     } else {
       const horizontal = { x: actor.state.position.x + dx, y: actor.state.position.y };
       const vertical = { x: actor.state.position.x, y: actor.state.position.y + dy };
-      if (this.canOccupyWorld(actor.state.actor_id, horizontal)) actor.state.position = horizontal;
-      if (this.canOccupyWorld(actor.state.actor_id, vertical)) actor.state.position = vertical;
+      if (this.canTraverse(actor, horizontal)) actor.state.position = horizontal;
+      const slide = { x: actor.state.position.x, y: vertical.y };
+      if (this.canTraverse(actor, slide)) actor.state.position = slide;
     }
     this.setFacingFromVector(actor, intent.x, intent.y);
-    actor.state.locomotion = "walk";
+    actor.state.locomotion = before.x !== actor.state.position.x || before.y !== actor.state.position.y ? "walk" : "stand";
     actor.idleElapsedMs = 0;
   }
 
@@ -922,11 +1016,40 @@ export class StageRuntime {
     return this.navigation.isWalkable(tile) && !this.isOccupied(tile, actorId);
   }
 
+  private canTraverse(actor: ActorRecord, to: WorldPosition): boolean {
+    const from = actor.state.position;
+    const distance = Math.hypot(to.x - from.x, to.y - from.y);
+    const steps = Math.max(1, Math.ceil(distance / (this.navigation.tileSize / 4)));
+    for (let step = 1; step <= steps; step++) {
+      const point = { x: from.x + (to.x - from.x) * step / steps, y: from.y + (to.y - from.y) * step / steps };
+      if (!this.canOccupyWorld(actor.state.actor_id, point)) return false;
+    }
+    // Feet have a small physical footprint even across a tile boundary. Sweep
+    // the whole segment so a fast actor cannot tunnel through another actor.
+    const minimum = this.navigation.tileSize * 0.6;
+    for (const other of this.#actors.values()) {
+      if (other === actor) continue;
+      const p = other.state.position;
+      const t = distance === 0 ? 0 : Math.max(0, Math.min(1,
+        ((p.x - from.x) * (to.x - from.x) + (p.y - from.y) * (to.y - from.y)) / (distance * distance),
+      ));
+      const nearest = Math.hypot(from.x + (to.x - from.x) * t - p.x, from.y + (to.y - from.y) * t - p.y);
+      if (nearest < minimum - 0.001) {
+        // Allow an already-too-close imported placement to separate safely.
+        const before = Math.hypot(from.x - p.x, from.y - p.y);
+        const after = Math.hypot(to.x - p.x, to.y - p.y);
+        if (!(before < minimum && after > before && t === 0)) return false;
+      }
+    }
+    return true;
+  }
+
   private isOccupied(position: TilePosition, ignoreActorId: string): boolean {
     return [...this.#actors.values()].some(
       (record) =>
         record.state.actor_id !== ignoreActorId &&
-        sameTile(this.navigation.worldToTile(record.state.position), position),
+        (sameTile(this.navigation.worldToTile(record.state.position), position) ||
+          (record.stepTarget !== null && sameTile(this.navigation.worldToTile(record.stepTarget), position))),
     );
   }
 

@@ -30,6 +30,8 @@ export class PerformanceAudioPlayer {
   readonly #buffers = new Map<string, Promise<AudioBuffer>>();
   readonly #sources = new Set<AudioBufferSourceNode>();
   #context: AudioContext | null = null;
+  #paused = false;
+  #pauseChange: Promise<void> = Promise.resolve();
 
   constructor(urlForPath: (path: string) => string) {
     this.#urlForPath = urlForPath;
@@ -37,15 +39,30 @@ export class PerformanceAudioPlayer {
 
   async unlock(): Promise<void> {
     const context = this.context();
-    if (context.state === "suspended") await context.resume();
+    if (!this.#paused && context.state === "suspended") await context.resume();
   }
 
-  async preload(paths: Iterable<string>): Promise<void> {
-    await Promise.all([...new Set(paths)].map((path) => this.load(path)));
+  setPaused(paused: boolean): Promise<void> {
+    this.#paused = paused;
+    this.#pauseChange = this.#pauseChange.catch(() => {}).then(async () => {
+      const context = this.#context;
+      if (!context || context.state === "closed") return;
+      if (this.#paused) await context.suspend();
+      else if (context.state === "suspended") await context.resume();
+    });
+    return this.#pauseChange;
   }
 
-  async play(path: string): Promise<PerformanceAudioPlayback> {
-    const [buffer] = await Promise.all([this.load(path), this.unlock()]);
+  async preload(paths: Iterable<string>, signal?: AbortSignal): Promise<void> {
+    signal?.throwIfAborted();
+    await Promise.all([...new Set(paths)].map((path) => this.load(path, signal)));
+    signal?.throwIfAborted();
+  }
+
+  async play(path: string, signal?: AbortSignal): Promise<PerformanceAudioPlayback> {
+    signal?.throwIfAborted();
+    const [buffer] = await Promise.all([this.load(path, signal), this.unlock()]);
+    signal?.throwIfAborted();
     const context = this.context();
     const source = context.createBufferSource();
     source.buffer = buffer;
@@ -90,10 +107,10 @@ export class PerformanceAudioPlayer {
     return this.#context;
   }
 
-  private load(path: string): Promise<AudioBuffer> {
+  private load(path: string, signal?: AbortSignal): Promise<AudioBuffer> {
     const cached = this.#buffers.get(path);
     if (cached) return cached;
-    const loading = this.fetchAndDecode(path).catch((error: unknown) => {
+    const loading = this.fetchAndDecode(path, signal).catch((error: unknown) => {
       this.#buffers.delete(path);
       throw error;
     });
@@ -101,9 +118,9 @@ export class PerformanceAudioPlayer {
     return loading;
   }
 
-  private async fetchAndDecode(path: string): Promise<AudioBuffer> {
+  private async fetchAndDecode(path: string, signal?: AbortSignal): Promise<AudioBuffer> {
     const url = this.#urlForPath(path);
-    const response = await fetch(url);
+    const response = await fetch(url, signal ? { signal } : {});
     if (!response.ok) throw new Error(`无法读取剧本音频 ${path} (${response.status})`);
     try {
       return await this.context().decodeAudioData(await response.arrayBuffer());

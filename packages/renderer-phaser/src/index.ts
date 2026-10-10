@@ -45,6 +45,9 @@ export interface StageCameraState {
 export interface StageGameController {
   destroy(removeCanvas?: boolean): void;
   setCameraCue(cue: CameraCue): void;
+  playCameraCue(cue: CameraCue, signal: AbortSignal): Promise<void>;
+  stopCameraMotion(): void;
+  setPlaybackPaused(paused: boolean): void;
   cameraState(): StageCameraState | null;
   setMinimapVisible(visible: boolean): void;
   minimapVisible(): boolean;
@@ -94,6 +97,8 @@ class RuntimeScene extends Phaser.Scene {
   #minimapViewport: Phaser.GameObjects.Graphics | null = null;
   #minimapVisible = true;
   #playerInputEnabled = true;
+  #playbackPaused = false;
+  #created = false;
   readonly #portalLabels = new Map<string, Phaser.GameObjects.Text>();
   #portalLeaders: Phaser.GameObjects.Graphics | null = null;
   #environment: StageEnvironment;
@@ -152,6 +157,8 @@ class RuntimeScene extends Phaser.Scene {
     this.createEnvironment();
     this.scale.on("resize", this.handleResize, this);
     this.applyCameraCue();
+    this.#created = true;
+    if (this.#playbackPaused) this.scene.pause();
   }
 
   override update(_time: number, delta: number): void {
@@ -231,6 +238,56 @@ class RuntimeScene extends Phaser.Scene {
   setCameraCue(cue: CameraCue): void {
     this.#cameraCue = cue;
     if (this.sys.isActive()) this.applyCameraCue();
+  }
+
+  playCameraCue(cue: CameraCue, signal: AbortSignal): Promise<void> {
+    signal.throwIfAborted();
+    if ((cue.type === "camera.follow_actor" || cue.type === "camera.focus_actor") &&
+      !this.#options.actors.some((actor) => actor.actorId === cue.actor_id)) {
+      return Promise.reject(new Error(`Unknown camera actor: ${cue.actor_id}`));
+    }
+    if (cue.type === "camera.focus_anchor" && !this.#options.scene.anchors.some((anchor) => anchor.id === cue.anchor_id)) {
+      return Promise.reject(new Error(`Unknown camera anchor: ${cue.anchor_id}`));
+    }
+    if (cue.type === "camera.focus_zone" && !this.#options.scene.zones.some((zone) => zone.id === cue.zone_id)) {
+      return Promise.reject(new Error(`Unknown camera zone: ${cue.zone_id}`));
+    }
+    this.setCameraCue(cue);
+    return new Promise<void>((resolve, reject) => {
+      const cleanup = () => {
+        this.events.off(Phaser.Scenes.Events.POST_UPDATE, check);
+        this.events.off(Phaser.Scenes.Events.CREATE, check);
+        this.events.off(Phaser.Scenes.Events.SHUTDOWN, shutdown);
+        this.events.off(Phaser.Scenes.Events.DESTROY, shutdown);
+        signal.removeEventListener("abort", abort);
+      };
+      const check = () => {
+        const camera = this.cameras?.main;
+        if (!this.#created || !camera || camera.panEffect.isRunning || camera.zoomEffect.isRunning) return;
+        cleanup();
+        resolve();
+      };
+      const abort = () => { cleanup(); this.stopCameraMotion(); reject(signal.reason); };
+      const shutdown = () => { cleanup(); reject(new Error("Camera scene was destroyed")); };
+      this.events.on(Phaser.Scenes.Events.POST_UPDATE, check);
+      this.events.on(Phaser.Scenes.Events.CREATE, check);
+      this.events.once(Phaser.Scenes.Events.SHUTDOWN, shutdown);
+      this.events.once(Phaser.Scenes.Events.DESTROY, shutdown);
+      signal.addEventListener("abort", abort, { once: true });
+      check();
+    });
+  }
+
+  stopCameraMotion(): void {
+    this.cameras?.main?.panEffect.reset();
+    this.cameras?.main?.zoomEffect.reset();
+  }
+
+  setPlaybackPaused(paused: boolean): void {
+    this.#playbackPaused = paused;
+    if (!this.#created) return;
+    if (paused) this.scene.pause();
+    else this.scene.resume();
   }
 
   cameraState(): StageCameraState | null {
@@ -772,6 +829,9 @@ export function createStageGame(options: StageRendererOptions): StageGameControl
   return {
     destroy: (removeCanvas = true) => game.destroy(removeCanvas),
     setCameraCue: (cue) => runtimeScene.setCameraCue(cue),
+    playCameraCue: (cue, signal) => runtimeScene.playCameraCue(cue, signal),
+    stopCameraMotion: () => runtimeScene.stopCameraMotion(),
+    setPlaybackPaused: (paused) => runtimeScene.setPlaybackPaused(paused),
     cameraState: () => runtimeScene.cameraState(),
     setMinimapVisible: (visible) => runtimeScene.setMinimapVisible(visible),
     minimapVisible: () => runtimeScene.minimapVisible(),

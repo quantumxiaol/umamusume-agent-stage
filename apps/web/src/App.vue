@@ -43,9 +43,13 @@ import {
   ensureSceneSpawnCapacity,
   placeScenePresences,
   StageRuntime,
+  ShowRunner,
+  validatePerformanceScene,
   WorldPresence,
   type CommandResult,
   type StageCastOutfit,
+  type ShowContext,
+  type ShowState,
 } from "@uma-stage/core";
 
 import { PerformanceAudioPlayer, performanceAudioPaths } from "./performance-audio";
@@ -107,6 +111,7 @@ interface FollowBinding {
 }
 
 interface StageInitializationOptions {
+  signal?: AbortSignal;
   definitionPath?: string;
   spawnOverrides?: Record<string, string>;
   followBindings?: FollowBinding[];
@@ -143,6 +148,8 @@ const agentSession = ref<AgentSession | null>(null);
 const agentInput = ref("");
 const conversation = ref<ConversationLine[]>([]);
 const performanceRunning = ref(false);
+const showState = ref<ShowState>({ status: "idle", sceneId: null, beatId: null, error: null });
+const performancePaused = computed(() => showState.value.status === "paused");
 const stageEnvironment = ref<StageEnvironment>(stageEnvironmentSchema.parse({}));
 const minimapVisible = ref(true);
 const mapOverviewActive = ref(false);
@@ -191,16 +198,22 @@ let portalTransitionTimer: number | null = null;
 let runPortalTransition: (() => void) | null = null;
 let cameraCueBeforeOverview: CameraCue | null = null;
 const performanceAudio = new PerformanceAudioPlayer(contentUrl);
+const showRunner = new ShowRunner((state) => { showState.value = state; });
+let unmounted = false;
 const worldPresence = new WorldPresence();
 const PORTAL_TRANSITION_FALLBACK_MS = 750;
 const PORTAL_TRANSITION_AFTER_COMMAND_MS = 50;
 
 onMounted(() => {
   window.addEventListener("keydown", handleStageShortcut);
+  document.addEventListener("visibilitychange", handleShowVisibility);
   void initializeApplication();
 });
 onBeforeUnmount(() => {
   window.removeEventListener("keydown", handleStageShortcut);
+  document.removeEventListener("visibilitychange", handleShowVisibility);
+  unmounted = true;
+  showRunner.cancel("页面已关闭");
   void performanceAudio.dispose();
   dispose();
 });
@@ -226,6 +239,7 @@ async function initialize(options: StageInitializationOptions = {}): Promise<voi
       loadStageRegistry(contentUrl("stages/registry.json")),
       loadCharacterMapping(contentUrl("characters/agent-mapping.json")),
     ]);
+    if (currentGeneration !== generation || options.signal?.aborted) return;
     characterMappings.value = mapping.characters;
     normalizeSelectedCast(mapping.characters);
     const cast = resolveCast(mapping.characters);
@@ -237,6 +251,7 @@ async function initialize(options: StageInitializationOptions = {}): Promise<voi
     const requestedStagePath =
       options.definitionPath || activeStagePath.value || stageRegistry.default_definition_path;
     const sourceStage = await loadStage(contentUrl(requestedStagePath));
+    if (currentGeneration !== generation || options.signal?.aborted) return;
     const castStage = applyStageCast(
       sourceStage,
       cast.map((member) => ({ mapping: member.mapping, outfit: member.outfit })),
@@ -248,6 +263,7 @@ async function initialize(options: StageInitializationOptions = {}): Promise<voi
       loadScene(contentUrl(castStage.scene_path)),
       import("@uma-stage/renderer-phaser"),
     ]);
+    if (currentGeneration !== generation || options.signal?.aborted) return;
     const castActorIds = castStage.actors.map((actorDefinition) => actorDefinition.instance_id);
     if (options.resetWorld) worldPresence.resetActors(castActorIds, sourceScene.scene_id);
     else worldPresence.reconcileActors(castActorIds, sourceScene.scene_id);
@@ -285,7 +301,7 @@ async function initialize(options: StageInitializationOptions = {}): Promise<voi
           spawnOverrides[actorDefinition.instance_id] ?? actorDefinition.spawn_id,
       ),
     );
-    if (currentGeneration !== generation) return;
+    if (currentGeneration !== generation || options.signal?.aborted) return;
 
     const nextRuntime = new StageRuntime(scene);
     const playerActorId = stage.actors.find(
@@ -374,7 +390,8 @@ async function initialize(options: StageInitializationOptions = {}): Promise<voi
       sceneNames: Object.fromEntries(stageRegistry.stages.map((entry) => [entry.scene_id, entry.display_name])),
     });
     game.setMinimapVisible(minimapVisible.value);
-    game.setPlayerInputEnabled(!worldOverviewOpen.value);
+    game.setPlayerInputEnabled(!worldOverviewOpen.value && !performanceRunning.value);
+    game.setPlaybackPaused(performancePaused.value);
     mapOverviewActive.value = false;
     cameraCueBeforeOverview = null;
     snapshotTimer = window.setInterval(() => {
@@ -383,7 +400,7 @@ async function initialize(options: StageInitializationOptions = {}): Promise<voi
     worldPresence.syncScene(scene, nextRuntime.snapshot());
     store.ready();
   } catch (error) {
-    if (currentGeneration === generation) store.fail(error);
+    if (currentGeneration === generation && !options.signal?.aborted) store.fail(error);
   }
 }
 
@@ -513,28 +530,38 @@ async function changeCast(castIndex?: number): Promise<void> {
 async function runPerformanceDemo(): Promise<void> {
   if (performanceRunning.value) return;
   performanceRunning.value = true;
-  agentSession.value = null;
-  conversation.value = [];
-  try {
-    // Resume audio while this call still carries the run-button user gesture.
-    await performanceAudio.unlock();
-    const script = await loadPerformance(
-      contentUrl("performances/admire-vega-starlight.anime.json"),
-    );
-    await performanceAudio.preload(performanceAudioPaths(script));
-    const characterCast = script.cast.filter((member) => member.character_id !== "trainer");
-    if (characterCast.length === 0 || characterCast.length > 4) {
-      throw new Error(`当前 Stage 支持 1–4 位角色，剧本声明了 ${characterCast.length} 位`);
-    }
-    selectedCast.value = characterCast.map((member) => ({
-      characterId: member.character_id,
-      outfit: performanceOutfit(member.outfit_id),
-    }));
-    normalizeSelectedCast(characterMappings.value);
-    activeActorId.value = resolveCast()[0]?.mapping.stage_actor_id ?? "";
-    pushConversation("system", "演出", `开始《${script.title}》`);
-
-    for (const performanceScene of script.scenes) {
+  game?.setPlayerInputEnabled(false);
+  let ownsStage = false;
+  let title = "JSON 短剧";
+  const result = await showRunner.run(async (context) => {
+    // Start unlocking while the run-button user gesture is still available.
+    await context.guard(performanceAudio.unlock());
+    return loadPerformance(contentUrl("performances/admire-vega-starlight.anime.json"), context.signal);
+  }, {
+    prepare: async (script, context) => {
+      title = script.title;
+      const characterCast = script.cast.filter((member) => member.character_id !== "trainer");
+      if (characterCast.length === 0 || characterCast.length > 4) {
+        throw new Error(`当前 Stage 支持 1–4 位角色，剧本声明了 ${characterCast.length} 位`);
+      }
+      performanceRoleBindings(script, "trainer");
+      const cast = characterCast.map((member) => ({ characterId: member.character_id, outfit: performanceOutfit(member.outfit_id) }));
+      for (const performanceScene of script.scenes) {
+        const stage = stageChoices.value.find((choice) => choice.stage_id === performanceScene.stage_id);
+        if (!stage) throw new Error(`剧本引用了未知舞台：${performanceScene.stage_id}`);
+        const definition = stageDefinitionSchema.parse(await context.guard(fetchJson(contentUrl(stage.definition_path), context.signal)));
+        const scene = scenePackSchema.parse(await context.guard(fetchJson(contentUrl(definition.scene_path), context.signal)));
+        validatePerformanceScene(performanceScene, scene);
+      }
+      await context.guard(performanceAudio.preload(performanceAudioPaths(script), context.signal));
+      selectedCast.value = cast;
+      ownsStage = true;
+      agentSession.value = null;
+      conversation.value = [];
+      activeActorId.value = resolveCast()[0]?.mapping.stage_actor_id ?? "";
+      pushConversation("system", "演出", `开始《${script.title}》`);
+    },
+    enterScene: async (script, performanceScene, context) => {
       const stage = stageChoices.value.find(
         (choice) => choice.stage_id === performanceScene.stage_id,
       );
@@ -553,29 +580,59 @@ async function runPerformanceDemo(): Promise<void> {
         definitionPath: stage.definition_path,
         spawnOverrides,
         resetWorld: true,
+        signal: context.signal,
       });
+      await context.checkpoint();
       if (store.phase !== "ready" || !runtime) {
         throw new Error(store.error || `无法装载剧本舞台：${stage.display_name}`);
       }
-      await applyPerformancePlacements(script, performanceScene);
-      await executePerformanceScene(script, performanceScene);
-    }
-    restoreLiveControl(script);
-    store.setMessage(`《${script.title}》演出完成`);
-    pushConversation("system", "演出", `《${script.title}》演出完成`);
-  } catch (error) {
-    performanceAudio.stopAll();
-    restoreLiveControl();
-    store.setMessage(`剧本演出失败：${errorMessage(error)}`);
-    pushConversation("system", "演出", `失败：${errorMessage(error)}`);
-  } finally {
-    performanceRunning.value = false;
-  }
+      const bindings = performanceRoleBindings(script, currentPlayerActorId.value);
+      for (const actorId of Object.values(bindings)) runtime.setControlOwner(actorId, "script");
+      await applyPerformancePlacements(script, performanceScene, context);
+    },
+    executeCue: executePerformanceCue,
+    setPaused: async (paused) => {
+      game?.setPlaybackPaused(paused);
+      await performanceAudio.setPaused(paused);
+    },
+    cleanup: async () => {
+      performanceAudio.stopAll();
+      if (ownsStage) {
+        // Invalidate any scene load that is still waiting for network/assets.
+        generation += 1;
+        game?.stopCameraMotion();
+        restoreLiveControl();
+      }
+      game?.setPlaybackPaused(false);
+      try { await performanceAudio.setPaused(false); }
+      finally {
+        if (ownsStage && !runtime && !unmounted) await initialize({ definitionPath: activeStagePath.value });
+        game?.setPlaybackPaused(false);
+        game?.setPlayerInputEnabled(!worldOverviewOpen.value);
+      }
+    },
+  });
+  performanceRunning.value = false;
+  if (unmounted) return;
+  const message = result.status === "completed" ? `《${title}》演出完成`
+    : result.status === "cancelled" ? "演出已结束，已恢复自由操作"
+    : `剧本演出失败：${result.error}`;
+  store.setMessage(message);
+  pushConversation("system", "演出", message);
+}
+
+function cancelPerformance(): void { showRunner.cancel(); }
+
+function togglePerformancePause(): void { void showRunner.setPaused(!performancePaused.value); }
+
+function handleShowVisibility(): void {
+  if (document.hidden && performanceRunning.value) void showRunner.setPaused(true);
 }
 
 async function applyPerformancePlacements(
   script: PerformanceScript,
   scene: PerformanceScript["scenes"][number],
+  context: ShowContext,
 ): Promise<void> {
   const activeRuntime = runtime;
   if (!activeRuntime) throw new Error("舞台 Runtime 尚未就绪");
@@ -584,59 +641,37 @@ async function applyPerformancePlacements(
     if (!placement.facing) return [];
     const actorId = actorIdsByRole[placement.role_id];
     if (!actorId) throw new Error(`剧本站位没有角色绑定：${placement.role_id}`);
-    return [activeRuntime.execute({
+    return [context.task(activeRuntime.execute({
       id: nextCommandId("placement-face"),
       type: "actor.face",
       actor_id: actorId,
       facing: placement.facing,
       source: "system",
       policy: "replace",
-    }).completion];
+    }))];
   });
-  const results = await Promise.all(tasks);
-  const failed = results.find((result) => result.status !== "completed");
-  if (failed) {
-    throw new Error(`剧本站位朝向失败：${failed.error?.message ?? failed.status}`);
-  }
-}
-
-async function executePerformanceScene(
-  script: PerformanceScript,
-  scene: PerformanceScript["scenes"][number],
-): Promise<void> {
-  const activeRuntime = runtime;
-  if (!activeRuntime) throw new Error("舞台 Runtime 尚未就绪");
-  const actorIdsByRole = performanceRoleBindings(script, currentPlayerActorId.value);
-  for (const actorId of Object.values(actorIdsByRole)) {
-    activeRuntime.setControlOwner(actorId, "script");
-  }
-  const backgroundTasks: Array<Promise<void>> = [];
-
-  for (const beat of scene.beats) {
-    if (runtime !== activeRuntime) throw new Error("剧本执行期间舞台已切换");
-    const tasks = beat.cues.map((cue) =>
-      executePerformanceCue(script, cue, actorIdsByRole, activeRuntime),
-    );
-    if (beat.wait_for === "all") await Promise.all(tasks);
-    else backgroundTasks.push(...tasks);
-    if (beat.hold_ms > 0) await delay(beat.hold_ms);
-  }
-  await Promise.all(backgroundTasks);
+  await context.guard(Promise.all(tasks));
 }
 
 async function executePerformanceCue(
   script: PerformanceScript,
   cue: PerformanceCue,
-  actorIdsByRole: Readonly<Record<string, string>>,
-  activeRuntime: StageRuntime,
+  context: ShowContext,
 ): Promise<void> {
+  await context.checkpoint();
+  const activeRuntime = runtime;
+  if (!activeRuntime) throw new Error("舞台 Runtime 尚未就绪");
+  const actorIdsByRole = performanceRoleBindings(script, currentPlayerActorId.value);
   const compiled = compilePerformanceCue(cue, actorIdsByRole);
   if (compiled.kind === "camera") {
-    setStageCameraCue(compiled.cue);
+    if (!game) throw new Error("舞台镜头尚未就绪");
+    mapOverviewActive.value = compiled.cue.type === "camera.overview";
+    cameraCueBeforeOverview = null;
+    await context.guard(game.playCameraCue(compiled.cue, context.signal));
     return;
   }
   if (compiled.kind === "wait") {
-    await delay(compiled.durationMs);
+    await context.wait(compiled.durationMs);
     return;
   }
   if (compiled.kind === "narration") {
@@ -646,10 +681,10 @@ async function executePerformanceCue(
       compiled.subtitleZh ?? compiled.subtitleJa ?? compiled.text,
     );
     if (compiled.audioPath) {
-      const playback = await performanceAudio.play(compiled.audioPath);
-      await playback.completion;
+      const playback = await context.guard(performanceAudio.play(compiled.audioPath, context.signal));
+      await context.guard(playback.completion);
     } else if (compiled.durationMs) {
-      await delay(compiled.durationMs);
+      await context.wait(compiled.durationMs);
     }
     return;
   }
@@ -663,21 +698,16 @@ async function executePerformanceCue(
   }
   const playback =
     cue.type === "dialogue.say" && cue.audio_path
-      ? await performanceAudio.play(cue.audio_path)
+      ? await context.guard(performanceAudio.play(cue.audio_path, context.signal))
       : null;
   const command =
     playback && compiled.command.type === "dialogue.say"
       ? { ...compiled.command, duration_ms: playback.durationMs }
       : compiled.command;
-  const [result] = await Promise.all([
-    activeRuntime.execute(command).completion,
+  await context.guard(Promise.all([
+    context.task(activeRuntime.execute(command)),
     playback?.completion ?? Promise.resolve(),
-  ]);
-  if (result.status !== "completed") {
-    throw new Error(
-      `Cue ${cue.cue_id} ${result.status}: ${result.error?.message ?? "未知原因"}`,
-    );
-  }
+  ]));
 }
 
 function performanceRoleBindings(
@@ -723,10 +753,6 @@ function restoreLiveControl(script?: PerformanceScript): void {
       actorId === currentPlayerActorId.value ? "player" : "agent",
     );
   }
-}
-
-function delay(durationMs: number): Promise<void> {
-  return new Promise((resolve) => window.setTimeout(resolve, durationMs));
 }
 
 async function changeCastOutfit(): Promise<void> {
@@ -1396,8 +1422,8 @@ async function loadStage(url: string): Promise<StageDefinition> {
   return stageDefinitionSchema.parse(await fetchJson(url));
 }
 
-async function loadPerformance(url: string): Promise<PerformanceScript> {
-  const payload = await fetchJson(url);
+async function loadPerformance(url: string, signal?: AbortSignal): Promise<PerformanceScript> {
+  const payload = await fetchJson(url, signal);
   const animeScript = animeStageScriptSchema.safeParse(payload);
   return animeScript.success
     ? compileAnimeStageScript(animeScript.data)
@@ -1421,8 +1447,8 @@ function initials(name: string): string {
   return name.slice(0, 2);
 }
 
-async function fetchJson(url: string): Promise<unknown> {
-  const response = await fetch(url);
+async function fetchJson(url: string, signal?: AbortSignal): Promise<unknown> {
+  const response = await fetch(url, signal ? { signal } : {});
   if (!response.ok) throw new Error(`无法读取 ${url} (${response.status})`);
   return response.json() as Promise<unknown>;
 }
@@ -1549,6 +1575,11 @@ function formatEvent(event: (typeof store.events)[number]): string {
           <button class="primary-action" :disabled="store.phase !== 'ready' || performanceRunning" type="button" @click="runPerformanceDemo">
             <span>▶</span> {{ performanceRunning ? '正在演出兼容 JSON 短剧…' : '运行兼容 JSON 短剧' }}
           </button>
+          <div v-if="performanceRunning" class="camera-actions" aria-label="演出播放控制">
+            <button type="button" :aria-pressed="performancePaused" @click="togglePerformancePause">{{ performancePaused ? '继续演出' : '暂停演出' }}</button>
+            <button type="button" @click="cancelPerformance">结束演出</button>
+            <span role="status">{{ performancePaused ? '已暂停（返回页面后请点继续）' : showState.status === 'loading' ? '加载演出素材…' : `正在演出 · ${showState.beatId ?? '场景准备'}` }}</span>
+          </div>
           <div class="camera-actions" aria-label="镜头控制">
             <span>CAMERA</span>
             <button :disabled="store.phase !== 'ready' || !currentPlayerActorId || performanceRunning" type="button" @click="followCamera(currentPlayerActorId)">镜头跟随训练员</button>
