@@ -43,6 +43,8 @@ export interface StageCameraState {
 }
 
 export interface StageGameController {
+  readonly ready: Promise<void>;
+  captureFrame(): string | null;
   destroy(removeCanvas?: boolean): void;
   setCameraCue(cue: CameraCue): void;
   playCameraCue(cue: CameraCue, signal: AbortSignal): Promise<void>;
@@ -88,8 +90,14 @@ const defaultEnvironment: StageEnvironment = {
   transition_ms: 800,
 };
 
+interface RuntimeSceneCallbacks {
+  ready(): void;
+  loadError(message: string): void;
+}
+
 class RuntimeScene extends Phaser.Scene {
   readonly #options: StageRendererOptions;
+  readonly #callbacks: RuntimeSceneCallbacks;
   readonly #displays = new Map<string, ActorDisplay>();
   #movementKeys: Record<string, Phaser.Input.Keyboard.Key> | null = null;
   #cameraCue: CameraCue;
@@ -99,6 +107,7 @@ class RuntimeScene extends Phaser.Scene {
   #playerInputEnabled = true;
   #playbackPaused = false;
   #created = false;
+  #assetError: string | null = null;
   readonly #portalLabels = new Map<string, Phaser.GameObjects.Text>();
   #portalLeaders: Phaser.GameObjects.Graphics | null = null;
   #environment: StageEnvironment;
@@ -111,9 +120,10 @@ class RuntimeScene extends Phaser.Scene {
   #environmentTransitionDurationMs = 0;
   #weatherElapsedMs = 0;
 
-  constructor(options: StageRendererOptions) {
+  constructor(options: StageRendererOptions, callbacks: RuntimeSceneCallbacks) {
     super({ key: "uma-stage-runtime" });
     this.#options = options;
+    this.#callbacks = callbacks;
     this.#environment = { ...(options.environment ?? defaultEnvironment) };
     this.#environmentVisual = resolveEnvironmentVisual(this.#environment);
     this.#environmentTransitionFrom = this.#environmentVisual;
@@ -127,6 +137,7 @@ class RuntimeScene extends Phaser.Scene {
   }
 
   preload(): void {
+    this.load.on("loaderror", this.handleLoadError, this);
     const { tileset } = this.#options.scene;
     if (tileset) {
       this.load.spritesheet(mapTextureKey(this.#options.scene.scene_id), assetUrl(this.#options.sceneBaseUrl, tileset.image), {
@@ -144,6 +155,7 @@ class RuntimeScene extends Phaser.Scene {
   }
 
   create(): void {
+    if (this.#assetError) return;
     this.drawMap();
     for (const actor of this.#options.actors) this.createActor(actor);
     this.#movementKeys =
@@ -159,6 +171,12 @@ class RuntimeScene extends Phaser.Scene {
     this.applyCameraCue();
     this.#created = true;
     if (this.#playbackPaused) this.scene.pause();
+    this.#callbacks.ready();
+  }
+
+  private handleLoadError(file: Phaser.Loader.File): void {
+    this.#assetError ??= `角色或地图素材加载失败：${file.key}`;
+    this.#callbacks.loadError(this.#assetError);
   }
 
   override update(_time: number, delta: number): void {
@@ -168,7 +186,9 @@ class RuntimeScene extends Phaser.Scene {
       this.#options.runtime.setPlayerIntent(playerActorId, intent.x, intent.y);
     }
     this.#options.runtime.tick(delta);
-    for (const state of this.#options.runtime.snapshot().actors) this.syncActor(state);
+    const actors = this.#options.runtime.snapshot().actors;
+    for (const state of actors) this.syncActor(state);
+    this.removeMissingActors(new Set(actors.map((actor) => actor.actor_id)));
     this.updateMinimapViewport();
     this.updateEnvironment(delta);
     this.updatePortalLabels();
@@ -656,6 +676,16 @@ class RuntimeScene extends Phaser.Scene {
       .setVisible(state.speech !== null);
   }
 
+  private removeMissingActors(actorIds: Set<string>): void {
+    for (const [actorId, display] of this.#displays) {
+      if (actorIds.has(actorId)) continue;
+      display.sprite.destroy();
+      display.label.destroy();
+      display.bubble.destroy();
+      this.#displays.delete(actorId);
+    }
+  }
+
   private readMovementIntent(): { x: number; y: number } {
     const keys = this.#movementKeys;
     if (!this.#playerInputEnabled || !keys || isTextEntryElement(document.activeElement)) return { x: 0, y: 0 };
@@ -810,11 +840,30 @@ class RuntimeScene extends Phaser.Scene {
 }
 
 export function createStageGame(options: StageRendererOptions): StageGameController {
-  const runtimeScene = new RuntimeScene(options);
+  let settled = false;
+  let resolveReady!: () => void;
+  let rejectReady!: (error: Error) => void;
+  const ready = new Promise<void>((resolve, reject) => {
+    resolveReady = () => {
+      if (settled) return;
+      settled = true;
+      resolve();
+    };
+    rejectReady = (error: Error) => {
+      if (settled) return;
+      settled = true;
+      reject(error);
+    };
+  });
+  const runtimeScene = new RuntimeScene(options, {
+    ready: resolveReady,
+    loadError: (message) => rejectReady(new Error(message)),
+  });
   const game = new Phaser.Game({
     type: Phaser.AUTO,
     parent: options.parent,
     backgroundColor: options.scene.map.background_color,
+    render: { preserveDrawingBuffer: true },
     pixelArt: true,
     antialias: false,
     roundPixels: true,
@@ -827,7 +876,12 @@ export function createStageGame(options: StageRendererOptions): StageGameControl
     scene: [runtimeScene],
   });
   return {
-    destroy: (removeCanvas = true) => game.destroy(removeCanvas),
+    ready,
+    captureFrame: () => game.canvas?.toDataURL("image/png") ?? null,
+    destroy: (removeCanvas = true) => {
+      rejectReady(new Error("舞台在素材加载完成前已销毁"));
+      game.destroy(removeCanvas);
+    },
     setCameraCue: (cue) => runtimeScene.setCameraCue(cue),
     playCameraCue: (cue, signal) => runtimeScene.playCameraCue(cue, signal),
     stopCameraMotion: () => runtimeScene.stopCameraMotion(),

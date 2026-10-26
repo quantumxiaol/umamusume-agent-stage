@@ -154,6 +154,25 @@ export class StageRuntime {
     this.emit("actor.spawned", { actor_id: options.actorId, data: { spawn_id: options.spawnId } });
   }
 
+  despawnActor(actorId: string): void {
+    const actor = this.#actors.get(actorId);
+    if (!actor) return;
+    const reason = "Actor left the scene";
+    actor.manualIntent = { x: 0, y: 0 };
+    this.cancelActiveMove(actor, reason, false);
+    actor.moveQueue.splice(0).forEach((queued) => this.cancelQueuedMove(queued, reason));
+    this.stopFollowing(actor, reason);
+    actor.activeSpeech?.task.cancel(reason);
+    for (const other of this.#actors.values()) {
+      if (other.activeFollow?.targetActorId === actorId) this.stopFollowing(other, reason);
+    }
+    for (const [key, owner] of this.#reservations) {
+      if (owner === actorId) this.#reservations.delete(key);
+    }
+    this.#actors.delete(actorId);
+    this.emit("actor.despawned", { actor_id: actorId, data: { scene_id: this.scene.scene_id } });
+  }
+
   execute(input: StageCommand): StageTask {
     const command = stageCommandSchema.parse(input);
     const task = new RuntimeTask(command.id);
@@ -299,6 +318,19 @@ export class StageRuntime {
   subscribe(handler: (event: StageEvent) => void): () => void {
     this.#subscribers.add(handler);
     return () => this.#subscribers.delete(handler);
+  }
+
+  dispose(reason = "Stage runtime disposed"): void {
+    for (const actor of this.#actors.values()) {
+      actor.manualIntent = { x: 0, y: 0 };
+      this.cancelActiveMove(actor, reason, false);
+      actor.moveQueue.splice(0).forEach((queued) => this.cancelQueuedMove(queued, reason));
+      this.stopFollowing(actor, reason);
+      actor.activeSpeech?.task.cancel(reason);
+      actor.stepTarget = null;
+    }
+    this.#reservations.clear();
+    this.#subscribers.clear();
   }
 
   inspect(): StageInspection {

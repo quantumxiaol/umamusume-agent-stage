@@ -2,13 +2,6 @@
 import { computed, onBeforeUnmount, onMounted, ref, shallowRef } from "vue";
 
 import {
-  AgentApiClient,
-  AgentApiError,
-  reconcileStageTurnActions,
-  stageActionToCommand,
-} from "@uma-stage/agent-client";
-import {
-  agentLiveStageSchema,
   animeStageScriptSchema,
   characterAgentMappingSchema,
   characterPackSchema,
@@ -24,7 +17,6 @@ import {
   type CharacterPack,
   type CharacterRegistry,
   type AgentStageAction,
-  type AgentStageEvent,
   type PerformanceCue,
   type PerformanceScript,
   type ScenePack,
@@ -37,11 +29,8 @@ import {
 } from "@uma-stage/contracts";
 import {
   applyStageCast,
-  assignStageSpawns,
   compileAnimeStageScript,
   compilePerformanceCue,
-  ensureSceneSpawnCapacity,
-  placeScenePresences,
   StageRuntime,
   ShowRunner,
   validatePerformanceScene,
@@ -52,15 +41,23 @@ import {
   type ShowState,
 } from "@uma-stage/core";
 
+import AppHeader from "./components/AppHeader.vue";
+import CastPanel from "./components/CastPanel.vue";
+import ConversationPanel from "./components/ConversationPanel.vue";
+import StageControls from "./components/StageControls.vue";
+import StageDiagnostics from "./components/StageDiagnostics.vue";
+import StageViewport from "./components/StageViewport.vue";
+import { useAgentStage } from "./composables/useAgentStage";
 import { PerformanceAudioPlayer, performanceAudioPaths } from "./performance-audio";
+import { assembleSceneActors } from "./scene-actors";
 import { useStageStore } from "./stores/stage";
 import { resolveStageShortcut } from "./stage-shortcuts";
 import WorldOverview from "./WorldOverview.vue";
 import { loadWorldOverview, type WorldOverviewData } from "./world-overview";
+import { travelActorToScene, type WorldTravelHost } from "./world-travel";
 
 type RendererModule = typeof import("@uma-stage/renderer-phaser");
 type StageGame = ReturnType<RendererModule["createStageGame"]>;
-type AgentStatus = "disconnected" | "connecting" | "connected" | "busy" | "error";
 
 interface CastSelection {
   characterId: string;
@@ -78,32 +75,6 @@ interface ActorPresentation {
   initials: string;
 }
 
-interface AgentSession {
-  sessionId: string;
-  userUuid: string;
-  castKey: string;
-  actors: Array<{
-    characterId: string;
-    displayName: string;
-    agentActorId: string;
-    stageActorId: string;
-  }>;
-}
-
-interface ConversationLine {
-  id: string;
-  speaker: string;
-  text: string;
-  kind: "trainer" | "character" | "action" | "command" | "narrator" | "system";
-}
-
-interface PendingAgentReply {
-  event: AgentStageEvent;
-  stageActorId: string | null;
-  actionShown: boolean;
-  dialogueShown: boolean;
-}
-
 interface FollowBinding {
   actorId: string;
   targetActorId: string;
@@ -117,14 +88,16 @@ interface StageInitializationOptions {
   followBindings?: FollowBinding[];
   resetWorld?: boolean;
   skipPresenceSync?: boolean;
+  preserveAgentOperation?: boolean;
 }
 
 const stageConfig = __STAGE_CONFIG__;
 const agentEnabled = stageConfig.mode === "agent";
 
-const stageElement = ref<HTMLElement | null>(null);
+const stageViewport = ref<InstanceType<typeof StageViewport> | null>(null);
 const store = useStageStore();
 const stageName = ref("特雷森学生广场");
+const stageTransitionImage = ref("");
 const currentStageId = ref("");
 const actorViews = ref<ActorPresentation[]>([]);
 const stageChoices = ref<StageRegistryEntry[]>([]);
@@ -141,12 +114,6 @@ const selectedCast = ref<CastSelection[]>([
 ]);
 const activeActorId = ref("uma_admire_vega");
 
-const agentStatus = ref<AgentStatus>("disconnected");
-const agentStatusMessage = ref("正在等待舞台初始化…");
-const agentCharacters = ref<string[]>([]);
-const agentSession = ref<AgentSession | null>(null);
-const agentInput = ref("");
-const conversation = ref<ConversationLine[]>([]);
 const performanceRunning = ref(false);
 const showState = ref<ShowState>({ status: "idle", sceneId: null, beatId: null, error: null });
 const performancePaused = computed(() => showState.value.status === "paused");
@@ -157,6 +124,8 @@ const worldOverviewOpen = ref(false);
 const worldOverviewData = shallowRef<WorldOverviewData | null>(null);
 const worldOverviewLoading = ref(false);
 const worldOverviewError = ref("");
+const worldTravelRunning = ref(false);
+let worldOverviewPromise: Promise<WorldOverviewData> | null = null;
 
 const resolvedCast = computed<ResolvedCastMember[]>(() =>
   selectedCast.value.flatMap((selection) => {
@@ -178,6 +147,21 @@ const activeCharacterName = computed(
 const castCharacterNames = computed(
   () => resolvedCast.value.map((member) => member.mapping.agent_character_name).join("、"),
 );
+const worldPresenceRevision = ref(0);
+const castLocations = computed(() => {
+  worldPresenceRevision.value;
+  return Object.fromEntries(
+    resolvedCast.value.map((member) => {
+      const actorId = member.mapping.stage_actor_id;
+      const sceneId = worldPresence.actor(actorId)?.scene_id ?? "";
+      const sceneName = stageChoices.value.find((choice) => choice.scene_id === sceneId)?.display_name ?? sceneId;
+      const prefix = actorId === activeActorId.value
+        ? "当前互动"
+        : sceneId === currentSceneId.value ? "当前地图" : "留守";
+      return [actorId, { sceneId, label: `${prefix} · ${sceneName || "未知地点"}` }];
+    }),
+  );
+});
 const activeActorFollowsPlayer = computed(
   () => actor(activeActorId.value)?.following_actor_id === currentPlayerActorId.value,
 );
@@ -187,12 +171,11 @@ const canControlActiveActor = computed(() =>
 
 let runtime: StageRuntime | null = null;
 let game: StageGame | null = null;
-let agentClient: AgentApiClient | null = null;
+let characterRegistry: CharacterRegistry | null = null;
 let unsubscribe: (() => void) | null = null;
 let snapshotTimer: number | null = null;
 let generation = 0;
 let commandSequence = 0;
-let conversationSequence = 0;
 let portalTransitionPending = false;
 let portalTransitionTimer: number | null = null;
 let runPortalTransition: (() => void) | null = null;
@@ -201,6 +184,65 @@ const performanceAudio = new PerformanceAudioPlayer(contentUrl);
 const showRunner = new ShowRunner((state) => { showState.value = state; });
 let unmounted = false;
 const worldPresence = new WorldPresence();
+const {
+  agentStatus,
+  agentStatusMessage,
+  agentCharacters,
+  agentMaxParticipants,
+  agentInput,
+  conversation,
+  canRetryTurn,
+  prepareAgentSession,
+  sendAgentMessage,
+  cancelAgentTurn,
+  invalidateAgent,
+  resetAgentSession,
+  retryAgentSession,
+  pushConversation,
+} = useAgentStage({
+  enabled: agentEnabled,
+  baseUrl: stageConfig.agentUrl,
+  apiKey: stageConfig.agentApiKey,
+  adapter: {
+    getCast: () => resolveCast().map((member) => ({
+      characterId: member.mapping.character_id,
+      displayName: member.mapping.agent_character_name,
+      stageActorId: member.mapping.stage_actor_id,
+    })),
+    getStage: () => {
+      const activeRuntime = runtime;
+      if (!activeRuntime) return null;
+      return {
+        runtime: activeRuntime,
+        stageId: currentStageId.value,
+        sceneId: currentSceneId.value,
+        sceneName: stageName.value,
+      };
+    },
+    getActorScene: (actorId) => worldPresence.actor(actorId)?.scene_id ?? null,
+    getRemoteActors: () => resolvedCast.value.flatMap((member) => {
+      const actorId = member.mapping.stage_actor_id;
+      const presence = worldPresence.actor(actorId);
+      return presence && presence.scene_id !== currentSceneId.value
+        ? [{ stageActorId: actorId, sceneId: presence.scene_id }]
+        : [];
+    }),
+    getTravelDestinations: async () => {
+      const data = await ensureWorldOverviewData();
+      return stageChoices.value.flatMap((choice) => {
+        const scene = data.scenes.get(choice.scene_id);
+        return scene ? [{
+          sceneId: choice.scene_id,
+          displayName: choice.display_name,
+          spawnIds: scene.spawns.map((spawn) => spawn.id),
+        }] : [];
+      });
+    },
+    executeTravel: (action, signal) => executeDirectorTravel(action, signal),
+    nextCommandId: () => nextCommandId("agent"),
+  },
+});
+const maxCast = computed(() => agentEnabled ? agentMaxParticipants.value : 4);
 const PORTAL_TRANSITION_FALLBACK_MS = 750;
 const PORTAL_TRANSITION_AFTER_COMMAND_MS = 50;
 
@@ -229,7 +271,7 @@ async function initialize(options: StageInitializationOptions = {}): Promise<voi
     worldPresence.syncScene(runtime.scene, runtime.snapshot());
   }
   const currentGeneration = ++generation;
-  dispose(false);
+  dispose(false, options.preserveAgentOperation ?? false);
   portalTransitionPending = false;
   store.reset();
   actorViews.value = [];
@@ -240,6 +282,7 @@ async function initialize(options: StageInitializationOptions = {}): Promise<voi
       loadCharacterMapping(contentUrl("characters/agent-mapping.json")),
     ]);
     if (currentGeneration !== generation || options.signal?.aborted) return;
+    characterRegistry = registry;
     characterMappings.value = mapping.characters;
     normalizeSelectedCast(mapping.characters);
     const cast = resolveCast(mapping.characters);
@@ -287,64 +330,41 @@ async function initialize(options: StageInitializationOptions = {}): Promise<voi
         return loadActor(contentUrl(entry.actor_path));
       }),
     );
-    const placement = placeScenePresences(
-      sourceScene,
-      scenePresences,
-      options.spawnOverrides,
-    );
-    const spawnOverrides = placement.spawnOverrides;
-    const scene = ensureSceneSpawnCapacity(
-      placement.scene,
-      stage.actors.length,
-      stage.actors.map(
-        (actorDefinition) =>
-          spawnOverrides[actorDefinition.instance_id] ?? actorDefinition.spawn_id,
-      ),
-    );
     if (currentGeneration !== generation || options.signal?.aborted) return;
 
-    const nextRuntime = new StageRuntime(scene);
-    const playerActorId = stage.actors.find(
-      (actorDefinition) => actorDefinition.player,
-    )?.instance_id;
-    const assignedSpawns = assignStageSpawns(stage.actors, scene, spawnOverrides);
+    const { scene, runtime: nextRuntime, playerActorId } = assembleSceneActors({
+      sourceScene,
+      stage,
+      presences: worldPresence,
+      packs,
+      ...(options.spawnOverrides ? { spawnOverrides: options.spawnOverrides } : {}),
+      ...(options.followBindings ? { followBindings: options.followBindings } : {}),
+      nextCommandId,
+    });
     const rendererActors = stage.actors.map((actorDefinition, index) => {
       const pack = packs[index];
       if (!pack) throw new Error(`缺少角色包：${actorDefinition.bundle_id}`);
       const registryEntry = registryByBundle.get(actorDefinition.bundle_id);
       if (!registryEntry) throw new Error(`缺少角色注册项：${actorDefinition.bundle_id}`);
-      nextRuntime.spawnActor({
-        actorId: actorDefinition.instance_id,
-        characterPack: pack,
-        spawnId: assignedSpawns[actorDefinition.instance_id] ?? actorDefinition.spawn_id,
-        controlOwner: actorDefinition.control_owner,
-      });
       return {
         actorId: actorDefinition.instance_id,
         pack,
         bundleBaseUrl: contentDirectoryUrl(registryEntry.actor_path),
       };
     });
-    const followBindings = uniqueFollowBindings([
-      ...worldPresence.followBindingsInScene(scene.scene_id),
-      ...(options.followBindings ?? []),
-    ]);
-    for (const binding of followBindings) {
-      if (!stage.actors.some((actorDefinition) => actorDefinition.instance_id === binding.actorId)) continue;
-      if (!stage.actors.some((actorDefinition) => actorDefinition.instance_id === binding.targetActorId)) continue;
-      nextRuntime.execute({
-        id: nextCommandId("portal-follow"),
-        type: "actor.follow",
-        actor_id: binding.actorId,
-        target_actor_id: binding.targetActorId,
-        distance_tiles: binding.distanceTiles,
-        preferred_side: binding.targetActorId === playerActorId ? "above" : "nearest",
-        source: "system",
-        policy: "replace",
-      });
-    }
     runtime = nextRuntime;
     unsubscribe = nextRuntime.subscribe((event) => {
+      if (event.type === "actor.despawned") {
+        actorViews.value = actorViews.value.filter((view) => view.instanceId !== event.actor_id);
+        if (activeActorId.value === event.actor_id) {
+          activeActorId.value = nextRuntime.snapshot().actors.find((state) => state.control_owner !== "player")?.actor_id ?? "";
+        }
+        store.setSnapshot(nextRuntime.snapshot());
+        const cue = game?.cameraState()?.cue;
+        if (cue?.type === "camera.follow_actor" && cue.actor_id === event.actor_id && playerActorId) {
+          followCamera(playerActorId);
+        }
+      }
       store.pushEvent(event);
       handlePortalEvent(event, playerActorId, stageRegistry);
     });
@@ -377,9 +397,9 @@ async function initialize(options: StageInitializationOptions = {}): Promise<voi
       initials: initials(packs[index]?.display_name ?? actorDefinition.instance_id),
     }));
 
-    const parent = stageElement.value;
+    const parent = stageViewport.value?.getMountElement();
     if (!parent) throw new Error("舞台挂载点不存在");
-    game = renderer.createStageGame({
+    const nextGame = renderer.createStageGame({
       parent,
       runtime: nextRuntime,
       scene,
@@ -389,9 +409,13 @@ async function initialize(options: StageInitializationOptions = {}): Promise<voi
       environment: stageEnvironment.value,
       sceneNames: Object.fromEntries(stageRegistry.stages.map((entry) => [entry.scene_id, entry.display_name])),
     });
-    game.setMinimapVisible(minimapVisible.value);
-    game.setPlayerInputEnabled(!worldOverviewOpen.value && !performanceRunning.value);
-    game.setPlaybackPaused(performancePaused.value);
+    game = nextGame;
+    nextGame.setMinimapVisible(minimapVisible.value);
+    syncPlayerInput();
+    nextGame.setPlaybackPaused(performancePaused.value);
+    await nextGame.ready;
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+    if (currentGeneration !== generation || options.signal?.aborted || game !== nextGame) return;
     mapOverviewActive.value = false;
     cameraCueBeforeOverview = null;
     snapshotTimer = window.setInterval(() => {
@@ -399,6 +423,7 @@ async function initialize(options: StageInitializationOptions = {}): Promise<voi
     }, 100);
     worldPresence.syncScene(scene, nextRuntime.snapshot());
     store.ready();
+    stageTransitionImage.value = "";
   } catch (error) {
     if (currentGeneration === generation && !options.signal?.aborted) store.fail(error);
   }
@@ -428,18 +453,6 @@ function resolveCast(mappings = characterMappings.value): ResolvedCastMember[] {
 
 function mappingFor(characterId: string): CharacterAgentMappingEntry | undefined {
   return characterMappings.value.find((entry) => entry.character_id === characterId);
-}
-
-function castKey(): string {
-  return resolveCast()
-    .map((member) => member.mapping.character_id)
-    .join("|");
-}
-
-function isCharacterSelectedElsewhere(characterId: string, castIndex: number): boolean {
-  return selectedCast.value.some(
-    (selection, index) => index !== castIndex && selection.characterId === characterId,
-  );
 }
 
 function handlePortalEvent(
@@ -498,8 +511,9 @@ function handlePortalEvent(
   );
 }
 
-function dispose(invalidate = true): void {
+function dispose(invalidate = true, preserveAgentOperation = false): void {
   if (invalidate) generation += 1;
+  if (!preserveAgentOperation) invalidateAgent("舞台已销毁");
   if (snapshotTimer !== null) window.clearInterval(snapshotTimer);
   snapshotTimer = null;
   if (portalTransitionTimer !== null) window.clearTimeout(portalTransitionTimer);
@@ -507,8 +521,11 @@ function dispose(invalidate = true): void {
   runPortalTransition = null;
   unsubscribe?.();
   unsubscribe = null;
+  const transitionFrame = game?.captureFrame();
+  if (transitionFrame) stageTransitionImage.value = transitionFrame;
   game?.destroy();
   game = null;
+  runtime?.dispose("舞台已切换");
   runtime = null;
   mapOverviewActive.value = false;
   cameraCueBeforeOverview = null;
@@ -521,7 +538,7 @@ async function changeCast(castIndex?: number): Promise<void> {
     const mapping = selected && mappingFor(selected.characterId);
     if (mapping) activeActorId.value = mapping.stage_actor_id;
   }
-  agentSession.value = null;
+  resetAgentSession(false);
   conversation.value = [];
   await initialize({ definitionPath: activeStagePath.value });
   if (store.phase === "ready" && agentEnabled) await prepareAgentSession();
@@ -556,7 +573,7 @@ async function runPerformanceDemo(): Promise<void> {
       await context.guard(performanceAudio.preload(performanceAudioPaths(script), context.signal));
       selectedCast.value = cast;
       ownsStage = true;
-      agentSession.value = null;
+      resetAgentSession(false);
       conversation.value = [];
       activeActorId.value = resolveCast()[0]?.mapping.stage_actor_id ?? "";
       pushConversation("system", "演出", `开始《${script.title}》`);
@@ -764,7 +781,7 @@ async function addCastMember(): Promise<void> {
   const mapping = characterMappings.value.find(
     (entry) => !used.has(entry.character_id) && isAgentCharacterAvailable(entry),
   );
-  if (!mapping || selectedCast.value.length >= 4) return;
+  if (!mapping || selectedCast.value.length >= maxCast.value) return;
   selectedCast.value.push({ characterId: mapping.character_id, outfit: "uniform" });
   activeActorId.value = mapping.stage_actor_id;
   await changeCast();
@@ -790,33 +807,39 @@ async function runMeeting(): Promise<void> {
   const actorId = activeActorId.value;
   if (!activeRuntime) return;
   activeRuntime.setControlOwner(actorId, "script");
-  store.setMessage(`脚本接管：${activeCharacterName.value}正在前往喷泉会面点`);
-  const movement = activeRuntime.execute({
-    id: nextCommandId("meeting"),
-    type: "actor.move_to",
-    actor_id: actorId,
-    source: "script",
-    policy: "replace",
-    target: { type: "anchor", id: "fountain_meeting" },
-  });
-  const result = await movement.completion;
-  if (activeRuntime !== runtime || result.status !== "completed") {
-    describeResult(result);
-    return;
-  }
-  store.setMessage(`${activeCharacterName.value}已到达交互槽位`);
-  const speech = activeRuntime.execute({
-    id: nextCommandId("say"),
-    type: "dialogue.say",
-    actor_id: actorId,
-    source: "script",
-    policy: "replace",
-    text: "训练员，下一项安排是什么？",
-  });
-  await speech.completion;
-  if (activeRuntime === runtime) {
-    activeRuntime.setControlOwner(actorId, "agent");
-    store.setMessage("演出完成，可以继续操作角色");
+  try {
+    store.setMessage(`脚本接管：${activeCharacterName.value}正在前往喷泉会面点`);
+    const movement = activeRuntime.execute({
+      id: nextCommandId("meeting"),
+      type: "actor.move_to",
+      actor_id: actorId,
+      source: "script",
+      policy: "replace",
+      target: { type: "anchor", id: "fountain_meeting" },
+    });
+    const result = await movement.completion;
+    if (activeRuntime !== runtime) return;
+    if (result.status !== "completed") {
+      describeResult(result);
+      return;
+    }
+    store.setMessage(`${activeCharacterName.value}已到达交互槽位`);
+    const speech = activeRuntime.execute({
+      id: nextCommandId("say"),
+      type: "dialogue.say",
+      actor_id: actorId,
+      source: "script",
+      policy: "replace",
+      text: "训练员，下一项安排是什么？",
+    });
+    const speechResult = await speech.completion;
+    if (activeRuntime !== runtime) return;
+    if (speechResult.status === "completed") store.setMessage("演出完成，可以继续操作角色");
+    else describeResult(speechResult);
+  } catch (error) {
+    if (activeRuntime === runtime) store.setMessage(errorMessage(error));
+  } finally {
+    if (activeRuntime === runtime) activeRuntime.setControlOwner(actorId, "agent");
   }
 }
 
@@ -970,30 +993,55 @@ function toggleMinimap(): void {
   game?.setMinimapVisible(minimapVisible.value);
 }
 
+function syncPlayerInput(): void {
+  game?.setPlayerInputEnabled(
+    !worldOverviewOpen.value && !performanceRunning.value,
+  );
+}
+
+function setWorldTraveling(active: boolean): void {
+  worldTravelRunning.value = active;
+  syncPlayerInput();
+}
+
 function openWorldOverview(): void {
   worldOverviewOpen.value = true;
-  game?.setPlayerInputEnabled(false);
+  syncPlayerInput();
   void prepareWorldOverview();
 }
 
 function closeWorldOverview(): void {
   worldOverviewOpen.value = false;
-  game?.setPlayerInputEnabled(true);
+  syncPlayerInput();
+}
+
+async function ensureWorldOverviewData(): Promise<WorldOverviewData> {
+  if (worldOverviewData.value) return worldOverviewData.value;
+  if (!worldOverviewPromise) {
+    worldOverviewLoading.value = true;
+    worldOverviewError.value = "";
+    worldOverviewPromise = loadWorldOverview(
+      stageChoices.value,
+      (path) => fetchJson(contentUrl(path)),
+    ).then((data) => {
+      worldOverviewData.value = data;
+      return data;
+    }).catch((error: unknown) => {
+      worldOverviewPromise = null;
+      worldOverviewError.value = errorMessage(error);
+      throw error;
+    }).finally(() => {
+      worldOverviewLoading.value = false;
+    });
+  }
+  return worldOverviewPromise;
 }
 
 async function prepareWorldOverview(): Promise<void> {
-  if (worldOverviewData.value || worldOverviewLoading.value) return;
-  worldOverviewLoading.value = true;
-  worldOverviewError.value = "";
   try {
-    worldOverviewData.value = await loadWorldOverview(
-      stageChoices.value,
-      (path) => fetchJson(contentUrl(path)),
-    );
-  } catch (error) {
-    worldOverviewError.value = errorMessage(error);
-  } finally {
-    worldOverviewLoading.value = false;
+    await ensureWorldOverviewData();
+  } catch {
+    return;
   }
 }
 
@@ -1026,355 +1074,113 @@ function applyStageEnvironment(): void {
   game?.setEnvironment(stageEnvironment.value);
 }
 
-function changeStageFromSelect(event: Event): void {
-  const definitionPath = (event.target as HTMLSelectElement).value;
-  if (!definitionPath || definitionPath === activeStagePath.value) return;
+function changeStageFromSelect(definitionPath: string): void {
+  if (!definitionPath || definitionPath === activeStagePath.value || agentStatus.value === "busy") return;
   void initialize({ definitionPath, resetWorld: true });
 }
 
 function resetCurrentScene(): void {
+  if (agentStatus.value === "busy") return;
   void initialize({
     ...(activeStagePath.value ? { definitionPath: activeStagePath.value } : {}),
     resetWorld: true,
   });
 }
 
-async function connectAgent(): Promise<boolean> {
-  if (!agentEnabled) return false;
-  agentStatus.value = "connecting";
-  agentStatusMessage.value = "正在从 .env 配置连接 Agent…";
-  try {
-    const client = new AgentApiClient({
-      baseUrl: stageConfig.agentUrl,
-      apiKey: stageConfig.agentApiKey,
-    });
-    const [characters] = await Promise.all([
-      client.listCharacters(),
-      client.stageCapabilities(),
-    ]);
-    agentClient = client;
-    agentCharacters.value = characters;
-    agentStatus.value = "connected";
-    agentStatusMessage.value = `已连接 · Agent ${characters.length} 角色 / Stage ${characterMappings.value.length} 角色`;
-    return true;
-  } catch (error) {
-    agentClient = null;
-    agentStatus.value = "error";
-    agentStatusMessage.value = errorMessage(error);
-    return false;
-  }
-}
-
-async function prepareAgentSession(): Promise<boolean> {
-  if (!agentEnabled) return false;
-  if (!(await connectAgent())) return false;
-  return createAgentSession();
-}
-
-async function createAgentSession(): Promise<boolean> {
-  if (!agentEnabled) return false;
+async function createBackgroundRuntime(sceneId: string): Promise<StageRuntime> {
+  const choice = stageChoices.value.find((candidate) => candidate.scene_id === sceneId);
+  const registry = characterRegistry;
+  if (!choice) throw new Error(`后台旅行找不到场景：${sceneId}`);
+  if (!registry) throw new Error("后台旅行角色注册表尚未就绪");
+  const sourceStage = await loadStage(contentUrl(choice.definition_path));
+  const sourceScene = await loadScene(contentUrl(sourceStage.scene_path));
   const cast = resolveCast();
-  if (cast.length === 0) return false;
-  if (!agentClient && !(await connectAgent())) return false;
-  if (!agentClient) return false;
-  const unavailable = cast.filter(
-    (member) => !agentCharacters.value.includes(member.mapping.agent_character_name),
+  const castStage = applyStageCast(
+    sourceStage,
+    cast.map((member) => ({ mapping: member.mapping, outfit: member.outfit })),
   );
-  if (unavailable.length > 0) {
-    agentStatus.value = "error";
-    agentStatusMessage.value = `Agent 尚未提供角色：${unavailable.map((member) => member.mapping.agent_character_name).join("、")}`;
-    return false;
-  }
-  agentStatus.value = "busy";
-  agentStatusMessage.value = `正在加载 ${cast.length} 位出演角色…`;
-  try {
-    const session = await agentClient.createStageSession({
-      characterNames: cast.map((member) => member.mapping.agent_character_name),
-      sceneName: stageName.value,
-    });
-    const sessionActors = cast.map((member) => {
-      const agentActor = session.actors.find(
-        (actor) =>
-          actor.actorType === "umamusume" &&
-          actor.displayName === member.mapping.agent_character_name,
-      );
-      if (!agentActor) {
-        throw new Error(
-          `Agent 会话未返回角色 actor_id：${member.mapping.agent_character_name}`,
-        );
-      }
-      return {
-        characterId: member.mapping.character_id,
-        displayName: member.mapping.agent_character_name,
-        agentActorId: agentActor.actorId,
-        stageActorId: member.mapping.stage_actor_id,
-      };
-    });
-    agentSession.value = {
-      sessionId: session.sessionId,
-      userUuid: session.userUuid,
-      castKey: castKey(),
-      actors: sessionActors,
-    };
-    conversation.value = [];
-    pushConversation(
-      "system",
-      "舞台",
-      `${cast.map((member) => member.mapping.agent_character_name).join("、")} 已进入多人角色会话`,
-    );
-    agentStatus.value = "connected";
-    agentStatusMessage.value = `${cast.length} 位角色会话已就绪`;
-    return true;
-  } catch (error) {
-    agentStatus.value = "error";
-    agentStatusMessage.value = errorMessage(error);
-    return false;
-  }
-}
-
-async function sendAgentMessage(): Promise<void> {
-  if (!agentEnabled) return;
-  const message = agentInput.value.trim();
-  const cast = resolveCast();
-  const activeRuntime = runtime;
-  if (!message || cast.length === 0 || !activeRuntime || agentStatus.value === "busy") return;
-  if (!agentSession.value || agentSession.value.castKey !== castKey()) {
-    if (!(await createAgentSession())) return;
-  }
-  const session = agentSession.value;
-  if (!session || !agentClient) return;
-  const presentStageActorIds = new Set(
-    activeRuntime.snapshot().actors.map((state) => state.actor_id),
+  const presentActorIds = new Set(
+    worldPresence.actorsInScene(sceneId).map((presence) => presence.actor_id),
   );
-  const presentSessionActors = session.actors.filter((actorBinding) =>
-    presentStageActorIds.has(actorBinding.stageActorId),
-  );
-  if (presentSessionActors.length === 0) {
-    agentStatus.value = "connected";
-    agentStatusMessage.value = "当前地图没有可对话的出演角色";
-    return;
-  }
-
-  agentInput.value = "";
-  pushConversation("trainer", "训练员", message);
-  agentStatus.value = "busy";
-  agentStatusMessage.value = "角色正在生成对白与舞台行为…";
-  try {
-    const liveStage = agentLiveStageSchema.parse({
-      schema_version: "live_stage.v1",
-      stage_id: currentStageId.value,
-      scene_id: currentSceneId.value,
-      ...activeRuntime.inspect(),
-    });
-    const result = await agentClient.turn({
-      sessionId: session.sessionId,
-      userUuid: session.userUuid,
-      message,
-      targetActorIds: presentSessionActors.map((actorBinding) => actorBinding.agentActorId),
-      actorBindings: presentSessionActors.map((actorBinding) => ({
-        agent_actor_id: actorBinding.agentActorId,
-        stage_actor_id: actorBinding.stageActorId,
-      })),
-      liveStage,
-    });
-    const pendingReplies: PendingAgentReply[] = result.events.flatMap((event) => {
-      if (event.event_type !== "character_reply") return [];
-      const actorBinding = session.actors.find(
-        (candidate) => candidate.agentActorId === event.actor?.actor_id,
-      );
-      return [{
-        event,
-        stageActorId: actorBinding?.stageActorId ?? null,
-        actionShown: false,
-        dialogueShown: false,
-      }];
-    });
-    for (const event of result.events) {
-      if (event.event_type === "narration" || event.event_type === "scene_change") {
-        pushConversation("narrator", "环境", event.content);
-      }
-    }
-    const actions = reconcileStageTurnActions(result, presentSessionActors.map((actorBinding) => ({
-      agent_actor_id: actorBinding.agentActorId,
-      stage_actor_id: actorBinding.stageActorId,
-    })));
-    if (activeRuntime !== runtime) {
-      throw new Error("Agent 返回期间舞台已切换，请重新发送本轮消息");
-    }
-    const boundStageActorIds = new Set(
-      presentSessionActors.map((actorBinding) => actorBinding.stageActorId),
-    );
-    const worldActions: Array<Extract<AgentStageAction, { type: "actor.travel_to_scene" }>> = [];
-    for (const action of actions) {
-      if (!boundStageActorIds.has(action.actor_id)) {
-        throw new Error(`Agent 返回了未绑定角色动作：${action.actor_id}`);
-      }
-      pushConversation("command", "StageCommand", formatAgentAction(action));
-      revealReplyForAgentAction(pendingReplies, action);
-      if (action.type === "actor.travel_to_scene") {
-        worldActions.push(action);
-        continue;
-      }
-      const state = activeRuntime
-        .snapshot()
-        .actors.find((candidate) => candidate.actor_id === action.actor_id);
-      if (state?.control_owner !== "agent") {
-        activeRuntime.setControlOwner(action.actor_id, "agent");
-      }
-      const command = stageActionToCommand(action, nextCommandId("agent"));
-      const commandResult = await activeRuntime.execute(command).completion;
-      if (commandResult.status !== "completed") {
-        throw new Error(
-          `舞台动作执行失败（${formatAgentAction(action)}）：${commandResult.status}` +
-          `${commandResult.error?.message ? ` · ${commandResult.error.message}` : ""}`,
-        );
-      }
-    }
-    revealPendingAgentReplies(pendingReplies);
-    for (const action of worldActions) await executeDirectorTravel(action);
-    agentStatus.value = "connected";
-    agentStatusMessage.value = `第 ${result.turn_index} 轮完成 · ${actions.length} 条舞台动作`;
-  } catch (error) {
-    agentStatus.value = "error";
-    agentStatusMessage.value = errorMessage(error);
-  }
+  const stage: StageDefinition = {
+    ...castStage,
+    actors: castStage.actors.filter((actor) => presentActorIds.has(actor.instance_id)),
+  };
+  if (stage.actors.length === 0) throw new Error(`后台场景没有可装载角色：${sceneId}`);
+  const registryByBundle = new Map(registry.characters.map((entry) => [entry.bundle_id, entry]));
+  const packs = await Promise.all(stage.actors.map((actor) => {
+    const entry = registryByBundle.get(actor.bundle_id);
+    if (!entry) throw new Error(`后台旅行引用了未注册角色：${actor.bundle_id}`);
+    return loadActor(contentUrl(entry.actor_path));
+  }));
+  return assembleSceneActors({
+    sourceScene,
+    stage,
+    presences: worldPresence,
+    packs,
+    nextCommandId,
+  }).runtime;
 }
 
 async function executeDirectorTravel(
   action: Extract<AgentStageAction, { type: "actor.travel_to_scene" }>,
+  signal: AbortSignal,
 ): Promise<void> {
-  const activeRuntime = runtime;
-  if (!activeRuntime) throw new Error("舞台 Runtime 尚未就绪");
-  const target = stageChoices.value.find(
-    (entry) => entry.scene_id === action.target_scene_id,
-  );
-  if (!target) throw new Error(`Director 引用了未知场景：${action.target_scene_id}`);
-  if (!activeRuntime.snapshot().actors.some((state) => state.actor_id === action.actor_id)) {
-    throw new Error(`角色不在当前场景：${action.actor_id}`);
+  if (action.actor_id === currentPlayerActorId.value) {
+    throw new Error("训练员请通过地图中的传送点换图");
   }
-  worldPresence.syncScene(activeRuntime.scene, activeRuntime.snapshot());
-  worldPresence.transferActor(
-    action.actor_id,
-    action.target_scene_id,
-    action.target_spawn_id ?? null,
-  );
-  const playerTravels = action.actor_id === currentPlayerActorId.value;
-  await initialize({
-    definitionPath: playerTravels ? target.definition_path : activeStagePath.value,
-    skipPresenceSync: true,
-  });
-  if (store.phase !== "ready") {
-    throw new Error(store.error || `无法完成跨场景移动：${target.display_name}`);
-  }
-  store.setMessage(
-    playerTravels
-      ? `训练员已前往${target.display_name}`
-      : `${action.actor_id}已单独前往${target.display_name}`,
-  );
-}
-
-function revealReplyForAgentAction(
-  replies: PendingAgentReply[],
-  action: AgentStageAction,
-): void {
-  if (action.type === "dialogue.say") {
-    const normalizedText = action.text.trim();
-    const reply =
-      replies.find(
-        (candidate) =>
-          !candidate.dialogueShown &&
-          candidate.stageActorId === action.actor_id &&
-          (candidate.event.dialogue.trim() || candidate.event.content.trim()) === normalizedText,
-      ) ??
-      replies.find(
-        (candidate) =>
-          !candidate.dialogueShown && candidate.stageActorId === action.actor_id,
-      );
-    if (!reply) return;
-    revealAgentReplyAction(reply);
-    pushConversation(
-      "character",
-      reply.event.actor?.display_name ?? activeCharacterName.value,
-      reply.event.dialogue || reply.event.content,
-    );
-    reply.dialogueShown = true;
-    return;
-  }
-
-  const reply = replies.find(
-    (candidate) => !candidate.actionShown && candidate.stageActorId === action.actor_id,
-  );
-  if (reply) revealAgentReplyAction(reply);
-}
-
-function revealAgentReplyAction(reply: PendingAgentReply): void {
-  if (reply.actionShown || !reply.event.action.trim()) return;
-  pushConversation(
-    "action",
-    reply.event.actor?.display_name ?? activeCharacterName.value,
-    reply.event.action,
-  );
-  reply.actionShown = true;
-}
-
-function revealPendingAgentReplies(replies: PendingAgentReply[]): void {
-  for (const reply of replies) {
-    revealAgentReplyAction(reply);
-    if (reply.dialogueShown) continue;
-    pushConversation(
-      "character",
-      reply.event.actor?.display_name ?? activeCharacterName.value,
-      reply.event.dialogue || reply.event.content,
-    );
-    reply.dialogueShown = true;
-  }
+  const data = await ensureWorldOverviewData();
+  const host: WorldTravelHost = {
+    presence: worldPresence,
+    navigation: data.navigation,
+    definitionPathForScene: (sceneId) => {
+      const stage = stageChoices.value.find((choice) => choice.scene_id === sceneId);
+      if (!stage) throw new Error(`世界中没有可进入的场景：${sceneId}`);
+      return stage.definition_path;
+    },
+    currentRuntime: () => runtime,
+    currentSceneId: () => currentSceneId.value,
+    currentGeneration: () => generation,
+    playerSceneId: () => worldPresence.actor(currentPlayerActorId.value)?.scene_id ?? currentSceneId.value,
+    loadScene: async (definitionPath, loadSignal, skipPresenceSync = false) => {
+      await initialize({
+        definitionPath,
+        signal: loadSignal,
+        preserveAgentOperation: true,
+        skipPresenceSync,
+      });
+      if (loadSignal.aborted) throw new DOMException("跨图场景装载已取消", "AbortError");
+      if (store.phase !== "ready" || !runtime) {
+        throw new Error(store.error || "旅行场景装载失败");
+      }
+      return runtime;
+    },
+    createBackgroundRuntime: (sceneId) => createBackgroundRuntime(sceneId),
+    syncActor: (travelRuntime, actorId) => {
+      const state = travelRuntime.snapshot().actors.find((actor) => actor.actor_id === actorId);
+      if (!state) throw new Error(`后台旅行同步时缺少角色：${actorId}`);
+      worldPresence.syncActor(travelRuntime.scene, state);
+      worldPresenceRevision.value += 1;
+    },
+    setTraveling: setWorldTraveling,
+    report: (message) => store.setMessage(message),
+    actorName: (actorId) => resolvedCast.value.find(
+      (member) => member.mapping.stage_actor_id === actorId,
+    )?.mapping.agent_character_name ?? actorId,
+    sceneName: (sceneId) => stageChoices.value.find(
+      (choice) => choice.scene_id === sceneId,
+    )?.display_name ?? sceneId,
+  };
+  await travelActorToScene(host, action, signal);
+  store.setMessage(`${host.actorName(action.actor_id)}已到达${host.sceneName(action.target_scene_id)}`);
 }
 
 function isAgentCharacterAvailable(mapping: CharacterAgentMappingEntry): boolean {
   return !agentEnabled || agentCharacters.value.length === 0 || agentCharacters.value.includes(mapping.agent_character_name);
 }
 
-function pushConversation(
-  kind: ConversationLine["kind"],
-  speaker: string,
-  text: string,
-): void {
-  if (!text.trim()) return;
-  conversationSequence += 1;
-  conversation.value.push({
-    id: `line-${conversationSequence}`,
-    speaker,
-    text: text.trim(),
-    kind,
-  });
-}
-
 function errorMessage(error: unknown): string {
-  if (error instanceof AgentApiError) {
-    const detail = typeof error.detail === "string" ? `：${error.detail}` : "";
-    return `Agent API ${error.status}${detail}`;
-  }
   return error instanceof Error ? error.message : String(error);
-}
-
-function formatAgentAction(action: AgentStageAction): string {
-  if (action.type === "actor.move_to") {
-    return `move_to → ${action.anchor_id}${action.slot_id ? ` / ${action.slot_id}` : ""}`;
-  }
-  if (action.type === "actor.approach") {
-    return `approach → ${action.target_actor_id} / ${action.distance_tiles} tile`;
-  }
-  if (action.type === "actor.follow") {
-    return `follow → ${action.target_actor_id} / ${action.distance_tiles} tile`;
-  }
-  if (action.type === "actor.stop_follow") return "stop_follow";
-  if (action.type === "actor.travel_to_scene") {
-    return `travel_to_scene → ${action.target_scene_id}${action.target_spawn_id ? ` / ${action.target_spawn_id}` : ""}`;
-  }
-  if (action.type === "actor.face") return `face → ${action.facing}`;
-  if (action.type === "actor.face_actor") return `face_actor → ${action.target_actor_id}`;
-  if (action.type === "dialogue.say") return `say → ${action.text}`;
-  return "stop";
 }
 
 function describeResult(result: CommandResult, success = "移动完成"): void {
@@ -1387,10 +1193,6 @@ function describeResult(result: CommandResult, success = "移动完成"): void {
 
 function actor(actorId: string): StageActorState | undefined {
   return store.snapshot?.actors.find((candidate) => candidate.actor_id === actorId);
-}
-
-function uniqueFollowBindings(bindings: FollowBinding[]): FollowBinding[] {
-  return [...new Map(bindings.map((binding) => [binding.actorId, binding])).values()];
 }
 
 function nextCommandId(prefix: string): string {
@@ -1453,289 +1255,136 @@ async function fetchJson(url: string, signal?: AbortSignal): Promise<unknown> {
   return response.json() as Promise<unknown>;
 }
 
-function formatEvent(event: (typeof store.events)[number]): string {
-  const actorName =
-    actorViews.value.find((view) => view.instanceId === event.actor_id)?.displayName ?? "stage";
-  return `${String(event.sequence).padStart(2, "0")} · ${actorName} · ${event.type}`;
+function updateCastCharacter(index: number, characterId: string): void {
+  const member = selectedCast.value[index];
+  if (!member || member.characterId === characterId) return;
+  member.characterId = characterId;
+  void changeCast(index);
 }
+
+function updateCastOutfitSelection(index: number, outfit: StageCastOutfit): void {
+  const member = selectedCast.value[index];
+  if (!member || member.outfit === outfit) return;
+  member.outfit = outfit;
+  void changeCastOutfit();
+}
+
+function updateStageEnvironment(patch: Partial<StageEnvironment>): void {
+  stageEnvironment.value = stageEnvironmentSchema.parse({ ...stageEnvironment.value, ...patch });
+  applyStageEnvironment();
+}
+
 </script>
 
 <template>
   <main class="shell">
-    <header class="topbar">
-      <div class="brand-block">
-        <span class="eyebrow">UMA STAGE / {{ agentEnabled ? 'PLAYABLE TEST' : 'CAMPUS PLAYGROUND' }}</span>
-        <h1>{{ stageName }}</h1>
+    <AppHeader
+      :stage-name="stageName"
+      :phase="store.phase"
+      :message="store.message"
+      :agent-enabled="agentEnabled"
+      :agent-status="agentStatus"
+    />
+    <div class="workspace">
+      <CastPanel
+        :selections="selectedCast"
+        :mappings="characterMappings"
+        :actor-locations="castLocations"
+        :active-actor-id="activeActorId"
+        :active-character-name="activeCharacterName"
+        :agent-characters="agentCharacters"
+        :agent-enabled="agentEnabled"
+        :agent-status="agentStatus"
+        :max-cast="maxCast"
+        :ready="store.phase === 'ready'"
+        :performance-running="performanceRunning"
+        :active-actor-follows-player="activeActorFollowsPlayer"
+        :can-control-active-actor="canControlActiveActor"
+        @select="selectActiveActor"
+        @add="addCastMember"
+        @remove="removeCastMember"
+        @update-character="updateCastCharacter"
+        @update-outfit="updateCastOutfitSelection"
+        @approach="approachTrainer"
+        @follow="startActorFollow"
+        @stop-follow="stopActorFollow"
+      />
+      <div class="stage-workspace">
+        <StageViewport
+          ref="stageViewport"
+          :stage-name="stageName"
+          :phase="store.phase"
+          :message="store.message"
+          :error="store.error"
+          :transition-image="stageTransitionImage"
+          @retry="() => initialize()"
+        />
+        <StageControls
+          :ready="store.phase === 'ready'"
+          :busy="agentStatus === 'busy'"
+          :stage-choices="stageChoices"
+          :active-stage-path="activeStagePath"
+          :current-scene-id="currentSceneId"
+          :current-player-actor-id="currentPlayerActorId"
+          :active-actor-id="activeActorId"
+          :active-character-name="activeCharacterName"
+          :scene-anchors="sceneAnchors"
+          :scene-zones="sceneZones"
+          :activity-paths="activityPaths"
+          :environment="stageEnvironment"
+          :minimap-visible="minimapVisible"
+          :map-overview-active="mapOverviewActive"
+          :performance-running="performanceRunning"
+          :performance-paused="performancePaused"
+          :performance-status="showState.status"
+          :performance-beat-id="showState.beatId"
+          @change-stage="changeStageFromSelect"
+          @open-world="openWorldOverview"
+          @toggle-minimap="toggleMinimap"
+          @toggle-overview="toggleMapOverview"
+          @follow-camera="followCamera"
+          @focus-zone="focusCameraOnZone"
+          @focus-anchor="focusCameraOnAnchor"
+          @send-actor-to="sendActorTo"
+          @run-activity="runActivityPath"
+          @run-meeting="runMeeting"
+          @update-environment="updateStageEnvironment"
+          @run-performance="runPerformanceDemo"
+          @toggle-performance-pause="togglePerformancePause"
+          @cancel-performance="cancelPerformance"
+          @reset="resetCurrentScene"
+        />
       </div>
-      <div class="status-block">
-        <div class="stage-health" :class="store.phase">
-          <span class="health-dot"></span>
-          <span>{{ store.message }}</span>
-        </div>
-        <div class="service-badges">
-          <span v-if="agentEnabled" class="service-status" :class="agentStatus">AGENT · {{ agentStatus }}</span>
-          <span v-else class="service-status connected">自由试玩 · 无 AI 请求</span>
-        </div>
-      </div>
-    </header>
-
-    <section class="character-toolbar">
-      <div class="cast-toolbar-heading">
-        <div>
-          <span class="eyebrow">CAST · {{ selectedCast.length }} / 4</span>
-          <strong>{{ agentEnabled ? '出演角色与当前测试角色' : '同行角色与当前操作角色' }}</strong>
-        </div>
-        <button
-          type="button"
-          :disabled="selectedCast.length >= 4 || store.phase === 'loading' || agentStatus === 'busy' || performanceRunning"
-          @click="addCastMember"
-        >
-          ＋ 添加角色
-        </button>
-      </div>
-      <div class="cast-list">
-        <article
-          v-for="(member, index) in selectedCast"
-          :key="`${index}-${member.characterId}`"
-          class="cast-row"
-          :class="{ active: mappingFor(member.characterId)?.stage_actor_id === activeActorId }"
-        >
-          <button
-            class="cast-focus"
-            type="button"
-            :aria-label="`选择第 ${index + 1} 位角色作为当前测试角色`"
-            @click="selectActiveActor(mappingFor(member.characterId)?.stage_actor_id ?? '')"
-          >
-            {{ mappingFor(member.characterId)?.stage_actor_id === activeActorId ? '当前' : `#${index + 1}` }}
-          </button>
-          <label>
-            <span>出演角色</span>
-            <select
-              v-model="member.characterId"
-              :disabled="store.phase === 'loading' || agentStatus === 'connecting' || agentStatus === 'busy' || performanceRunning"
-              @change="changeCast(index)"
-            >
-              <option
-                v-for="mapping in characterMappings"
-                :key="mapping.character_id"
-                :value="mapping.character_id"
-                :disabled="!isAgentCharacterAvailable(mapping) || isCharacterSelectedElsewhere(mapping.character_id, index)"
-              >
-                {{ mapping.agent_character_name }}{{ isAgentCharacterAvailable(mapping) ? '' : '（Agent 未加载）' }}
-              </option>
-            </select>
-          </label>
-          <label>
-            <span>服装</span>
-            <select
-              v-model="member.outfit"
-              :disabled="store.phase === 'loading' || agentStatus === 'busy' || performanceRunning"
-              @change="changeCastOutfit"
-            >
-              <option value="uniform">制服</option>
-              <option value="race_outfit">决胜服</option>
-            </select>
-          </label>
-          <span class="mapping-preview">
-            {{ mappingFor(member.characterId)?.character_id }} → {{ mappingFor(member.characterId)?.stage_actor_id }}
-          </span>
-          <button
-            class="cast-remove"
-            type="button"
-            :disabled="selectedCast.length <= 1 || store.phase === 'loading' || agentStatus === 'busy' || performanceRunning"
-            @click="removeCastMember(index)"
-          >
-            移除
-          </button>
-        </article>
-      </div>
-    </section>
-
-    <section class="workspace">
-      <div class="stage-card">
-        <div class="stage-meta">
-          <div>
-            <span class="meta-label">PLAYABLE SLICE</span>
-            <strong>{{ agentEnabled ? '角色加载 · 碰撞寻路 · Agent Stage Actions · Portal' : '校园漫游 · 角色随行 · 跨图探索' }}</strong>
-          </div>
-          <div class="key-guide" aria-label="移动操作">
-            <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>
-            <span>移动训练员</span>
-          </div>
-        </div>
-        <div ref="stageElement" class="stage-mount" :aria-label="`${stageName}舞台`">
-          <div v-if="store.phase === 'loading'" class="loading-panel">LOADING STAGE…</div>
-          <div v-if="store.phase === 'error'" class="error-panel">
-            <strong>装载失败</strong>
-            <span>{{ store.error }}</span>
-            <button type="button" @click="() => initialize()">重试</button>
-          </div>
-        </div>
-        <div class="action-dock">
-          <button class="primary-action" :disabled="store.phase !== 'ready' || performanceRunning" type="button" @click="runPerformanceDemo">
-            <span>▶</span> {{ performanceRunning ? '正在演出兼容 JSON 短剧…' : '运行兼容 JSON 短剧' }}
-          </button>
-          <div v-if="performanceRunning" class="camera-actions" aria-label="演出播放控制">
-            <button type="button" :aria-pressed="performancePaused" @click="togglePerformancePause">{{ performancePaused ? '继续演出' : '暂停演出' }}</button>
-            <button type="button" @click="cancelPerformance">结束演出</button>
-            <span role="status">{{ performancePaused ? '已暂停（返回页面后请点继续）' : showState.status === 'loading' ? '加载演出素材…' : `正在演出 · ${showState.beatId ?? '场景准备'}` }}</span>
-          </div>
-          <div class="camera-actions" aria-label="镜头控制">
-            <span>CAMERA</span>
-            <button :disabled="store.phase !== 'ready' || !currentPlayerActorId || performanceRunning" type="button" @click="followCamera(currentPlayerActorId)">镜头跟随训练员</button>
-            <button :disabled="store.phase !== 'ready' || !activeActorId || performanceRunning" type="button" @click="followCamera(activeActorId)">镜头跟随{{ activeCharacterName }}</button>
-            <button :aria-pressed="minimapVisible" aria-keyshortcuts="M" :disabled="store.phase !== 'ready' || performanceRunning" type="button" title="快捷键 M" @click="toggleMinimap">
-              小地图：{{ minimapVisible ? '开' : '关' }}（M）
-            </button>
-            <button :aria-pressed="mapOverviewActive" aria-keyshortcuts="O" :disabled="store.phase !== 'ready' || performanceRunning" type="button" title="快捷键 O" @click="toggleMapOverview">
-              {{ mapOverviewActive ? '退出当前地图预览' : '当前地图全图' }}（O）
-            </button>
-            <button v-for="zone in sceneZones.slice(0, 2)" :key="`camera-zone-${zone.id}`" :disabled="store.phase !== 'ready' || performanceRunning" type="button" @click="focusCameraOnZone(zone.id)">
-              定镜 · {{ zone.displayName }}
-            </button>
-            <button v-if="sceneZones.length === 0 && sceneAnchors[0]" :disabled="store.phase !== 'ready' || performanceRunning" type="button" @click="focusCameraOnAnchor(sceneAnchors[0].id)">
-              定镜 · {{ sceneAnchors[0].displayName }}
-            </button>
-          </div>
-          <div class="actor-actions" aria-label="角色跟随控制">
-            <span>ACTOR</span>
-            <button :disabled="store.phase !== 'ready' || !currentPlayerActorId || !activeActorId || activeActorFollowsPlayer || performanceRunning" type="button" @click="startActorFollow">
-              {{ activeCharacterName }}跟随训练员
-            </button>
-            <button :disabled="store.phase !== 'ready' || !activeActorFollowsPlayer || performanceRunning" type="button" @click="stopActorFollow">
-              {{ activeCharacterName }}停止跟随
-            </button>
-          </div>
-          <div class="environment-actions" aria-label="环境控制">
-            <span>ENV</span>
-            <label>
-              <span>时间</span>
-              <select v-model="stageEnvironment.time_of_day" :disabled="store.phase !== 'ready' || performanceRunning" aria-label="时间" @change="applyStageEnvironment">
-                <option value="day">白天</option>
-                <option value="evening">黄昏</option>
-                <option value="night">夜晚</option>
-              </select>
-            </label>
-            <label>
-              <span>天气</span>
-              <select v-model="stageEnvironment.weather" :disabled="store.phase !== 'ready' || performanceRunning" aria-label="天气" @change="applyStageEnvironment">
-                <option value="clear">晴朗</option>
-                <option value="rain">雨</option>
-                <option value="snow">雪</option>
-              </select>
-            </label>
-            <label v-if="stageEnvironment.weather !== 'clear'" class="environment-intensity">
-              <span>强度</span>
-              <input v-model.number="stageEnvironment.intensity" type="range" min="0.15" max="1" step="0.05" aria-label="天气强度" :disabled="store.phase !== 'ready' || performanceRunning" @change="applyStageEnvironment">
-            </label>
-          </div>
-          <button v-if="currentSceneId === 'tracen_student_plaza'" :disabled="store.phase !== 'ready' || !activeActorId || performanceRunning" type="button" @click="runMeeting">
-            <span>▶</span> 运行会面演出
-          </button>
-          <button v-for="anchor in sceneAnchors.slice(0, 3)" :key="anchor.id" :disabled="store.phase !== 'ready' || !activeActorId || performanceRunning" type="button" @click="sendActorTo(anchor.id, anchor.displayName)">
-            {{ anchor.displayName }}
-          </button>
-          <button v-for="path in activityPaths" :key="path.id" :disabled="store.phase !== 'ready' || !activeActorId || performanceRunning" type="button" @click="runActivityPath(path.id, path.activityId)">
-            执行 {{ path.activityId }}
-          </button>
-          <button :disabled="performanceRunning" type="button" @click="resetCurrentScene">重置场景</button>
-          <div class="scene-actions" aria-label="地图切换">
-            <span>MAP</span>
-            <button type="button" aria-haspopup="dialog" aria-keyshortcuts="G" :disabled="store.phase !== 'ready' || performanceRunning" @click="openWorldOverview">世界连接总览（G）</button>
-            <select :value="activeStagePath" :disabled="store.phase !== 'ready' || performanceRunning" aria-label="地图" @change="changeStageFromSelect">
-              <option v-for="choice in stageChoices" :key="choice.stage_id" :value="choice.definition_path">
-                {{ choice.display_name }}
-              </option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <WorldOverview v-if="worldOverviewOpen"
-        :data="worldOverviewData" :current-scene-id="currentSceneId" :loading="worldOverviewLoading" :error="worldOverviewError"
-        @close="closeWorldOverview" @retry="prepareWorldOverview" />
-
       <aside class="inspector">
-        <section v-if="!agentEnabled" class="panel playground-panel">
-          <div class="panel-heading"><span class="eyebrow">CAMPUS PLAYGROUND</span><span class="live-mark">试玩</span></div>
-          <h2>和她们逛逛特雷森</h2>
-          <p>这是纯前端试玩模式，不连接 HF、不调用 LLM。选择角色，带她一起探索校园。</p>
-          <div class="playground-controls">
-            <strong>当前操作：{{ activeActorId ? activeCharacterName : '当前地图没有可操作角色' }}</strong>
-            <span v-if="activeActorId">{{ activeActorFollowsPlayer ? '正在跟随训练员' : '未跟随训练员' }}</span>
-            <button type="button" :disabled="!canControlActiveActor" @click="approachTrainer">{{ activeCharacterName }}，过来</button>
-            <button type="button" :disabled="!canControlActiveActor || activeActorFollowsPlayer" @click="startActorFollow">{{ activeCharacterName }}跟随训练员</button>
-            <button type="button" :disabled="!canControlActiveActor || !activeActorFollowsPlayer" @click="stopActorFollow">{{ activeCharacterName }}停止跟随</button>
-          </div>
-          <ul class="playground-guide">
-            <li><kbd>W A S D</kbd> / 方向键移动训练员。</li>
-            <li>走到标注目的地的传送点即可换图；只有跟随角色随行，其他角色留守原地图。</li>
-            <li><kbd>M</kbd> 小地图 · <kbd>O</kbd> 当前地图全图 · <kbd>G</kbd> 世界路线。</li>
-            <li>下方可切换镜头、昼夜天气，也可播放预置 JSON 短剧与配音。</li>
-          </ul>
-        </section>
-        <section v-if="agentEnabled || conversation.length > 0" class="panel agent-panel">
-          <div class="panel-heading">
-            <span class="eyebrow">{{ agentEnabled ? 'TRAINER ↔ ACTOR' : '短剧字幕' }}</span>
-            <span v-if="agentEnabled" class="agent-dot" :class="agentStatus"></span>
-          </div>
-          <div v-if="agentEnabled" class="agent-session-summary">
-            <strong>训练员 ↔ {{ castCharacterNames || '出演角色' }}</strong>
-            <span>多人 Stage Director · 会话由 .env 自动初始化</span>
-          </div>
-          <div v-if="agentEnabled" class="agent-status-row">
-            <p class="agent-message">{{ agentStatusMessage }}</p>
-            <button v-if="agentStatus === 'error' || agentStatus === 'disconnected'" type="button" @click="prepareAgentSession">重试</button>
-          </div>
-          <ol class="conversation-list">
-            <li v-for="line in conversation" :key="line.id" :class="line.kind">
-              <strong>{{ line.speaker }}</strong>
-              <span>{{ line.text }}</span>
-            </li>
-            <li v-if="conversation.length === 0" class="conversation-empty">
-              输入一句话，测试多角色发言调度、对白与舞台行为响应。
-            </li>
-          </ol>
-          <form v-if="agentEnabled" class="agent-compose" @submit.prevent="sendAgentMessage">
-            <textarea v-model="agentInput" rows="2" :disabled="agentStatus === 'busy' || performanceRunning" placeholder="例如：我们去喷泉旁聊聊吧。" @keydown.enter.exact.prevent="sendAgentMessage"></textarea>
-            <button type="submit" :disabled="!agentInput.trim() || agentStatus === 'busy' || performanceRunning">发送</button>
-          </form>
-        </section>
-
-        <section class="panel actors-panel">
-          <div class="panel-heading">
-            <span class="eyebrow">LIVE ACTORS</span>
-            <span class="count">{{ actorViews.length }} / {{ resolvedCast.length + (currentPlayerActorId ? 1 : 0) }}</span>
-          </div>
-          <article v-for="view in actorViews" :key="view.instanceId" class="actor-row" :class="{ active: !view.player && view.instanceId === activeActorId }">
-            <div class="actor-index" :class="view.player ? 'trainer-index' : 'vega-index'">{{ view.initials }}</div>
-            <div>
-              <strong>{{ view.displayName }}</strong>
-              <small>{{ actor(view.instanceId)?.control_owner ?? '—' }} · {{ actor(view.instanceId)?.locomotion ?? '—' }}/{{ actor(view.instanceId)?.facing ?? '—' }}</small>
-            </div>
-            <div class="actor-row-tail">
-              <span class="coordinate">{{ actor(view.instanceId) ? `${Math.round(actor(view.instanceId)!.position.x)}, ${Math.round(actor(view.instanceId)!.position.y)}` : '—' }}</span>
-              <button v-if="!view.player" type="button" @click="selectActiveActor(view.instanceId)">
-                {{ view.instanceId === activeActorId ? '当前' : '选择' }}
-              </button>
-            </div>
-          </article>
-        </section>
-
-        <section class="panel event-panel">
-          <div class="panel-heading">
-            <span class="eyebrow">STAGE EVENTS</span>
-            <span class="live-mark">LIVE</span>
-          </div>
-          <ol class="event-list">
-            <li v-for="event in [...store.events].reverse()" :key="event.sequence" :class="event.type.split('.')[0]">
-              <span>{{ formatEvent(event) }}</span>
-              <time>{{ (event.time_ms / 1000).toFixed(1) }}s</time>
-            </li>
-            <li v-if="store.events.length === 0" class="empty-event">等待舞台事件…</li>
-          </ol>
-        </section>
+        <ConversationPanel
+          v-model="agentInput"
+          :agent-enabled="agentEnabled"
+          :agent-status="agentStatus"
+          :agent-status-message="agentStatusMessage"
+          :conversation="conversation"
+          :cast-names="castCharacterNames"
+          :performance-running="performanceRunning"
+          :can-retry-turn="canRetryTurn"
+          @send="sendAgentMessage"
+          @retry="retryAgentSession"
+          @cancel="cancelAgentTurn"
+        />
+        <StageDiagnostics
+          :actors="actorViews"
+          :actor-states="store.snapshot?.actors ?? []"
+          :events="store.events"
+          :conversation="conversation"
+        />
       </aside>
-    </section>
+    </div>
+    <WorldOverview
+      v-if="worldOverviewOpen"
+      :data="worldOverviewData"
+      :current-scene-id="currentSceneId"
+      :loading="worldOverviewLoading"
+      :error="worldOverviewError"
+      @close="closeWorldOverview"
+      @retry="prepareWorldOverview"
+    />
   </main>
 </template>

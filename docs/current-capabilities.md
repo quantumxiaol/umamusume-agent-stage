@@ -10,7 +10,7 @@
 - 当前同步 29 名角色的制服/决胜服与 1 个训练员，共 59 个严格 base20 CharacterBundle；
 - base20 要求 stand 4 帧、walk 8 帧、idle 8 帧，共 20 个唯一帧引用；
 - `CharacterAgentMapping` 显式关联稳定角色 ID、Agent 中文名、Stage actor ID 和两套服装；
-- 页面可组成 1–4 名角色的 cast，每名角色独立选择服装和观察镜头。
+- playground 可组成 1–4 名角色的 cast；Agent 模式服从后端 `director_max_participants`（当前默认 3 人），每名角色独立选择服装和观察镜头。
 
 ### 地图与世界
 
@@ -26,9 +26,11 @@
 ## 实时舞台
 
 - `StageRuntime` 是角色位置、碰撞、控制权、命令和任务结果的唯一权威；
+- Web 采用明亮学院风响应式布局，角色、舞台、对话和控制组件分离，Actor 坐标、原始命令与事件收进折叠诊断区；
 - 玩家可用 WASD/方向键移动；
 - Runtime/剧本支持移动、训练路线、跟随、停止、朝向和对白；Agent 支持接近等动作，但目前 Agent API 尚未开放训练路线指令；
 - 场内移动具有下一格占用、脚底安全距离、动态绕行和有限失败处理；固定 Actor ID 顺序裁决抢道，无法绕开的堵塞会失败，而不是无限原地踏步；
+- `StageRuntime.dispose()` 统一取消活动/排队移动与对白并解除跟随；Phaser Controller 的 `ready` 在素材真正加载完成后才兑现，失败会进入页面错误层；
 - 明确指定 Anchor Slot 时严格到该槽位，不再自动退回 Anchor 中心；未知 Slot 返回 `INVALID_SLOT`，占用/不可达返回 `NO_REACHABLE_TARGET`；
 - 镜头支持跟随 Actor、聚焦 Actor/Anchor/Zone、固定世界坐标和整图预览；
 - `M` 切换小地图，`O` 切换当前地图全图，`G` 打开世界连接与出口路线；整图预览退出后恢复先前镜头；
@@ -39,8 +41,11 @@
 - `playground` 模式不连接后端，保留基础游戏操作、JSON 短剧和现成音频；Pages 工作流固定使用这一模式；
 - `agent` 模式下浏览器直接连接本地或 HF Space 的 `umamusume-agent /stage/*`；本地开发默认保持联调模式；
 - Agent 返回结构化 `AgentStageAction`，前端校验并转换为 `StageCommand`；
-- 单角色仍经过 Stage Director；多人由 Director 选择当前地图中的发言者和动作；
-- 会话可包含分散在多张地图的角色，每轮只绑定当前 Scene 中的角色；
+- `useAgentStage` 管理能力协商、会话、90 秒超时、取消与显式重连重发；换图会取消旧请求和任务，迟到响应不会控制新场景；
+- 会话失效不会静默重试；动作部分失败时保留已收到的角色回复，并显示未完成状态；
+- 单角色仍经过 Stage Director；多人由 Director 选择发言者和动作；
+- 会话可包含分散在多张地图的角色；真实缺席角色可通过 travel/approach/follow 召回，本地动作与场内气泡必须到场后执行；
+- `world-travel` 按 WorldNavigation 逐图步行并核对 Portal，支持 NPC 先行与留守召回；离开当前 Scene 后由后台 Runtime 推进，训练员不被锁住，旅行者退场会清理碰撞与显示，可见切换保留最后一帧；旧后端继续使用同图动作；
 - `PerformanceScript v1` 描述 cast、scene、并行 beat、动作、对白、音频提示和镜头；
 - anime 兼容入口保留 `projectId/title/lines`，只增加根级 `stage` 字段；
 - 网页演出器会播放 `audio/audio_path` 指向的现成 TTS，并按实际音频长度同步气泡、字幕和行间停顿；
@@ -64,8 +69,8 @@ docs/                     架构、协议、部署与内容管线
 ## 当前边界
 
 - 当前浏览器会话是世界权威，刷新页面后从默认舞台重新开始；
-- 后台 Scene 保存位置但不持续推进时间和行动；
-- 跨地图路径可以规划，但尚未由 World scheduler 自动逐图执行；
+- 除当前旅行者的路线外，后台 Scene 只保存位置，不持续推进其他时间和行动；
+- Agent 跨图旅行由可见 Runtime 与后台 Runtime 协同执行；不支持并发推进多个后台旅行或完整 NPC 日程；
 - Agent Stage Director 暂未返回独立 CameraCue；
 - JSON 短剧已支持浏览器音频回放；实时 TTS 调度和视频导出仍需继续接入；
 - 地图数量已经覆盖主要地点，下一阶段优先处理 Anchor Slot、Portal 落点、遮挡层和美术一致性。

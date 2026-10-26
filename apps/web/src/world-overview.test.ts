@@ -33,6 +33,18 @@ describe("world overview", () => {
     expect(data.navigation.findRoute(scene.scene_id, scene.scene_id)?.steps).toEqual([]);
   });
 
+  it("uses the real plaza portal for travel to the training ground", () => {
+    expect(data.navigation.findRoute("tracen_student_plaza", "tracen_training_ground")?.steps).toEqual([
+      {
+        from_scene_id: "tracen_student_plaza",
+        portal_id: "to_training_ground",
+        exit_position: { x: 47, y: 16 },
+        target_scene_id: "tracen_training_ground",
+        target_spawn_id: "from_plaza",
+      },
+    ]);
+  });
+
   it("has routes between every playable scene and valid destination entrances", () => {
     for (const source of data.scenes.values()) {
       for (const target of data.scenes.keys()) {

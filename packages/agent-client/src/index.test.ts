@@ -2,9 +2,36 @@ import { describe, expect, it, vi } from "vitest";
 
 import {
   AgentApiClient,
+  AgentApiError,
+  AgentTimeoutError,
   reconcileStageTurnActions,
   stageActionToCommand,
 } from "./index";
+
+const requiredStageActions = [
+  "actor.move_to",
+  "actor.approach",
+  "actor.follow",
+  "actor.stop_follow",
+  "actor.stop",
+  "actor.face",
+  "actor.face_actor",
+  "dialogue.say",
+] as const;
+
+function stageCapabilitiesPayload() {
+  return {
+    schema_version: "agent_stage_api.v1",
+    session_api: 1,
+    turn_schema_version: "agent_stage_turn.v1",
+    action_types: [...requiredStageActions],
+    max_stage_actions_per_turn: 8,
+  };
+}
+
+function jsonResponse(payload: unknown, init?: ResponseInit): Response {
+  return new Response(JSON.stringify(payload), init);
+}
 
 describe("AgentApiClient", () => {
   it("uses the API key and creates a stage session", async () => {
@@ -48,6 +75,149 @@ describe("AgentApiClient", () => {
       expect.objectContaining({ method: "POST" }),
     );
   });
+
+  it("keeps external cancellation as AbortError", async () => {
+    const fetch = vi.fn<typeof globalThis.fetch>(() => new Promise(() => {}));
+    const client = new AgentApiClient({ baseUrl: "https://agent.example", fetch });
+    const controller = new AbortController();
+    const request = client.createStageSession(
+      { characterNames: ["爱慕织姬"], sceneName: "学生广场" },
+      controller.signal,
+    );
+
+    controller.abort();
+    const error = await request.catch((reason: unknown) => reason);
+
+    expect(error).toMatchObject({ name: "AbortError" });
+    expect(error).not.toBeInstanceOf(AgentApiError);
+    expect(error).not.toBeInstanceOf(AgentTimeoutError);
+    expect(fetch.mock.calls[0]?.[1]?.signal?.aborted).toBe(true);
+  });
+
+  it("uses a dedicated error when a request times out", async () => {
+    const fetch = vi.fn<typeof globalThis.fetch>(() => new Promise(() => {}));
+    const client = new AgentApiClient({
+      baseUrl: "https://agent.example",
+      fetch,
+      timeoutMs: 10,
+    });
+
+    const error = await client
+      .listCharacters(new AbortController().signal)
+      .catch((reason: unknown) => reason);
+
+    expect(error).toBeInstanceOf(AgentTimeoutError);
+    expect(error).toMatchObject({ name: "AgentTimeoutError", timeoutMs: 10 });
+    expect(error).not.toBeInstanceOf(AgentApiError);
+    expect(fetch.mock.calls[0]?.[1]?.signal?.aborted).toBe(true);
+  });
+
+  it("preserves Retry-After on HTTP 429 errors", async () => {
+    const fetch = vi.fn<typeof globalThis.fetch>(async () =>
+      jsonResponse(
+        { detail: "Too many requests" },
+        { status: 429, headers: { "Retry-After": "17" } },
+      ),
+    );
+    const client = new AgentApiClient({ baseUrl: "https://agent.example", fetch });
+
+    const error = await client.listCharacters().catch((reason: unknown) => reason);
+
+    expect(error).toBeInstanceOf(AgentApiError);
+    expect(error).toMatchObject({
+      name: "AgentApiError",
+      status: 429,
+      detail: "Too many requests",
+      retryAfter: "17",
+    });
+  });
+
+  it("returns validated stage capabilities without requiring scene travel", async () => {
+    const payload = stageCapabilitiesPayload();
+    expect(payload.action_types).not.toContain("actor.travel_to_scene");
+    const fetch = vi.fn<typeof globalThis.fetch>(async () => jsonResponse(payload));
+    const client = new AgentApiClient({ baseUrl: "https://agent.example", fetch });
+
+    await expect(
+      client.stageCapabilities(new AbortController().signal),
+    ).resolves.toEqual({
+      schemaVersion: "agent_stage_api.v1",
+      sessionApi: 1,
+      turnSchemaVersion: "agent_stage_turn.v1",
+      supportedActions: [...requiredStageActions],
+      maxActionsPerTurn: 8,
+    });
+  });
+
+  it.each([
+    { field: "schema_version", value: "agent_stage_api.v2" },
+    { field: "session_api", value: 2 },
+    { field: "turn_schema_version", value: "agent_stage_turn.v2" },
+    { field: "action_types", value: "actor.stop" },
+    { field: "action_types", value: [...requiredStageActions, 3] },
+    { field: "max_stage_actions_per_turn", value: 0 },
+    { field: "max_stage_actions_per_turn", value: 1.5 },
+  ])("rejects an invalid stage capability $field", async ({ field, value }) => {
+    const fetch = vi.fn<typeof globalThis.fetch>(async () =>
+      jsonResponse({ ...stageCapabilitiesPayload(), [field]: value }),
+    );
+    const client = new AgentApiClient({ baseUrl: "https://agent.example", fetch });
+
+    await expect(client.stageCapabilities()).rejects.toThrow(field);
+  });
+
+  it.each(requiredStageActions)("requires %s in stage capabilities", async (action) => {
+    const fetch = vi.fn<typeof globalThis.fetch>(async () =>
+      jsonResponse({
+        ...stageCapabilitiesPayload(),
+        action_types: requiredStageActions.filter((candidate) => candidate !== action),
+      }),
+    );
+    const client = new AgentApiClient({ baseUrl: "https://agent.example", fetch });
+
+    await expect(client.stageCapabilities()).rejects.toThrow(action);
+  });
+
+  it("returns the Director participant limit from server capabilities", async () => {
+    const fetch = vi.fn<typeof globalThis.fetch>(async () =>
+      jsonResponse({ director_max_participants: 3 }),
+    );
+    const client = new AgentApiClient({ baseUrl: "https://agent.example", fetch });
+
+    await expect(
+      client.serverCapabilities(new AbortController().signal),
+    ).resolves.toEqual({ directorMaxParticipants: 3 });
+    expect(fetch).toHaveBeenCalledWith(
+      "https://agent.example/capabilities",
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
+  });
+
+  it.each([
+    { kind: "missing", payload: {} },
+    { kind: "null", payload: { director_max_participants: null } },
+  ])("returns null for a $kind Director participant limit", async ({ payload }) => {
+    const fetch = vi.fn<typeof globalThis.fetch>(async () => jsonResponse(payload));
+    const client = new AgentApiClient({ baseUrl: "https://agent.example", fetch });
+
+    await expect(client.serverCapabilities()).resolves.toEqual({
+      directorMaxParticipants: null,
+    });
+  });
+
+  it.each([0, -1, 1.5, "3"])(
+    "rejects invalid Director participant limit %s",
+    async (directorMaxParticipants) => {
+      const fetch = vi.fn<typeof globalThis.fetch>(async () =>
+        jsonResponse({ director_max_participants: directorMaxParticipants }),
+      );
+      const client = new AgentApiClient({ baseUrl: "https://agent.example", fetch });
+
+      await expect(client.serverCapabilities()).rejects.toThrow(
+        "director_max_participants must be a positive integer",
+      );
+    },
+  );
 });
 
 describe("stageActionToCommand", () => {
@@ -167,25 +337,34 @@ describe("stageActionToCommand", () => {
     );
     const client = new AgentApiClient({ baseUrl: "https://agent.example", fetch });
 
-    await expect(client.turn({
-      sessionId: "s1",
-      userUuid: "u1",
-      message: "先去训练场等我。",
-      targetActorIds: ["agent-admire-vega"],
-      actorBindings: [{
-        agent_actor_id: "agent-admire-vega",
-        stage_actor_id: "uma_admire_vega",
-      }],
-      liveStage: {
-        schema_version: "live_stage.v1",
-        stage_id: "student_plaza_stage",
-        scene_id: "tracen_student_plaza",
-        actors: [],
-        anchors: [],
-        activity_paths: [],
-        portals: [],
-      },
-    })).resolves.toMatchObject({ stage_actions: response.stage_actions });
+    await expect(
+      client.turn(
+        {
+          sessionId: "s1",
+          userUuid: "u1",
+          message: "先去训练场等我。",
+          targetActorIds: ["agent-admire-vega"],
+          actorBindings: [
+            {
+              agent_actor_id: "agent-admire-vega",
+              stage_actor_id: "uma_admire_vega",
+            },
+          ],
+          liveStage: {
+            schema_version: "live_stage.v1",
+            stage_id: "student_plaza_stage",
+            scene_id: "tracen_student_plaza",
+            actors: [],
+            remote_actors: [],
+            travel_destinations: [],
+            anchors: [],
+            activity_paths: [],
+            portals: [],
+          },
+        },
+        new AbortController().signal,
+      ),
+    ).resolves.toMatchObject({ stage_actions: response.stage_actions });
   });
 });
 

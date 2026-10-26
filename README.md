@@ -8,6 +8,7 @@
 
 ## 能做什么
 
+- 在明亮学院风的响应式舞台中查看角色，同行角色、画布和对话分区清晰，技术诊断默认收起；
 - 加载 ChibiWeaver base20 角色包，并切换制服/决胜服；
 - 在特雷森学院场景中碰撞行走、A* 寻路、跨 Portal 换图；
 - 让角色接近、跟随、停止跟随、转向、沿训练路线行动并显示对白；
@@ -59,12 +60,12 @@ VITE_STAGE_MODE=playground pnpm dev
 | 操作 | 快捷键或入口 |
 | --- | --- |
 | 移动训练员 | `W A S D` 或方向键 |
-| 显示/隐藏小地图 | `M`，或 CAMERA 区域的“小地图”按钮 |
-| 进入/退出当前地图全图预览 | `O`，或 CAMERA 区域的“当前地图全图”按钮 |
-| 查看世界连接与换图路线 | `G`，或 MAP 区域的“世界连接总览”；`Esc` / `G` 关闭 |
-| 跟随角色/训练员、定镜 | 页面 CAMERA 控件 |
-| 角色跟随/停止跟随训练员 | 页面 ACTOR 控件 |
-| 昼夜和天气 | 页面 ENV 控件 |
+| 显示/隐藏小地图 | `M`，或舞台下方“视野”区域的“小地图”按钮 |
+| 进入/退出当前地图全图预览 | `O`，或“视野”区域的“全图预览”按钮 |
+| 查看世界连接与换图路线 | `G`，或“地点”区域的“校园路线”；`Esc` / `G` 关闭 |
+| 跟随角色/训练员、定镜 | 展开“镜头、活动与场景管理” |
+| 角色过来/跟随/停止跟随 | 左侧同行角色下方的互动按钮 |
+| 昼夜和天气 | 舞台下方“环境”控件 |
 
 输入框、选择框或可编辑区域聚焦时，地图移动和镜头快捷键不会抢占键盘输入。退出全图预览后会恢复进入前的跟随或定镜状态；小地图开关会在跨地图后保留。
 
@@ -72,9 +73,9 @@ VITE_STAGE_MODE=playground pnpm dev
 
 ## Agent 对话与 JSON 短剧
 
-在 `agent` 模式，网页从 `.env` 自动连接 Agent，并为所选 cast 建立 Stage 会话。每轮只把当前地图中的角色、Anchor 和实时状态交给 Director；留在其他地图的角色仍属于会话，但不会隔着地图发言或接收动作。协议和动作语义见 [`docs/agent-integration.md`](docs/agent-integration.md)。
+在 `agent` 模式，网页从 `.env` 自动连接 Agent，核对 Stage 能力和出演人数上限，并为所选 cast 建立 Stage 会话。每轮提交当前地图的实时状态、留守角色的真实位置和可旅行目的地。支持跨图的后端可以让角色逐图前往其他地点；留守角色也能被“快过来”召回，到场后再接近或跟随训练员。NPC 跨图时训练员可继续移动，离开的角色会从旧 Runtime 退场，可见切换会保留最后一帧避免闪屏。旧后端继续使用同图对话，并会在跨图召回时提示需要升级。对话可主动取消，换图会取消旧轮次；会话失效或动作失败后可按提示重连并重发。协议和动作语义见 [`docs/agent-integration.md`](docs/agent-integration.md)。
 
-“运行兼容 JSON 短剧”会回放 [`content/performances/admire-vega-starlight.anime.json`](content/performances/admire-vega-starlight.anime.json)。原始对白、字幕、音频与立绘字段保持兼容，网页会播放现成 TTS 并按音频实际长度推进字幕；额外的 `stage` 字段负责编排地图、角色行动、镜头和环境。格式见 [`docs/performance-script.md`](docs/performance-script.md)。
+“播放星光短剧”会回放 [`content/performances/admire-vega-starlight.anime.json`](content/performances/admire-vega-starlight.anime.json)。原始对白、字幕、音频与立绘字段保持兼容，网页会播放现成 TTS 并按音频实际长度推进字幕；额外的 `stage` 字段负责编排地图、角色行动、镜头和环境。格式见 [`docs/performance-script.md`](docs/performance-script.md)。
 
 演出过程中可以“暂停／继续”或“结束演出”。暂停会同步冻结角色、镜头、音频与段落等待；切到后台标签页时自动暂停，回来后手动继续。结束演出会保留当前已加载的场景位置并恢复自由操作，不回滚整场剧情。
 

@@ -92,6 +92,21 @@ describe("WorldPresence", () => {
     expect(world.actor("friend")?.tile).toEqual({ x: 4, y: 4 });
   });
 
+  it("syncs one traveler without overwriting other actors in the scene", () => {
+    const world = new WorldPresence();
+    world.reconcileActors(["trainer", "follower", "friend"], "plaza");
+    world.syncScene(scene, snapshot());
+
+    world.syncActor(scene, {
+      ...snapshot().actors[1]!,
+      position: { x: 160, y: 160 },
+    });
+
+    expect(world.actor("follower")?.tile).toEqual({ x: 5, y: 5 });
+    expect(world.actor("trainer")?.tile).toEqual({ x: 1, y: 1 });
+    expect(world.actor("friend")?.tile).toEqual({ x: 4, y: 4 });
+  });
+
   it("moves one actor independently and clears cross-scene follow bindings", () => {
     const world = new WorldPresence();
     world.reconcileActors(["trainer", "follower", "friend"], "plaza");
@@ -104,6 +119,22 @@ describe("WorldPresence", () => {
       spawn_id: "from_plaza",
     });
     expect(world.actor("follower")?.following_actor_id).toBeNull();
+  });
+
+  it("uses a follow binding established after recall for the next player transfer", () => {
+    const world = new WorldPresence();
+    world.reconcileActors(["trainer", "follower", "friend"], "plaza");
+    world.syncScene(scene, snapshot());
+    world.transferActor("follower", "gate", "entry");
+    world.transferActor("trainer", "gate", "entry");
+    world.syncScene(
+      { ...scene, scene_id: "gate" },
+      { ...snapshot(), scene_id: "gate", actors: snapshot().actors.slice(0, 2) },
+    );
+
+    expect(world.actor("follower")?.following_actor_id).toBe("trainer");
+    expect(world.transferFollowingParty("trainer", "gate", "next", "entry")).toEqual(["trainer", "follower"]);
+    expect(world.actor("friend")?.scene_id).toBe("plaza");
   });
 
   it("restores a resident at its saved tile with a runtime-only spawn", () => {

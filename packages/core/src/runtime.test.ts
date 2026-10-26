@@ -417,4 +417,100 @@ describe("StageRuntime", () => {
       target_spawn_id: "entry",
     });
   });
+
+  it("despawns an actor and releases its work, followers and spawn tile", async () => {
+    const runtime = runtimeWithActors();
+    runtime.execute({
+      id: "despawn-follow", type: "actor.follow", actor_id: "b", target_actor_id: "a",
+      source: "script", policy: "replace", distance_tiles: 2,
+    });
+    const movement = runtime.execute({
+      id: "despawn-move", type: "actor.move_to", actor_id: "a", source: "script", policy: "replace",
+      target: { type: "tile", position: { x: 6, y: 1 } },
+    });
+    const speech = runtime.execute({
+      id: "despawn-speech", type: "dialogue.say", actor_id: "a", source: "script", policy: "replace",
+      text: "Leaving now", duration_ms: 5000,
+    });
+
+    runtime.despawnActor("a");
+    runtime.despawnActor("a");
+
+    expect(runtime.snapshot().actors.map((actor) => actor.actor_id)).toEqual(["b"]);
+    expect(runtime.snapshot().actors[0]?.following_actor_id).toBeNull();
+    expect(runtime.events().some((event) => event.type === "actor.despawned" && event.actor_id === "a")).toBe(true);
+    await expect(movement.completion).resolves.toMatchObject({ status: "cancelled" });
+    await expect(speech.completion).resolves.toMatchObject({ status: "cancelled" });
+    expect(() => runtime.spawnActor({ actorId: "a", characterPack: pack, spawnId: "a", controlOwner: "script" })).not.toThrow();
+  });
+
+  it("settles active work and clears subscriptions when disposed", async () => {
+    const runtime = runtimeWithActors();
+    const active = runtime.execute({
+      id: "dispose-active", type: "actor.move_to", actor_id: "a", source: "script", policy: "reject",
+      target: { type: "tile", position: { x: 7, y: 4 } },
+    });
+    const queued = runtime.execute({
+      id: "dispose-queued", type: "actor.move_to", actor_id: "a", source: "script", policy: "queue",
+      target: { type: "tile", position: { x: 1, y: 4 } },
+    });
+    const speech = runtime.execute({
+      id: "dispose-speech", type: "dialogue.say", actor_id: "a", source: "script", policy: "replace",
+      text: "This speech is still active", duration_ms: 5000,
+    });
+    const follow = runtime.execute({
+      id: "dispose-follow", type: "actor.follow", actor_id: "b", target_actor_id: "a",
+      distance_tiles: 1, source: "script", policy: "replace",
+    });
+    await expect(follow.completion).resolves.toMatchObject({ status: "completed" });
+    runtime.tick(50);
+
+    const before = runtime.snapshot();
+    expect(before.actors.find((actor) => actor.actor_id === "a")).toMatchObject({
+      speech: "This speech is still active",
+      active_locomotion_task_id: "dispose-active",
+    });
+    expect(before.actors.find((actor) => actor.actor_id === "b")).toMatchObject({
+      following_actor_id: "a",
+      follow_distance_tiles: 1,
+    });
+
+    let notifications = 0;
+    runtime.subscribe(() => { notifications += 1; });
+    const reason = "Scene disposed by test";
+    runtime.dispose(reason);
+
+    const results = await Promise.all([active.completion, queued.completion, speech.completion]);
+    expect(results.map((result) => result.commandId)).toEqual([
+      "dispose-active", "dispose-queued", "dispose-speech",
+    ]);
+    for (const result of results) {
+      expect(result).toMatchObject({
+        status: "cancelled",
+        error: { code: "CANCELLED", message: reason },
+      });
+    }
+    const disposed = runtime.snapshot();
+    const actorA = disposed.actors.find((actor) => actor.actor_id === "a")!;
+    expect(actorA).toMatchObject({ speech: null, active_locomotion_task_id: null });
+    expect(disposed.actors.find((actor) => actor.actor_id === "b")).toMatchObject({
+      following_actor_id: null,
+      follow_distance_tiles: null,
+    });
+    expect(notifications).toBeGreaterThan(0);
+
+    const eventCount = runtime.events().length;
+    const notificationCount = notifications;
+    expect(() => runtime.dispose(reason)).not.toThrow();
+    expect(runtime.events()).toHaveLength(eventCount);
+    runtime.setControlOwner("b", "agent");
+    runUntilSettled(runtime, 20);
+
+    expect(notifications).toBe(notificationCount);
+    expect(runtime.snapshot().actors.find((actor) => actor.actor_id === "a")?.position)
+      .toEqual(actorA.position);
+    expect(runtime.events().filter((event) =>
+      event.type === "command.started" && event.command_id === "dispose-queued",
+    )).toHaveLength(0);
+  });
 });

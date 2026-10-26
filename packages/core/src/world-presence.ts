@@ -1,6 +1,7 @@
 import type {
   Direction,
   ScenePack,
+  StageActorState,
   StageSnapshot,
   TilePosition,
 } from "@uma-stage/contracts";
@@ -56,18 +57,20 @@ export class WorldPresence {
   }
 
   syncScene(scene: ScenePack, snapshot: StageSnapshot): void {
+    for (const actor of snapshot.actors) this.syncActor(scene, actor);
+  }
+
+  syncActor(scene: ScenePack, actor: StageActorState): void {
     const navigation = new GridNavigation(scene);
-    for (const actor of snapshot.actors) {
-      this.#actors.set(actor.actor_id, {
-        actor_id: actor.actor_id,
-        scene_id: snapshot.scene_id,
-        tile: navigation.worldToTile(actor.position),
-        facing: actor.facing,
-        spawn_id: null,
-        following_actor_id: actor.following_actor_id,
-        follow_distance_tiles: actor.follow_distance_tiles,
-      });
-    }
+    this.#actors.set(actor.actor_id, {
+      actor_id: actor.actor_id,
+      scene_id: scene.scene_id,
+      tile: navigation.worldToTile(actor.position),
+      facing: actor.facing,
+      spawn_id: null,
+      following_actor_id: actor.following_actor_id,
+      follow_distance_tiles: actor.follow_distance_tiles,
+    });
     this.clearDanglingFollowBindings();
   }
 

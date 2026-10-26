@@ -14,6 +14,7 @@ export const agentCharacterListSchema = z.object({
 export const agentStageActorBindingSchema = z.object({
   agent_actor_id: z.string().min(1),
   stage_actor_id: z.string().min(1),
+  scene_id: z.string().min(1).optional(),
 });
 
 export const agentLiveStageSchema = z.object({
@@ -32,6 +33,19 @@ export const agentLiveStageSchema = z.object({
       nearby_anchors: z.array(z.string()),
     }),
   ),
+  remote_actors: z.array(
+    z.object({
+      actor_id: z.string().min(1),
+      scene_id: z.string().min(1),
+    }),
+  ).default([]),
+  travel_destinations: z.array(
+    z.object({
+      scene_id: z.string().min(1),
+      display_name: z.string().default(""),
+      spawn_ids: z.array(z.string()).default([]),
+    }),
+  ).default([]),
   anchors: z.array(
     z.object({
       id: z.string().min(1),

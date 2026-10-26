@@ -113,6 +113,58 @@
         "additionalProperties": false
       }
     },
+    "remote_actors": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "actor_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scene_id": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "actor_id",
+          "scene_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "travel_destinations": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "scene_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "display_name": {
+            "default": "",
+            "type": "string"
+          },
+          "spawn_ids": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "scene_id",
+          "display_name",
+          "spawn_ids"
+        ],
+        "additionalProperties": false
+      }
+    },
     "anchors": {
       "type": "array",
       "items": {
@@ -211,6 +263,8 @@
     "stage_id",
     "scene_id",
     "actors",
+    "remote_actors",
+    "travel_destinations",
     "anchors",
     "activity_paths",
     "portals"

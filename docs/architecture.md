@@ -98,7 +98,7 @@ WorldNavigation: Scene A ─portal─► Scene B ─portal─► Scene C
 GridNavigation: actor tile ─A*─► 当前 Scene 的 portal/anchor tile
 ```
 
-`WorldRouteStep` 明确给出 `from_scene_id / portal_id / exit_position / target_scene_id / target_spawn_id`。这使导演未来只声明跨图目的地，执行器仍能逐图使用确定性 A*，而不是让 LLM 生成坐标。
+`WorldRouteStep` 明确给出 `from_scene_id / portal_id / exit_position / target_scene_id / target_spawn_id`。Director 只声明跨图目的地，`world-travel` 逐图调用确定性 A*，核对实际 Portal tile 和事件后才更新 Presence；模型不生成坐标，Portal 被占或只到其附近不能算旅行成功。目标 Spawn 是入口偏好，被占时可使用邻近安全站位。
 
 ### 镜头不是世界状态
 
@@ -120,26 +120,28 @@ Phaser Controller 执行 cue，同时保留跟随相机边界、小地图、Port
 
 ## 两种导演输入，共用同一个舞台
 
-- **实时 Agent 模式**：`umamusume-agent` 根据训练员输入、角色回复与 `live_stage` 返回一个或多个结构化动作；网页保留整组 cast 的会话，但每轮只绑定当前 Scene 的角色并依次等待动作终态。
+- **实时 Agent 模式**：`umamusume-agent` 根据训练员输入、角色回复与 `live_stage` 返回一个或多个结构化动作；网页保留整组 cast 的会话，绑定当前及真实缺席角色，并依次等待动作终态。
 - **确定性短剧模式**：`PerformanceScript` 的 scene 依次切换，beat 依次执行，同一 beat 的 cues 并行；`wait_for: all` 会等待移动、对白和 wait cue 完成后才进入下一 beat。结束或失败后控制权会归还给 player/agent。
 
-两者都通过 `StageCommand`、`CameraCue`、`StageTask` 和 `StageEvent` 接触当前 Runtime；跨 Scene 的 `actor.travel_to_scene` 由 Web 先更新 `WorldPresence`，再重建可见 Runtime。Agent 不操作 Phaser；剧本也不保存第二份运行时坐标状态。
+两者都通过 `StageCommand`、`CameraCue`、`StageTask` 和 `StageEvent` 接触当前 Runtime；跨 Scene 的 `actor.travel_to_scene` 由 `world-travel` 逐图步行到 Portal，核对事件后才更新 `WorldPresence` 并装配下一场景。内部旅行装配保留 Agent operation，玩家主动换图则取消它。Agent 不操作 Phaser；剧本也不保存第二份运行时坐标状态。
 
 ### 当前跨地图边界
 
-当前 `StageRuntime` 仍是单 Scene 实例：玩家走入 Portal 后，网页会重建目标 Scene。`WorldPresence` 已能持有 `actor_id → scene_id/tile/follow`，所以角色可分散留在不同地图；当前只推进可见 Scene，页面刷新后则从默认舞台重新开始。跨地图路线虽然可以规划，但尚未自动连续执行，后台 Scene 也不会随时间推进。要支持“导演在不同地图角色之间切镜头”和后台行动，下一步是在现有 Presence 之上增加 World scheduler，而不是复制场内坐标权威。
+当前 `StageRuntime` 仍是单 Scene 实例：玩家走入 Portal 后，网页会重建目标 Scene。`WorldPresence` 持有 `actor_id → scene_id/tile/follow`，所以角色可分散留在不同地图。NPC 先行或召回由可见 Runtime 与后台 Runtime 协同执行：当前 Scene 内由 Phaser 驱动，离开当前 Scene 后由受取消控制的 tick 推进后台 Runtime。后台只用 `syncActor` 更新旅行者，不覆盖其他角色；旅行者离开时 `despawnActor` 清理碰撞、任务、跟随和 Phaser 显示，玩家日常移动不被锁住。
+
+召回进入玩家当前 Scene 时才进行可见装配，并在销毁旧 Game 前保留最后一帧，直到新场景 ready 和首帧绘制完成。后台仅推进当前旅行者的路线，不推进其他后台日程；页面刷新后从默认舞台重新开始，持续后台 World scheduler 仍属于后续工作。
 
 ## Agent HTTP 边界
 
-普通 `/chat`、`/director/*` 与新增 `/stage/*` 是并列能力。Stage 会话使用专用导演提示词，但复用 Agent 的角色加载、导演规划、角色回复与会话隔离。Agent 不反向请求浏览器：
+普通 `/chat`、`/director/*` 与 `/stage/*` 是并列能力。Stage 会话使用专用导演提示词，但复用 Agent 的角色加载、导演规划、角色回复与会话隔离。Agent 不反向请求浏览器：
 
-1. 浏览器从 `/characters` 与本地 mapping 计算可出演交集；
+1. 浏览器从 `/characters` 与本地 mapping 计算可出演交集，并校验 `/stage/capabilities` 与根 `/capabilities`；
 2. `/stage/sessions` 返回本次会话真实的 Agent actor ID；
 3. 浏览器将它绑定到当前 Stage actor ID；
 4. `/stage/turn` 接收 `live_stage` 并返回经过白名单过滤的 `stage_actions`；
-5. 浏览器逐条转换并等待 `StageTask` 终态。
+5. `useAgentStage` 逐条转换并等待 `StageTask` 终态；换图或销毁会取消请求与旧 Runtime 任务，迟到响应不能控制新场景。
 
-GitHub Pages 生产环境直接调用 HF Space。浏览器内 API key 只是轻量门槛，不能当成机密；后端仍需限流、额度控制与 key 轮换。
+GitHub Pages 当前固定发布不请求 Agent 的 playground。只有显式选择 agent 构建时，浏览器才直接请求配置的本地或 HF Space；这种公开部署中的 API key 只是轻量门槛，不能当成机密，后端仍需限流、额度控制与 key 轮换。
 
 ## 下一阶段
 

@@ -21,6 +21,7 @@ export type StageActorState = z.infer<typeof stageActorStateSchema>;
 
 export const stageEventTypeSchema = z.enum([
   "actor.spawned",
+  "actor.despawned",
   "actor.movement_started",
   "actor.arrived",
   "actor.facing_changed",
